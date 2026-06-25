@@ -67,6 +67,42 @@
   margin: 0 0 1.25rem;
 }
 
+/* ---- Demo bar ---- */
+.demo-bar {
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.demo-bar__label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+}
+
+.demo-bar__tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent-hover);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 0.05rem 0.45rem;
+}
+
+.demo-bar__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
 /* ---- Form fields ---- */
 .field {
   margin-bottom: 1.25rem;

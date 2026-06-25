@@ -2,6 +2,7 @@ import { useId, useState } from "react";
 import type { ChangeEvent } from "react";
 
 import type { ReviewRequest, ReviewerPersona } from "../types/review";
+import { SAMPLE_DIFFS, type SampleDiff } from "../samples/sampleDiffs";
 import { DEFAULT_PERSONAS, PersonaSelector } from "./PersonaSelector";
 
 interface DiffInputPanelProps {
@@ -38,6 +39,14 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
     event.target.value = "";
   };
 
+  const loadSample = (sample: SampleDiff) => {
+    setTitle(sample.title);
+    setDescription(sample.description);
+    setDiffText(sample.diffText);
+    setPersonas(sample.recommendedPersonas);
+    setFileName(null);
+  };
+
   const handleSubmit = () => {
     if (!canRun) {
       return;
@@ -54,6 +63,27 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
   return (
     <section className="panel">
       <h2 className="panel__title">Merge request</h2>
+
+      <div className="demo-bar">
+        <span className="demo-bar__label">
+          Load a demo diff
+          <span className="demo-bar__tag">sample data</span>
+        </span>
+        <div className="demo-bar__buttons">
+          {SAMPLE_DIFFS.map((sample) => (
+            <button
+              key={sample.id}
+              type="button"
+              className="chip"
+              onClick={() => loadSample(sample)}
+              disabled={isLoading}
+              title={sample.description}
+            >
+              {sample.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="field">
         <label className="field__label" htmlFor={titleId}>

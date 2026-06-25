@@ -61,3 +61,17 @@ A running log of notable choices made during the build.
 - **Filename** is `mr-review-council-report.md`, with a sanitized title slug
   appended when a title is present.
 - See `docs/sample-review-export.md` for an example of the output structure.
+
+## Demo mode (Phase 8)
+
+- **Sample diffs** live in `src/samples/sampleDiffs.ts` as plain data
+  (`SampleDiff[]`): id, label, title, description, diff text, and recommended
+  personas. All content is invented/generic — no proprietary code.
+- **Load a demo diff** control sits at the top of the input panel and is clearly
+  marked "sample data". Selecting a sample fills title/description/diff and sets
+  the recommended personas, but does **not** auto-run — the user still clicks
+  "Run Review" (keeps the demo deliberate and matches the normal flow).
+- Three samples: low-risk frontend (clean, includes a test update), risky backend
+  auth (security/QA/backend/SRE), and mixed full-stack (architect/product/QA).
+- The paste/upload workflow is unchanged; demo loading just sets the same form
+  state.

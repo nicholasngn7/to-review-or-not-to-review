@@ -55,6 +55,36 @@ npm run dev
 The dev server runs at `http://localhost:5173` and proxies `/api` to the backend
 at `http://localhost:8000`.
 
+## Demo Walkthrough
+
+The app ships with built-in sample diffs so you can show it off without a real
+merge request.
+
+1. Start the backend and frontend (see [Local Setup](#local-setup)):
+   - Backend: `cd backend && source .venv/bin/activate && uvicorn app.main:app --reload --port 8000`
+   - Frontend: `cd frontend && npm run dev`, then open `http://localhost:5173`.
+2. In the **Merge request** panel, use **Load a demo diff** (marked *sample data*)
+   and pick a sample. It fills in the title, description, diff, and a recommended
+   set of personas. Nothing runs automatically.
+3. Click **Run Review**.
+
+Which sample to use:
+
+- **Low-risk frontend change** — a small React component tweak *with* a matching
+  test update. Produces a mostly clean review (good for showing the "looks clean"
+  states and a `ready` recommendation).
+- **Risky backend auth change** — a Python auth endpoint with secret handling,
+  `eval`/`subprocess`/`shell=True`, a swallowed exception, a no-timeout network
+  call, and no tests. Triggers Security (incl. high), QA, Backend, and SRE
+  findings and a `needs human review` recommendation.
+- **Mixed full-stack change** — touches frontend, backend, config, and docs in
+  one MR. Triggers Architect (scope/boundaries) and Product/QA feedback.
+
+To export, click **Export Markdown** in the results panel to download a `.md`
+report you can paste into a GitLab/GitHub comment.
+
+The paste-your-own and `.diff`/`.patch` upload workflows still work as before.
+
 ## Current MVP Scope
 
 This is an incremental build. What exists today (scaffold step):
@@ -69,5 +99,6 @@ This is an incremental build. What exists today (scaffold step):
 - [x] Review flow UI (diff input, persona selector, summary, finding cards)
 - [x] Results dashboard (risk/recommendation badges, stats, reviewer tabs, severity/persona filtering, empty states)
 - [x] Export review to Markdown (client-side download)
+- [x] Built-in demo sample diffs ("Load a demo diff")
 
 No AI integration is wired up yet.
