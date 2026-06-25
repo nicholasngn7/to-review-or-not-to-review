@@ -30,6 +30,18 @@ export async function capturePage(
 }
 
 /**
+ * Stable-viewport screenshot (the 1440×900 frame, not the full scroll height). Used
+ * for tall states (e.g. a long results dashboard) to keep asset size reasonable.
+ */
+export async function captureViewport(
+  page: Page,
+  version: DemoVersion,
+  name: string,
+): Promise<void> {
+  await page.screenshot({ path: screenshotPath(version, name), fullPage: false });
+}
+
+/**
  * Focused screenshot of a single element (e.g. a panel). Scrolls it into view first.
  * Falls back to a full-page capture if the element is not present.
  */

@@ -10,7 +10,7 @@ import {
   runReview,
   waitForSuggestedRepliesIfAvailable,
 } from "../helpers/flows";
-import { capturePage, captureElement } from "../helpers/screenshot";
+import { captureElement, captureViewport } from "../helpers/screenshot";
 
 /**
  * v0.3 — local fixture-based comment import screenshots.
@@ -63,7 +63,9 @@ test.describe("v0.3 local import screenshots", () => {
     await normalizeImportedCommentsIfAvailable(page);
     await loadImportedThreadsIfAvailable(page);
     await runReview(page); // needs backend on :8000
-    await capturePage(page, V, "v0.3-imported-threads-review-results.png");
+    // Stable viewport (not full-page) to keep this asset light — the verdict and
+    // results header are above the fold once the review completes.
+    await captureViewport(page, V, "v0.3-imported-threads-review-results.png");
   });
 
   test("suggested replies from imported comments", async ({ page }) => {

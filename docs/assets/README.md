@@ -17,16 +17,23 @@ docs/assets/videos/             mr-review-council-v0.{1,2,3}-*.webm (recorded fr
 ```
 
 **Generation status:** the **v0.3** set is generated from the `v0.3.0` tree. The
-**v0.1/v0.2** sets are capture targets — generate them from `v0.1.0` / `v0.2.0`
-worktrees (see [`../demo-automation-plan.md`](../demo-automation-plan.md) §1 and the
-per-version commands there). Mark worktree-captured assets as exact-version.
+**v0.1/v0.2** sets are capture targets — generate them by running the **current**
+harness against the **historical** app started from a `v0.1.0` / `v0.2.0` worktree,
+using `DEMO_BASE_URL` (the old tags do **not** contain the `demo:*` scripts). See
+[`../demo-automation-plan.md`](../demo-automation-plan.md) §1 and
+[`../../frontend/demo/README.md`](../../frontend/demo/README.md).
 
 ```bash
-# From the frontend dir, with the backend running on :8000:
-npm run demo:screenshots          # all specs (current tree)
-npm run demo:screenshots:v0.1     # v0.1 specs only
-npm run demo:screenshots:v0.2     # v0.2 specs only
+# From the frontend dir, with the backend running on :8000.
+# A bare run targets the CURRENT app (exact for the latest version = v0.3 today;
+# a milestone-style fallback if used for an older version's folder):
+npm run demo:screenshots          # all specs (current app)
 npm run demo:screenshots:v0.3     # v0.3 specs only
+
+# Exact v0.1/v0.2: start the historical app from a worktree, then point the
+# current harness at it (does NOT auto-start this checkout's dev server):
+DEMO_BASE_URL=http://localhost:5173 npm run demo:screenshots:v0.1
+DEMO_BASE_URL=http://localhost:5173 npm run demo:video:v0.1
 ```
 
 > The legacy flat filenames in the table below (`main-review-input.png`,

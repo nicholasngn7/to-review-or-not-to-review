@@ -164,14 +164,17 @@ video specs (`frontend/demo/videos/`) and saved under
 
 | Milestone | Video |
 | --------- | ----- |
-| v0.1 core review | `mr-review-council-v0.1-core-review-demo.webm` *(capture target — record from a `v0.1.0` worktree)* |
-| v0.2 suggested replies | `mr-review-council-v0.2-suggested-replies-demo.webm` *(capture target — record from a `v0.2.0` worktree)* |
+| v0.1 core review | `mr-review-council-v0.1-core-review-demo.webm` *(capture target — see exact-version flow below)* |
+| v0.2 suggested replies | `mr-review-council-v0.2-suggested-replies-demo.webm` *(capture target — see exact-version flow below)* |
 | v0.3 local import | [`mr-review-council-v0.3-local-import-demo.webm`](docs/assets/videos/mr-review-council-v0.3-local-import-demo.webm) *(recorded from the `v0.3.0` tree)* |
 
-Exact-version videos should be recorded from the matching `v0.1.0` / `v0.2.0` / `v0.3.0`
-worktree; a recording from a newer checkout is a truthful **milestone-style** fallback,
-not an exact build. The v0.3 import video is a **local fixture-based demo** (bundled
-synthetic JSON) — **not** live GitHub/GitLab integration. Converting `.webm` to
+Exact-version videos are produced by running the **current** Playwright harness against
+the **historical** app started from the matching `v0.1.0` / `v0.2.0` worktree, via
+`DEMO_BASE_URL` (old tags don't ship the `demo:*` scripts) — see
+[`frontend/demo/README.md`](frontend/demo/README.md). A recording from a newer checkout
+is a truthful **milestone-style** fallback, not an exact build. The v0.3 import video is
+a **local fixture-based demo** (bundled synthetic JSON) — **not** live GitHub/GitLab
+integration. Converting `.webm` to
 `.mp4`/`.gif` with `ffmpeg` is **optional** and not required.
 
 A ready-to-record script, narration, timing guide, and recording checklist live in
@@ -253,9 +256,12 @@ them per exact release tag via git worktrees, and
 [`docs/assets/README.md`](docs/assets/README.md) for capture conventions.
 
 > **Status:** the **v0.3** images below are generated from the **`v0.3.0`** tree. The
-> **v0.1** and **v0.2** images are **capture targets** — run their specs from `v0.1.0`
-> / `v0.2.0` worktrees (per the demo automation plan) to produce exact-version assets.
-> Until captured, those links render as their captions. No demo **videos** exist yet.
+> **v0.1** and **v0.2** images are **capture targets** — produce exact-version assets by
+> running the current Playwright harness against a historical app started from a
+> `v0.1.0` / `v0.2.0` worktree, via `DEMO_BASE_URL` (the old tags don't contain the
+> `demo:*` scripts). See [`docs/demo-automation-plan.md`](docs/demo-automation-plan.md)
+> §1 and [`frontend/demo/README.md`](frontend/demo/README.md). Until captured, those
+> links render as their captions.
 
 ### v0.1 — core review MVP (capture targets)
 

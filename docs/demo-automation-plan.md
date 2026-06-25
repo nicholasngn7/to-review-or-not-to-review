@@ -67,33 +67,42 @@ git worktree add ../mrrc-v0.2 v0.2.0
 git worktree add ../mrrc-v0.3 v0.3.0
 ```
 
-Each worktree gets its own backend `.venv` and `npm install` (dependencies may differ
-per tag). Run that worktree's backend + frontend, capture, then tear down. Full
-per-version capture (repeat for v0.2 / v0.3, swapping the version):
+> **Important:** the `v0.1.0` / `v0.2.0` tags **predate these `demo:*` scripts**, so
+> you cannot run the capture scripts *inside* an old worktree. Instead, **run the
+> historical app from the worktree, but run the current checkout's Playwright harness
+> against it** via `DEMO_BASE_URL`. When `DEMO_BASE_URL` is set the harness attaches to
+> the already-running app and does **not** start its own dev server.
+
+Each worktree gets its own backend `.venv` and `npm install` (dependencies differ per
+tag). Full per-version capture (repeat for v0.2 / v0.3, swapping the version):
 
 ```bash
-# 1) Backend deps + server on :8000 (in the worktree)
+# 1) Historical backend on :8000 (in the worktree)
 cd ../mrrc-v0.1/backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --port 8000 &        # leave running
+uvicorn app.main:app --port 8000          # leave running
 
-# 2) Frontend deps + capture (new terminal, in the worktree)
+# 2) Historical frontend on :5173 (new terminal, in the worktree)
 cd ../mrrc-v0.1/frontend
 npm install
-npm run demo:install-browsers             # first time only
-npm run demo:screenshots:v0.1             # writes docs/assets/screenshots/v0.1/*.png
-npm run demo:video:v0.1                   # writes docs/assets/videos/...v0.1...webm
+npm run dev -- --port 5173                # leave running
 
-# 3) Tear down when done
+# 3) Capture with the CURRENT harness against the historical app
+#    (new terminal, in the PRIMARY checkout's frontend/)
+cd frontend
+DEMO_BASE_URL=http://localhost:5173 npm run demo:screenshots:v0.1
+DEMO_BASE_URL=http://localhost:5173 npm run demo:video:v0.1
+
+# 4) Tear down when done
 git worktree remove ../mrrc-v0.1
 ```
 
-> The screenshot scripts write to `docs/assets/screenshots/vX/` **relative to that
-> worktree**. Copy the PNGs back to the primary checkout (or capture from a worktree
-> created inside the primary repo) so the committed assets land in the main tree.
-> **No cross-worktree automation loop is provided** — these documented commands are
-> the supported path.
+> Because the harness runs from the **primary** checkout, the screenshot/video paths
+> resolve to **this** repo's `docs/assets/screenshots/vX/` and `docs/assets/videos/` —
+> no copying between trees is needed. **No cross-worktree automation loop is provided;**
+> these documented commands are the supported path. See
+> [`../frontend/demo/README.md`](../frontend/demo/README.md) for the same workflow.
 
 > **Milestone-style fallback (only if a tag fails to run):** capture all three flows
 > from the current `v0.3.0` app, since it is a superset, and label them truthfully as
@@ -202,12 +211,12 @@ Proposed `frontend/package.json` scripts:
 | `npm run demo:video:v0.1` | Record the v0.1 core-review walkthrough `.webm`. |
 | `npm run demo:video:v0.2` | Record the v0.2 suggested-replies walkthrough `.webm`. |
 | `npm run demo:video:v0.3` | Record the v0.3 local-import walkthrough `.webm`. |
-| `npm run demo:all` | Run screenshots + all three videos (assumes the right version is running, or orchestrates per-worktree). |
+| `npm run demo:all` | Run smoke + screenshots + videos for the **currently-running app** (current checkout, or a historical app via `DEMO_BASE_URL`). |
 
-> Because exact-version capture means *different code per tag*, `demo:all` either (a)
-> runs against whichever version's servers are up, or (b) is wrapped by a thin shell
-> helper that loops the worktrees. Decide in the implementation phase; default to (a)
-> for simplicity and document the worktree loop for full regeneration.
+> **As implemented:** `demo:all` runs against whichever app the harness is pointed at —
+> the current checkout's auto-started dev server by default, or an externally-started
+> app when `DEMO_BASE_URL` is set. There is **no** cross-worktree automation loop; exact
+> per-tag regeneration is the documented `DEMO_BASE_URL` workflow in §1.
 
 ## 8. Manual prerequisites
 
@@ -226,9 +235,15 @@ Per version (or per worktree):
    ```bash
    cd frontend && npx playwright install --with-deps chromium
    ```
-4. There is **no** combined "start both" command today. The implementation phase may
-   optionally add one (e.g. a `concurrently` dev script or a small shell helper), but
-   it is not required — two terminals work.
+4. There is **no** combined "start both" command today — two terminals work.
+5. **Exact-version capture:** set `DEMO_BASE_URL` to the historical app's URL so the
+   current harness attaches to it instead of starting this checkout's dev server, e.g.
+   `DEMO_BASE_URL=http://localhost:5173 npm run demo:screenshots:v0.1`. See §1 and
+   [`../frontend/demo/README.md`](../frontend/demo/README.md).
+
+> **Caveat:** running a bare `npm run demo:screenshots:v0.1` from this (latest) checkout
+> captures the **current** app into the `v0.1` folder — a milestone-style fallback, not
+> an exact v0.1.0 build. Use the `DEMO_BASE_URL` + worktree flow for exact assets.
 
 ## 9. Documentation updates needed later
 
@@ -281,21 +296,23 @@ When assets are generated, update:
    Recording is enabled **only** inside the video specs (never globally), and short
    intentional `beat()` pauses keep the videos watchable while still using deterministic
    waits for state. `ffmpeg` → `.mp4`/`.gif` is optional, not required.
-4. **Phase D — Docs wiring.** Update README, `demo-script.md`, `docs/assets/README.md`,
-   and `release-checklist-v0.3.md` to reference the generated assets and scripts.
+4. **Phase D — Exact-version capture workflow + docs wiring. ✅ Done.** Made the
+   baseURL env-configurable (`DEMO_BASE_URL`; disables the bundled `webServer` so the
+   harness attaches to an externally-started historical app), corrected the worktree
+   docs (run the **current** harness against the **historical** app — old tags lack the
+   `demo:*` scripts), added [`../frontend/demo/README.md`](../frontend/demo/README.md),
+   recaptured the heavy v0.3 results screenshot as a stable-viewport shot (~2.3 MB →
+   ~0.5 MB), and wired README / `demo-script.md` / `docs/assets/README.md` /
+   `release-checklist-v0.3.md`. v0.1/v0.2 exact assets remain a manual capture step
+   (run the documented `DEMO_BASE_URL` flow when those worktrees are available).
 
-## 12. Recommended next implementation prompt
+## 12. Recommended next step
 
-Phases A, B, and C are complete (harness, screenshots, videos). The remaining work is
-**Phase D — capture the exact-version v0.1/v0.2 assets and final docs wiring**:
+Phases A–D are complete: the harness, screenshot/video specs, env-configurable capture,
+and docs are all in place; the **v0.3** assets are captured from the `v0.3.0` tree.
 
-> "Complete demo automation Phase D for MR Review Council: capture the exact-version
-> v0.1 and v0.2 screenshots and videos by creating `git worktree`s for `v0.1.0` and
-> `v0.2.0`, installing their backend/frontend deps, starting each backend on :8000,
-> and running `demo:screenshots:v0.1` / `demo:video:v0.1` (and the v0.2 equivalents)
-> from each worktree; copy the resulting PNGs/webm into the primary checkout under
-> `docs/assets/screenshots/v0.1|v0.2/` and `docs/assets/videos/`. Then flip the README
-> wording for v0.1/v0.2 from 'capture target' to generated-from-tag, verify all asset
-> links resolve, and optionally add an `ffmpeg` snippet for `.mp4`/`.gif` derivatives.
-> Do not add live provider calls, OAuth, tokens, URL input, posting, or real AI; keep
-> the v0.3 import described as a local fixture-based demo."
+The only remaining work is **operational, not code**: capture the exact-version
+**v0.1 / v0.2** screenshots and videos by following §1 (worktree + `DEMO_BASE_URL`),
+then flip their README wording from "capture target" to generated-from-tag. No further
+automation changes are required; optionally add an `ffmpeg` `.mp4`/`.gif` step if a
+non-`.webm` format is needed.
