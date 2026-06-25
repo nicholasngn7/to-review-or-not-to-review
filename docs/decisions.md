@@ -400,3 +400,24 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   synthetic, version-controlled JSON so the demo and tests can run the import flow
   deterministically without a real provider; they are not, and should not be
   presented as, captured production data.
+
+## v0.4 — RAG-style grounded review context (planned, not implemented)
+
+- **v0.4 is a planning-phase design only.** No ingestion, embedding, retrieval, or
+  citation code exists yet; no new dependencies and no tests were added. The shipped
+  product is unchanged. Full plan: `docs/v0.4-plan-rag-grounded-review.md`.
+- **Embedding sits behind a provider abstraction, mirroring `ReviewProvider`.** The
+  planned `EmbeddingProvider.embed()` is selected by an `EMBEDDING_PROVIDER` env var via
+  a validating factory. The default is a **deterministic local embedding provider**
+  (lexical hashing vectorizer, cosine similarity, top-k); Bedrock/OpenAI embedding
+  providers are an **optional future path**, disabled unless explicitly configured.
+- **Retrieval is additive and provenance-only.** When a review has no knowledge sources,
+  behavior is unchanged (an invariance requirement). Citations annotate findings and the
+  response (`context_used`) but must not change findings, severities, overall risk, or
+  the merge recommendation — the same provenance-not-behavior rule used for v0.3's
+  `ExternalCommentReference`.
+- **Honest positioning is mandatory.** It is a local **RAG architecture demo** with a
+  deterministic, **lexical** retriever — not production-grade RAG and not semantic search.
+  Wording like “production-grade RAG”, “semantic retrieval”, “Bedrock-powered”, or
+  “LLM-generated findings” must not be used until a real provider is implemented and
+  tested. Ingestion is local, allow-listed files only — no URL fetching, tokens, or OAuth.

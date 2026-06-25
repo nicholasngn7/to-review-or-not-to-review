@@ -100,3 +100,14 @@ A real `BedrockReviewProvider`, live provider fetching of diffs/comments, persis
 and deployment are future work behind the existing seams — see
 [`future-git-provider-import.md`](future-git-provider-import.md) and
 [`future-git-provider-comment-import.md`](future-git-provider-comment-import.md).
+
+## Planned work
+
+- **v0.4 — RAG-style grounded review context (planned, not implemented).** A design plan
+  to ingest selected local docs, chunk and embed them behind an embedding-provider
+  abstraction (a deterministic local provider first), retrieve relevant context before a
+  review, and attach citations to findings. It is scoped as a local **RAG architecture
+  demo** with lexical/deterministic retrieval — not semantic search, not production-grade
+  RAG, and with no live/Bedrock embedding calls unless a real provider is later
+  implemented and tested. Full plan:
+  [`v0.4-plan-rag-grounded-review.md`](v0.4-plan-rag-grounded-review.md).

@@ -479,6 +479,17 @@ dev servers):
 - Richer findings (inline diff annotations, dedupe/ranking, confidence tuning).
 - Deployment automation (API Gateway/Lambda or ECS) with infrastructure-as-code.
 
+### Planned: v0.4 — RAG-style grounded review context
+
+> **Planned, not implemented.** A design plan to add **RAG-style local retrieval**:
+> ingest selected local docs, chunk and embed them through an embedding-provider
+> abstraction (a **deterministic local provider** first), retrieve relevant context
+> before a review, and attach citations/snippets to findings. It is framed as a local
+> **RAG architecture demo** — lexical/deterministic retrieval, **not** semantic search,
+> production-grade RAG, or any live/Bedrock embedding calls (those remain optional future
+> work). Full plan:
+> [`docs/v0.4-plan-rag-grounded-review.md`](docs/v0.4-plan-rag-grounded-review.md).
+
 ## v0.2 — reviewer tone & suggested replies (implemented)
 
 Shipped in `v0.2.0`. Design doc:
