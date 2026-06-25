@@ -1,7 +1,7 @@
 """Review request/response models — the core API contract.
 
-This is the shape exchanged between the frontend and `POST /api/review`
-(implemented in a later phase). The review engine is not implemented here.
+This is the shape exchanged between the frontend and `POST /api/reviews`.
+The review engine lives in `app.services.review_engine`.
 """
 
 from typing import Optional

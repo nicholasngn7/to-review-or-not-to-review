@@ -108,3 +108,34 @@ A running log of notable choices made during the build.
   runs for free with no credentials, tests stay fast and deterministic, and the
   extensibility seam is proven before spending on tokens. The Bedrock provider is
   the obvious, isolated place to add the integration later.
+
+## Final MVP decisions (Phase 10)
+
+These are the deliberate scope boundaries for the MVP. Each is a documented
+non-goal, not an oversight — chosen to keep the project clonable, free to run,
+and focused on demonstrating the review pipeline and its architecture.
+
+- **Local-first MVP.** The whole app runs on `localhost` with only Node + Python.
+  No cloud services, accounts, or credentials are required to clone and demo it.
+- **Mock provider first.** Reviews are produced by deterministic heuristics so the
+  full product flow is real and demoable without an LLM. Same input ⇒ same output.
+- **Provider abstraction before real AI.** The `ReviewProvider` seam (+ Bedrock
+  placeholder) was built first so a real model is an isolated future change, not a
+  refactor. Architecture is proven before any token spend.
+- **No real AI / paid API calls yet.** `REVIEW_PROVIDER=bedrock` intentionally
+  returns a clear `501`; there are no boto3 / OpenAI / Anthropic dependencies.
+- **No auth / OAuth yet.** No GitLab/GitHub login or diff-fetch-by-URL; diffs are
+  pasted, uploaded, or loaded from samples. Keeps the surface area small and the
+  demo frictionless.
+- **No database / persistence yet.** Reviews are computed on demand and not
+  stored. Markdown export is the way to keep a result. DynamoDB/S3 are designed-for
+  but unimplemented.
+- **Demo diffs included.** Built-in sample diffs (`frontend/src/samples/`) make
+  the app demoable without a real MR and give repeatable "clean" vs "risky"
+  reviews for screenshots and walkthroughs.
+- **Docs as a deliverable.** README (portfolio-oriented), `architecture.md` (flow
+  + Mermaid + where AWS fits), this decision log, and `review-contract.md` are
+  treated as part of the MVP, not an afterthought.
+- **Polish over new features.** Phase 10 was scoped to validation, docs, and
+  cleanup (no unused imports; consistent route names `GET /health`,
+  `POST /api/parse-diff`, `POST /api/reviews`); no new large features were added.

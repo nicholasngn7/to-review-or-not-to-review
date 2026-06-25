@@ -1,33 +1,98 @@
-# MR Review Council
+# To Review or Not To Review
 
-A multi-persona AI merge-request reviewer. MR Review Council reviews GitLab/GitHub
-merge request diffs through different engineering perspectives — Architect, QA,
-Security, Frontend, Backend, SRE, and Product/Maintainability — and returns a
-structured review with an overall risk level, a merge recommendation, and
-per-persona findings.
+> **Product / demo name:** MR Review Council — a multi-persona merge-request review assistant.
 
-The MVP runs entirely locally with no AWS credentials or paid APIs. AI reviews are
-produced by a deterministic mock provider that sits behind a pluggable interface,
-so a real Bedrock/OpenAI/Anthropic provider can drop in later without changing the
-API or UI.
+MR Review Council reviews a Git merge-request / pull-request diff through several
+distinct engineering perspectives — **Architect, QA, Security, Frontend, Backend,
+SRE, and Product** — and returns a structured review: an overall risk level, a
+merge recommendation, and per-persona findings you can filter, read, and export
+to Markdown.
 
-## Tech Stack
+The entire MVP runs **locally with no AWS credentials and no paid APIs**. Reviews
+are produced by a deterministic *mock* provider that sits behind a clean,
+pluggable interface, so a real Amazon Bedrock / OpenAI / Anthropic provider can
+drop in later **without changing the API or the UI**.
 
-- **Frontend:** React + TypeScript + Vite
-- **Backend:** Python + FastAPI + Pydantic
-- **Future:** AWS (API Gateway/Lambda or ECS, DynamoDB, S3, Amazon Bedrock)
+---
 
-## Repository Layout
+## Why this project exists
+
+Code review is where a lot of engineering judgment lives, but a single reviewer
+rarely holds every lens at once — security, testing, reliability, architecture,
+product. This project explores what an automated "review council" could look
+like: many specialized reviewers over one diff, each with a clear focus, rolled
+up into a single risk/recommendation verdict.
+
+It's also a deliberate portfolio piece. The goal was to design the *architecture*
+of an AI-assisted reviewer — a clean diff → review → aggregation pipeline behind a
+provider seam — and prove the full product flow end to end **before** spending a
+cent on tokens or standing up cloud infrastructure. The mock provider keeps the
+app free, fast, deterministic, and easy for anyone to clone and run.
+
+## Key features
+
+- **Multi-persona review** — 7 reviewer personas, each with its own focus,
+  output expectations, and severity guidance (`backend/app/personas/registry.py`).
+- **Real unified-diff parsing** — raw `diff`/`patch` text → structured files /
+  hunks / lines / stats (`backend/app/services/diff_parser.py`).
+- **Deterministic mock review engine** — credible, repeatable findings from
+  heuristics; no AI, no flakiness.
+- **Aggregated verdict** — overall risk level + a merge recommendation
+  (`ready` → `needs human review`) derived from all findings.
+- **Pluggable provider interface** — `REVIEW_PROVIDER` selects the backend;
+  a Bedrock placeholder shows exactly where a real model plugs in.
+- **Polished review dashboard** — risk/recommendation badges, diff stats,
+  reviewer tabs, severity filters, and detailed finding cards.
+- **Diff input three ways** — paste, upload a `.diff`/`.patch`, or load a
+  built-in demo sample.
+- **Markdown export** — download the full review as a clean `.md` report to paste
+  into a GitLab MR / GitHub PR comment.
+- **Tested** — backend parser/engine/provider/route tests; type-checked frontend.
+
+## Tech stack
+
+- **Frontend:** React + TypeScript + Vite (plain CSS, no UI framework)
+- **Backend:** Python + FastAPI + Pydantic v2
+- **Tests:** pytest (backend), `tsc` type-check + `vite build` (frontend)
+- **Future / designed-for:** AWS (Amazon Bedrock for reviews; API Gateway/Lambda
+  or ECS for hosting; DynamoDB + S3 for persistence)
+
+## Architecture overview
+
+```text
+Frontend (React/TS/Vite)                 Backend (FastAPI/Pydantic)
+┌─────────────────────────┐  POST /api   ┌────────────────────────────────────────┐
+│ Diff input (paste/upload │ ──/reviews─► │ diff_parser   → ParsedDiff             │
+│   /demo) + persona pick  │              │ review_engine → aggregates results     │
+│ Risk/verdict dashboard   │ ◄──JSON───── │   create_provider(REVIEW_PROVIDER)     │
+│ Tabs · filters · cards   │              │     ReviewProvider (interface)         │
+│ Export to Markdown       │              │       MockReviewProvider  (default)    │
+└─────────────────────────┘              │       BedrockReviewProvider (placeholder)│
+                                          │ personas/registry → PersonaSpec(s)     │
+                                          └────────────────────────────────────────┘
+```
+
+The frontend POSTs a diff plus the selected personas. The backend parses the
+unified diff, asks the configured `ReviewProvider` for one review per persona,
+and aggregates a structured response (overall risk, merge recommendation,
+summary, diff stats, per-persona findings, flattened findings). The API contract
+is identical regardless of which provider runs.
+
+See [`docs/architecture.md`](docs/architecture.md) for the detailed flow and a
+Mermaid diagram, and [`docs/decisions.md`](docs/decisions.md) for the decision
+log.
+
+### Repository layout
 
 ```text
 .
-├── backend/    # FastAPI app (Python)
+├── backend/    # FastAPI app: parser, review engine, providers, personas, tests
 ├── frontend/   # React + TypeScript + Vite app
-├── docs/       # Architecture notes and project docs
+├── docs/       # Architecture, decisions, review contract, samples
 └── README.md
 ```
 
-## Local Setup
+## Local setup
 
 You need **Node.js 18+** and **Python 3.11+** installed.
 
@@ -41,13 +106,8 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-The API is then available at `http://localhost:8000`. Health check:
-`http://localhost:8000/health`.
-
-Reviews run through a pluggable provider chosen by the `REVIEW_PROVIDER`
-environment variable (default `mock`, fully offline). The `bedrock` value is a
-placeholder seam that intentionally returns a clear `501` until a real provider
-is implemented. See [`backend/README.md`](backend/README.md#review-providers).
+The API is then available at `http://localhost:8000` (health check:
+`http://localhost:8000/health`, interactive docs: `http://localhost:8000/docs`).
 
 ### Frontend
 
@@ -60,17 +120,24 @@ npm run dev
 The dev server runs at `http://localhost:5173` and proxies `/api` to the backend
 at `http://localhost:8000`.
 
-## Demo Walkthrough
+### API endpoints
+
+| Method | Path              | Description                                    |
+| ------ | ----------------- | ---------------------------------------------- |
+| GET    | `/health`         | Liveness probe, returns `{"status":"ok"}`      |
+| POST   | `/api/parse-diff` | Parse unified diff text into a `ParsedDiff`     |
+| POST   | `/api/reviews`    | Run selected personas, return a `ReviewResponse` |
+
+## Demo walkthrough
 
 The app ships with built-in sample diffs so you can show it off without a real
 merge request.
 
-1. Start the backend and frontend (see [Local Setup](#local-setup)):
-   - Backend: `cd backend && source .venv/bin/activate && uvicorn app.main:app --reload --port 8000`
-   - Frontend: `cd frontend && npm run dev`, then open `http://localhost:5173`.
-2. In the **Merge request** panel, use **Load a demo diff** (marked *sample data*)
-   and pick a sample. It fills in the title, description, diff, and a recommended
-   set of personas. Nothing runs automatically.
+1. Start the backend and frontend (see [Local setup](#local-setup)).
+2. Open `http://localhost:5173`. In the **Merge request** panel, use **Load a
+   demo diff** (marked *sample data*) and pick a sample. It fills in the title,
+   description, diff, and a recommended set of personas — **nothing runs
+   automatically**.
 3. Click **Run Review**.
 
 Which sample to use:
@@ -85,26 +152,103 @@ Which sample to use:
 - **Mixed full-stack change** — touches frontend, backend, config, and docs in
   one MR. Triggers Architect (scope/boundaries) and Product/QA feedback.
 
-To export, click **Export Markdown** in the results panel to download a `.md`
-report you can paste into a GitLab/GitHub comment.
+Then explore the results: switch **reviewer tabs**, apply **severity filters**,
+read the finding cards, and click **Export Markdown**. The paste-your-own and
+`.diff`/`.patch` upload workflows work exactly the same way.
 
-The paste-your-own and `.diff`/`.patch` upload workflows still work as before.
+## Running tests and builds
 
-## Current MVP Scope
+Backend tests (parser, review engine, providers, routes):
 
-This is an incremental build. What exists today (scaffold step):
+```bash
+cd backend && source .venv/bin/activate
+python -m pytest -q
+```
 
-- [x] Monorepo structure (`frontend/`, `backend/`, `docs/`)
-- [x] Backend `GET /health` returning `{ "status": "ok" }`
-- [x] Frontend landing page with project name, description, and a "Start Review" placeholder
-- [x] Shared review contract models (backend Pydantic + frontend TypeScript)
-- [x] Diff parsing (files / hunks / lines) via `POST /api/parse-diff`
-- [x] Mock review engine + persona findings
-- [x] `POST /api/reviews` endpoint
-- [x] Review flow UI (diff input, persona selector, summary, finding cards)
-- [x] Results dashboard (risk/recommendation badges, stats, reviewer tabs, severity/persona filtering, empty states)
-- [x] Export review to Markdown (client-side download)
-- [x] Built-in demo sample diffs ("Load a demo diff")
-- [x] Pluggable review provider interface (`REVIEW_PROVIDER`: `mock` default, `bedrock` placeholder)
+Frontend type-check + production build:
 
-No AI integration is wired up yet.
+```bash
+cd frontend
+npm run build      # runs `tsc -b` then `vite build`
+```
+
+## Provider architecture
+
+Review generation lives behind a single `ReviewProvider` interface
+(`backend/app/services/providers/base.py`):
+
+```python
+review(parsed_diff, selected_personas, title=None, description=None) -> list[PersonaReview]
+```
+
+The provider is chosen by the `REVIEW_PROVIDER` environment variable, resolved by
+a small factory (`create_provider`) that validates the value:
+
+| `REVIEW_PROVIDER` | Behavior                                                          |
+| ----------------- | ----------------------------------------------------------------- |
+| `mock` *(default)*| Deterministic, offline heuristics. No AI, no credentials.         |
+| `bedrock`         | Placeholder seam. Returns a clear **501**, not a fake review.     |
+| *anything else*   | Fails fast with a `ValueError` listing the valid options.         |
+
+```bash
+# Default — fully local, deterministic:
+uvicorn app.main:app --reload --port 8000
+
+# Explicit:
+REVIEW_PROVIDER=mock uvicorn app.main:app --reload --port 8000
+
+# Placeholder — /api/reviews responds 501 with an explanatory message:
+REVIEW_PROVIDER=bedrock uvicorn app.main:app --reload --port 8000
+```
+
+Persona knowledge (display name, review focus, output expectations, severity
+guidance) lives once in `backend/app/personas/registry.py`, so the mock provider
+and any future LLM provider build from the same source of truth.
+
+**Why real AI calls are intentionally deferred:** keeping reviews deterministic
+and offline means the app runs for free with no credentials, the test suite stays
+fast and deterministic, and the extensibility seam is proven before spending on
+tokens. Adding Bedrock later is an isolated change inside `BedrockReviewProvider`.
+
+## Markdown export
+
+From the results panel, **Export Markdown** downloads a `.md` report built
+entirely client-side (`frontend/src/lib/exportMarkdown.ts`). The report always
+reflects the **full review** — every persona and every finding — independent of
+the reviewer/severity filters applied in the UI. It includes an overview
+(risk, recommendation, diff stats), the council summary, and findings grouped by
+reviewer with file/location/confidence. See
+[`docs/sample-review-export.md`](docs/sample-review-export.md) for an example.
+
+## Screenshots
+
+> _Placeholder — add screenshots / a short GIF here._
+>
+> Suggested captures:
+> - `docs/screenshots/input.png` — diff input panel with a demo loaded
+> - `docs/screenshots/dashboard.png` — results dashboard (badges, stats, tabs)
+> - `docs/screenshots/findings.png` — finding cards with severity filtering
+> - `docs/screenshots/export.md` — an exported Markdown report
+
+## Known limitations
+
+- **No real AI.** Findings come from heuristics, so they're approximate and can
+  produce false positives/negatives. `BedrockReviewProvider` is a stub.
+- **No authentication and no GitLab/GitHub integration.** Diffs are pasted,
+  uploaded, or loaded from samples — there is no OAuth or API fetch.
+- **No persistence.** Reviews are computed on demand and not stored; there is no
+  database. Export to Markdown is the only way to keep a result.
+- **Heuristic scope.** The parser targets common unified-diff output; unusual or
+  malformed diffs may parse partially.
+- **Single-request flow.** No batching, history, or multi-MR comparison.
+
+## Future enhancements
+
+- Implement `BedrockReviewProvider` (prompt-per-persona from the registry, parse
+  model output into findings) behind the existing seam.
+- Add GitLab/GitHub integration to fetch MR/PR diffs by URL.
+- Persist reviews (DynamoDB) and store exports/artifacts (S3); add review history.
+- Authentication and per-user/org configuration.
+- CI integration: post the review as an MR/PR comment automatically.
+- Richer findings (inline diff annotations, dedupe/ranking, confidence tuning).
+- Deployment automation (API Gateway/Lambda or ECS) with infrastructure-as-code.
