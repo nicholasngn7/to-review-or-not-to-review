@@ -29,6 +29,17 @@ from .git_import import (
     ImportCommentsResponse,
     ImportedCommentThread,
 )
+from .knowledge import (
+    EmbeddingProviderType,
+    EmbeddingVector,
+    KnowledgeChunk,
+    KnowledgeDocument,
+    KnowledgeSourceType,
+    RetrievalEvaluationCase,
+    RetrievalQuery,
+    RetrievalResult,
+    RetrievedCitation,
+)
 from .review import (
     HunkReference,
     PersonaReview,
@@ -86,4 +97,14 @@ __all__ = [
     "ImportedCommentThread",
     "ImportCommentsRequest",
     "ImportCommentsResponse",
+    # knowledge/retrieval contracts (v0.4, Phase 1A — contracts only)
+    "KnowledgeSourceType",
+    "EmbeddingProviderType",
+    "KnowledgeDocument",
+    "KnowledgeChunk",
+    "EmbeddingVector",
+    "RetrievalQuery",
+    "RetrievalResult",
+    "RetrievedCitation",
+    "RetrievalEvaluationCase",
 ]

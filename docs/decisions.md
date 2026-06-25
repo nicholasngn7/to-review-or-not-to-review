@@ -421,3 +421,12 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   Wording like “production-grade RAG”, “semantic retrieval”, “Bedrock-powered”, or
   “LLM-generated findings” must not be used until a real provider is implemented and
   tested. Ingestion is local, allow-listed files only — no URL fetching, tokens, or OAuth.
+- **Phase 1A ships contracts only.** `backend/app/models/knowledge.py` adds
+  `KnowledgeSourceType`, `EmbeddingProviderType`, `KnowledgeDocument`, `KnowledgeChunk`,
+  `EmbeddingVector`, `RetrievalQuery`, `RetrievalResult`, `RetrievedCitation`, and
+  `RetrievalEvaluationCase` (CamelModel; camelCase JSON), with small deterministic
+  validations (`EmbeddingVector.dimensions == len(values)`; `RetrievalQuery.top_k ≥ 1`;
+  `RetrievalEvaluationCase.minimum_top_k_hit_count ≥ 1`). No ingestion/chunking/embedding/
+  retrieval behavior, no endpoints, no UI, and **no** changes to the review contract — those
+  additive review fields are deferred to Phase 1B. `bedrock_optional_future` is a reserved
+  enum name only and implies no integration.
