@@ -8,12 +8,66 @@ SRE, and Product** — and returns a structured review: an overall risk level, a
 merge recommendation, and per-persona findings you can filter, read, and export
 to Markdown.
 
-The entire MVP runs **locally with no AWS credentials and no paid APIs**. Reviews
-are produced by a deterministic *mock* provider that sits behind a clean,
-pluggable interface, so a real Amazon Bedrock / OpenAI / Anthropic provider can
-drop in later **without changing the API or the UI**.
+The entire project runs **locally with no cloud credentials and no paid APIs**.
+Reviews are produced by a deterministic *mock* provider behind a clean, pluggable
+interface, so a real Amazon Bedrock / OpenAI / Anthropic provider can drop in later
+**without changing the API or the UI**. It is a portfolio/architecture demonstration,
+shipped in three tagged milestones (`v0.1.0`, `v0.2.0`, `v0.3.0`).
 
 ---
+
+## What this demonstrates
+
+- **Full-stack product design** — a typed React/TypeScript frontend and a
+  FastAPI/Pydantic backend connected by a single, contract-first JSON boundary.
+- **Architecture before spend** — a deterministic mock provider proves the whole
+  diff → review → verdict flow end to end behind a provider seam, so real AI can be
+  added later as an isolated change (no API/UI churn).
+- **Incremental delivery** — three exact, runnable Git tags, each adding a coherent
+  capability: core review (`v0.1`), reviewer tone + comment threads + suggested
+  replies (`v0.2`), and a local fixture-based comment-import demo (`v0.3`).
+- **Decoupling via contracts** — a normalized comment-thread contract lets imported
+  provider-shaped data flow through the *exact* same review/reply path as
+  locally-entered data, proven by invariance tests.
+- **Test & demo discipline** — 161 backend tests, 56 frontend tests, and Playwright
+  demo automation that captures real screenshots/videos from each tagged build.
+
+## Project scope
+
+**Implemented**
+
+- Multi-persona review over a parsed unified diff → overall risk, merge
+  recommendation, per-persona findings, Markdown export.
+- Deterministic mock review provider behind a `ReviewProvider` interface selected by
+  `REVIEW_PROVIDER` (with a `bedrock` placeholder that returns a clear `501`).
+- Reviewer **tone profiles** (presentation only) and deterministic, **copy-only**
+  suggested replies for existing comment threads.
+- **Local, fixture-based** GitHub/GitLab comment **import** that normalizes
+  provider-shaped JSON into the comment-thread contract.
+- Playwright demo automation; exact-version screenshots and videos.
+
+**Planned / deferred (designed, not built)**
+
+- A real `BedrockReviewProvider` behind the existing seam.
+- Live GitHub/GitLab fetching of diffs and comments by URL.
+- Persistence (review history), authentication, and deployment automation.
+
+**Intentionally not included**
+
+- ❌ Live GitHub/GitLab API calls · ❌ OAuth / token input · ❌ comment posting or
+  auto-reply · ❌ real AI/LLM review generation · ❌ a hosted/production deployment.
+
+## Demo by version
+
+Screenshots and videos are **real captures from the matching tagged build** (see
+[Screenshots](#screenshots) for the full gallery and
+[`frontend/demo/README.md`](frontend/demo/README.md) for how they were captured):
+
+| Version | What it adds | Screenshots | Video |
+| ------- | ------------ | ----------- | ----- |
+| **v0.1.0** | Core multi-persona review + Markdown export | [v0.1 gallery](#v01--core-review-mvp-from-the-v010-tag) | [core-review demo](docs/assets/videos/mr-review-council-v0.1-core-review-demo.webm) |
+| **v0.2.0** | Reviewer tone, comment threads, suggested replies | [v0.2 gallery](#v02--reviewer-tone-comment-threads-suggested-replies-from-the-v020-tag) | [suggested-replies demo](docs/assets/videos/mr-review-council-v0.2-suggested-replies-demo.webm) |
+| **v0.3.0** | Local fixture-based comment import | [v0.3 gallery](#v03--local-fixture-based-comment-import-demo-generated-from-v030) | [local-import demo](docs/assets/videos/mr-review-council-v0.3-local-import-demo.webm) |
 
 ## Why this project exists
 
@@ -58,6 +112,12 @@ app free, fast, deterministic, and easy for anyone to clone and run.
   or ECS for hosting; DynamoDB + S3 for persistence)
 
 ## Architecture overview
+
+In one breath: a **React/TypeScript** frontend and a **FastAPI/Pydantic** backend
+share a contract-first JSON boundary; review generation sits behind a **deterministic
+provider abstraction**; existing discussions flow through a **normalized
+comment-thread contract** (the same path whether entered locally or imported from
+provider-shaped JSON); and **Playwright demo automation** captures the assets.
 
 ```text
 Frontend (React/TS/Vite)                 Backend (FastAPI/Pydantic)
@@ -319,9 +379,11 @@ threads, with file/line context.*
 
 ## Portfolio notes
 
-Positioning material — project summary, resume bullet variants, a LinkedIn/GitHub
-blurb, and interview talking points — lives in
-[`docs/portfolio-notes.md`](docs/portfolio-notes.md).
+Positioning material — short/medium/long blurbs, resume bullet options, a LinkedIn
+entry + post draft, a GitHub pinned-repo summary, interview talking points, and a
+final accuracy checklist — lives in
+[`docs/portfolio-package.md`](docs/portfolio-package.md) (with an earlier, shorter
+set of notes in [`docs/portfolio-notes.md`](docs/portfolio-notes.md)).
 
 ### Future Git provider import (planned, not implemented)
 
@@ -420,42 +482,26 @@ dev servers):
 - Richer findings (inline diff annotations, dedupe/ranking, confidence tuning).
 - Deployment automation (API Gateway/Lambda or ECS) with infrastructure-as-code.
 
-## Next iteration: v0.2 (planned)
+## v0.2 — reviewer tone & suggested replies (implemented)
 
-> These are **planned/future** capabilities, not current MVP behavior. They do not
-> add real AI, GitHub/GitLab integration, or any auto-posting. Full design:
-> [`docs/v0.2-plan-reviewer-tone-and-comment-replies.md`](docs/v0.2-plan-reviewer-tone-and-comment-replies.md).
+Shipped in `v0.2.0`. Design doc:
+[`docs/v0.2-plan-reviewer-tone-and-comment-replies.md`](docs/v0.2-plan-reviewer-tone-and-comment-replies.md).
 
-- **Reviewer voice/tone profiles** — configure each persona's communication style
-  (tone: direct / supportive / educational / strict / curious / executive;
-  strictness; verbosity; optional custom instructions). Tone changes *wording and
-  framing only* — it will **not** change risk detection, severities, or the merge
-  recommendation.
-- **Suggested replies to existing MR/PR comments** — paste existing comment
-  threads and generate *draft* replies from selected reviewer perspectives.
-  Copy-only: replies are never posted back automatically; you review and post them
-  yourself.
+- **Reviewer voice/tone profiles** — a **"Reviewer voice" UI** sets a global tone
+  (style: direct / supportive / educational / strict / curious / executive;
+  strictness; verbosity; optional custom instructions) plus optional per-reviewer
+  overrides. The deterministic mock provider rewords finding explanations,
+  recommendations, and persona summaries accordingly. Tone is **presentation only** —
+  findings, severities, overall risk, and the merge recommendation are unchanged, the
+  default voice is an exact no-op, and per-reviewer overrides win over the global voice
+  (see [`docs/review-contract.md`](docs/review-contract.md)).
+- **Suggested replies to existing comment threads** — capture existing MR/PR comment
+  threads (an optional local input) and the review returns deterministic, **copy-only**
+  draft replies, routed to relevant selected personas and framed in the resolved tone.
+  Each reply is self-contained (carries the source thread's `filePath`/`line`), appears
+  in a grouped "Suggested replies" panel with per-reply and per-thread copy actions, and
+  is included in the Markdown export. Every reply is marked "needs human review" and
+  **nothing is posted anywhere**.
 
-Both will continue to run locally on the deterministic mock provider. GitHub/GitLab
-comment import and any auto-posting are intentionally deferred until the local
-model is proven (see the plan doc).
-
-> **v0.2 progress:** reviewer tone is now end-to-end. The **"Reviewer voice" UI**
-> lets you pick a global tone (style / strictness / verbosity + optional custom
-> instructions) and optional per-reviewer overrides before running a review; the
-> deterministic mock provider rewords finding explanations, recommendations, and
-> persona summaries accordingly (see [`docs/review-contract.md`](docs/review-contract.md)).
-> Tone is **presentation only** — findings, severities, overall risk, and the
-> merge recommendation are unchanged, the default voice is an exact no-op, and
-> per-reviewer overrides win over the global voice.
->
-> **Suggested replies** are now generated too: capture existing MR/PR **comment
-> threads** (an optional local input) and the review returns deterministic,
-> **copy-only** draft replies, routed to relevant selected personas and framed in
-> the resolved tone. Each reply is **self-contained** — it carries the source
-> thread's `filePath`/`line` for context. They appear in a grouped "Suggested
-> replies" panel with per-reply copy and a "copy all replies for this thread"
-> action, and are included in the Markdown export. Every reply is marked
-> "needs human review" and **nothing is posted anywhere** — there is no
-> GitHub/GitLab integration and no auto-posting. Real AI-driven output remains
-> deferred.
+Both run locally on the deterministic mock provider. There is no GitHub/GitLab
+integration, no auto-posting, and no real AI — those remain intentionally deferred.

@@ -1,5 +1,10 @@
 # Portfolio & Resume Notes — MR Review Council
 
+> **See also:** [`portfolio-package.md`](portfolio-package.md) is the fuller, canonical
+> package (short/medium/long blurbs, more resume bullets, a LinkedIn post draft, a
+> GitHub pinned-repo summary, expanded interview talking points, and a final accuracy
+> checklist). This file is the earlier, shorter set of notes.
+
 Positioning material for *MR Review Council* (repo: `to-review-or-not-to-review`).
 Use these blurbs and talking points for a portfolio site, resume, LinkedIn, or
 interviews. Keep claims accurate — see the "Do not overclaim" section.
