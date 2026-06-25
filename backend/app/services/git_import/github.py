@@ -215,6 +215,73 @@ def map_github_review_comments_to_threads(
         )
         roots_order.append(reply_id)
 
+    return _build(roots, roots_order, repository, pull_request_number)
+
+
+def map_github_issue_comments_to_threads(
+    comments: list[dict],
+    *,
+    repository: Optional[str] = None,
+    pull_request_number: Optional[int] = None,
+) -> list[ImportedCommentThread]:
+    """Normalize GitHub PR *issue* (conversation) comments into threads.
+
+    Issue comments are line-less and have no native threading, so each non-empty
+    comment becomes its own single-comment, line-less `CommentThread`. Output follows
+    input order; empty-body comments are dropped.
+    """
+    if not comments:
+        return []
+
+    results: list[ImportedCommentThread] = []
+    for comment in comments:
+        if not isinstance(comment, dict):
+            continue
+
+        comment_obj = to_thread_comment(
+            comment_id=comment.get("id"),
+            body=comment.get("body"),
+            author=_author(comment),
+            created_at=_created_at(comment),
+        )
+        if comment_obj is None:
+            continue  # empty/whitespace body: drop.
+
+        comment_id = str(comment.get("id"))
+        thread = CommentThread(
+            id=synthetic_thread_id(
+                GitProviderType.GITHUB,
+                repository,
+                pull_request_number,
+                "ic",
+                comment_id,
+            ),
+            file_path=None,
+            line=None,
+            status=resolve_status(_resolved_raw(comment)),
+            comments=[comment_obj],
+            source="github",
+        )
+        external = ExternalCommentReference(
+            provider=GitProviderType.GITHUB,
+            repository=repository,
+            pull_request_number=pull_request_number,
+            comment_id=comment_id,
+            web_url=_web_url(comment),
+        )
+        results.append(
+            ImportedCommentThread(thread=thread, external_reference=external)
+        )
+
+    return results
+
+
+def _build(
+    roots: dict[str, _Assembling],
+    roots_order: list[str],
+    repository: Optional[str],
+    pull_request_number: Optional[int],
+) -> list[ImportedCommentThread]:
     results: list[ImportedCommentThread] = []
     for root_id in roots_order:
         assembling = roots[root_id]

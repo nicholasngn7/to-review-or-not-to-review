@@ -1,0 +1,51 @@
+[
+  {
+    "id": 2001,
+    "user": { "login": "reviewer-alpha" },
+    "body": "Overall this looks close. Can we split the migration into its own PR?",
+    "created_at": "2026-02-01T09:00:00Z",
+    "html_url": "https://example.test/acme/widgets/pull/7#issuecomment-2001"
+  },
+  {
+    "id": 2002,
+    "user": { "login": "reviewer-beta" },
+    "body": "Thanks for the quick turnaround — I'll re-review after CI is green.",
+    "created_at": "2026-02-01T10:30:00Z",
+    "html_url": "https://example.test/acme/widgets/pull/7#issuecomment-2002"
+  },
+  {
+    "id": 2003,
+    "user": { "login": "reviewer-gamma" },
+    "body": "Please add a changelog entry before merge.",
+    "createdAt": "2026-02-01T11:15:00Z",
+    "htmlUrl": "https://example.test/acme/widgets/pull/7#issuecomment-2003"
+  },
+  {
+    "id": 2004,
+    "user": { "login": "reviewer-beta" },
+    "body": "   ",
+    "created_at": "2026-02-01T12:00:00Z",
+    "html_url": "https://example.test/acme/widgets/pull/7#issuecomment-2004"
+  },
+  {
+    "id": 2005,
+    "body": "Bot note: build artifacts uploaded.",
+    "created_at": "2026-02-01T12:30:00Z",
+    "html_url": "https://example.test/acme/widgets/pull/7#issuecomment-2005"
+  },
+  {
+    "id": 2006,
+    "user": { "login": "reviewer-alpha" },
+    "body": "Approving once the changelog is added."
+  },
+  {
+    "id": 2007,
+    "user": { "login": "reviewer-delta", "name": "Delta Reviewer" },
+    "body": "Nit: rename the helper for clarity.",
+    "created_at": "2026-02-01T13:00:00Z",
+    "html_url": "https://example.test/acme/widgets/pull/7#issuecomment-2007",
+    "reactions": { "total_count": 2, "+1": 2 },
+    "author_association": "CONTRIBUTOR",
+    "performed_via_github_app": null
+  }
+]

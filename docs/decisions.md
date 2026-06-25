@@ -331,3 +331,11 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   against official GitHub API docs before any live call**. Mapping is deterministic
   (first-seen root order, readable synthetic ids) so re-imports are idempotent, and
   it never affects detection, routing, tone, or reply behavior.
+- **PR issue comments map to line-less single-comment threads (v0.3 Phase 3).**
+  GitHub PR *conversation* comments have no file/line and no native threading, so
+  `map_github_issue_comments_to_threads` maps each non-empty comment to its own
+  `CommentThread` (`filePath`/`line` `None`, status `unknown`, ids tagged `ic`),
+  keeping review/thread-only provenance fields (`reviewId`, `discussionId`,
+  `isOutdated`) `None`. Same guardrails as Phase 2: pure, tolerant parsing,
+  deterministic, fixture-only, and **the synthetic shape must be verified against
+  official GitHub docs before live integration**.

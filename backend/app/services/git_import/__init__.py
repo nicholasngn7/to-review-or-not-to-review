@@ -13,7 +13,10 @@ from .common import (
     synthetic_thread_id,
     to_thread_comment,
 )
-from .github import map_github_review_comments_to_threads
+from .github import (
+    map_github_issue_comments_to_threads,
+    map_github_review_comments_to_threads,
+)
 
 __all__ = [
     "clean_body",
@@ -21,4 +24,5 @@ __all__ = [
     "to_thread_comment",
     "resolve_status",
     "map_github_review_comments_to_threads",
+    "map_github_issue_comments_to_threads",
 ]
