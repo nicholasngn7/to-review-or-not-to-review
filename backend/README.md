@@ -13,10 +13,11 @@ uvicorn app.main:app --reload --port 8000
 
 ## Endpoints
 
-| Method | Path              | Description                                   |
-| ------ | ----------------- | --------------------------------------------- |
-| GET    | `/health`         | Liveness probe, returns `{"status":"ok"}`     |
-| POST   | `/api/parse-diff` | Parse unified diff text into a `ParsedDiff`    |
+| Method | Path              | Description                                    |
+| ------ | ----------------- | ---------------------------------------------- |
+| GET    | `/health`         | Liveness probe, returns `{"status":"ok"}`      |
+| POST   | `/api/parse-diff` | Parse unified diff text into a `ParsedDiff`     |
+| POST   | `/api/reviews`    | Run selected personas, return a `ReviewResponse` |
 
 Interactive API docs are available at `http://localhost:8000/docs` while the
 server is running.
@@ -40,6 +41,34 @@ curl -s -X POST http://localhost:8000/api/parse-diff \
 The response is the structured `ParsedDiff` (files, hunks, lines, and stats) in
 camelCase JSON. See [`../docs/review-contract.md`](../docs/review-contract.md).
 
+### `POST /api/reviews`
+
+Runs the selected reviewer personas over a diff with the deterministic mock
+engine (no AI) and returns a `ReviewResponse`.
+
+Request body (`ReviewRequest`):
+
+```json
+{
+  "diffText": "diff --git a/app.py b/app.py\n@@ ...",
+  "selectedPersonas": ["security", "qa"],
+  "title": "optional",
+  "description": "optional",
+  "source": "optional"
+}
+```
+
+Sample curl:
+
+```bash
+curl -s -X POST http://localhost:8000/api/reviews \
+  -H 'Content-Type: application/json' \
+  -d '{"diffText":"diff --git a/app/config.py b/app/config.py\n--- a/app/config.py\n+++ b/app/config.py\n@@ -1,1 +1,3 @@\n import os\n+API_TOKEN = \"abc123\"\n+result = eval(data)\n","selectedPersonas":["security","qa"]}'
+```
+
+The response includes `overallRisk`, `mergeRecommendation`, `summary`,
+`diffStats`, `personaReviews`, and a flattened `findings` list.
+
 ## Tests
 
 ```bash
@@ -57,10 +86,16 @@ app/
   models/                  # Pydantic contract (enums, diff, review)
   services/
     diff_parser.py         # unified-diff -> ParsedDiff
+    mock_review_provider.py # deterministic per-persona heuristics
+    review_engine.py       # orchestrate personas + aggregate ReviewResponse
   api/routes/
     diff.py                # POST /api/parse-diff
+    reviews.py             # POST /api/reviews
 tests/
   test_diff_parser.py
+  test_review_engine.py
+  test_reviews_route.py
 ```
 
-Future phases add the mock review engine and the `/api/review` endpoint.
+A real AI provider (Bedrock/OpenAI/Anthropic) will replace the mock provider
+behind a provider interface in a later phase.

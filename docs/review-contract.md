@@ -1,7 +1,7 @@
 # Review Contract
 
-The shared contract between the frontend and the `POST /api/review` endpoint
-(the endpoint is implemented in a later phase). The backend defines this with
+The shared contract between the frontend and the `POST /api/reviews` endpoint
+(served by the deterministic mock review engine). The backend defines this with
 Pydantic models in [`backend/app/models/`](../backend/app/models); the frontend
 mirrors it in [`frontend/src/types/review.ts`](../frontend/src/types/review.ts).
 

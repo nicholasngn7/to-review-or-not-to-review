@@ -64,8 +64,8 @@ This is an incremental build. What exists today (scaffold step):
 - [x] Frontend landing page with project name, description, and a "Start Review" placeholder
 - [x] Shared review contract models (backend Pydantic + frontend TypeScript)
 - [x] Diff parsing (files / hunks / lines) via `POST /api/parse-diff`
-- [ ] Mock review engine + persona findings
-- [ ] `POST /api/review` endpoint
+- [x] Mock review engine + persona findings
+- [x] `POST /api/reviews` endpoint
 - [ ] Results UI (summary, risk score, reviewer tabs, finding cards)
 - [ ] Export to Markdown
 
