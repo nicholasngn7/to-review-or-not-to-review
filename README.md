@@ -222,13 +222,34 @@ reviewer with file/location/confidence. See
 
 ## Screenshots
 
-> _Placeholder — add screenshots / a short GIF here._
->
-> Suggested captures:
-> - `docs/screenshots/input.png` — diff input panel with a demo loaded
-> - `docs/screenshots/dashboard.png` — results dashboard (badges, stats, tabs)
-> - `docs/screenshots/findings.png` — finding cards with severity filtering
-> - `docs/screenshots/export.md` — an exported Markdown report
+> **Note:** the images below are placeholders — capture them locally and drop the
+> PNGs into [`docs/assets/`](docs/assets/) using the exact filenames shown. See
+> [`docs/assets/README.md`](docs/assets/README.md) for sizes and the app state to
+> set up for each shot. (Until then, the image links render as their captions.)
+
+### Main review input
+
+![Main review input screen — diff input with a demo loaded and personas selected](docs/assets/main-review-input.png)
+
+*The input panel: load a built-in demo diff (or paste/upload your own), pick
+reviewer personas, and run a review. Shown here with the low-risk frontend demo
+loaded, before running.*
+
+### Risky backend review dashboard
+
+![Risky backend review dashboard — high risk verdict, stats, reviewer tabs, and finding cards](docs/assets/risky-review-dashboard.png)
+
+*The results dashboard for the risky backend demo: overall risk and merge
+recommendation badges, diff stats, reviewer tabs, severity filtering, and
+detailed finding cards from the Security/QA/Backend/SRE personas.*
+
+### Markdown export
+
+![Markdown export output — the exported report rendered as Markdown](docs/assets/markdown-export.png)
+
+*The downloaded `.md` report (rendered): overview with risk/recommendation/stats,
+the council summary, and findings grouped by reviewer — the full review,
+independent of any UI filters.*
 
 ## Known limitations
 
