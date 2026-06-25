@@ -17,6 +17,7 @@ from .enums import (
     ReviewerPersona,
     RiskLevel,
 )
+from .knowledge import RetrievalQuery, RetrievalResult, RetrievedCitation
 from .tone import ToneProfile
 
 
@@ -51,6 +52,17 @@ class ReviewRequest(CamelModel):
         default=None,
         description="Existing MR/PR comment threads, captured as structured input. "
         "Used for future suggested replies (Phase 15); not required to run a review.",
+    )
+    knowledge_sources: Optional[list[str]] = Field(
+        default=None,
+        description="Local docs/sources to ground the review on (v0.4 RAG-style "
+        "retrieval). Accepted by the contract but ignored by runtime review behavior "
+        "in this phase.",
+    )
+    retrieval: Optional[RetrievalQuery] = Field(
+        default=None,
+        description="Optional retrieval query options for future grounded review. "
+        "Accepted by the contract but ignored by runtime review behavior in this phase.",
     )
 
 
@@ -89,6 +101,11 @@ class ReviewFinding(CamelModel):
         ge=0.0,
         le=1.0,
         description="Model confidence in this finding, 0.0-1.0.",
+    )
+    citations: list[RetrievedCitation] = Field(
+        default_factory=list,
+        description="Retrieved context snippets cited by this finding (v0.4 RAG-style "
+        "retrieval). Contract placeholder; not populated in this phase.",
     )
 
 
@@ -129,4 +146,9 @@ class ReviewResponse(CamelModel):
         default_factory=list,
         description="Draft, copy-only replies to existing comment threads. Empty "
         "until Phase 15 implements deterministic reply generation.",
+    )
+    context_used: list[RetrievalResult] = Field(
+        default_factory=list,
+        description="Retrieved context surfaced for this review (v0.4 RAG-style "
+        "retrieval). Contract placeholder; not populated in this phase.",
     )

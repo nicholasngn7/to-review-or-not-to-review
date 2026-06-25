@@ -430,3 +430,15 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   retrieval behavior, no endpoints, no UI, and **no** changes to the review contract — those
   additive review fields are deferred to Phase 1B. `bedrock_optional_future` is a reserved
   enum name only and implies no integration.
+- **Phase 1B adds additive review-contract fields only.** `ReviewRequest` gains
+  `knowledge_sources: list[str] | None = None` and `retrieval: RetrievalQuery | None =
+  None`; `ReviewFinding` gains `citations: list[RetrievedCitation] = []`; `ReviewResponse`
+  gains `context_used: list[RetrievalResult] = []`. They are **accepted by the contract but
+  ignored by runtime review behavior** — contract placeholders only. No citations are
+  generated and `contextUsed` is never populated this phase; risk, findings, severities,
+  recommendation, suggested replies, tone, and import behavior are unchanged. The fields
+  default to `None`/empty lists (with per-instance list defaults, no shared mutables) so
+  existing requests/responses stay backward-compatible; FastAPI already serializes empty
+  defaults (e.g. `suggestedReplies: []`), so adding `citations: []`/`contextUsed: []` is
+  consistent with current API output. Ingestion/chunking/embedding/retrieval stay deferred
+  to Phase 2+.
