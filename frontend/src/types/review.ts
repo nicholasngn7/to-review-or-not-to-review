@@ -84,6 +84,45 @@ export interface SuggestedReply {
   line?: number | null;
 }
 
+// ---- Retrieval / grounding (v0.4; local, lexical, provenance-only) ----
+
+/**
+ * Options for opt-in local retrieval grounding. Lexical/deterministic — not a
+ * semantic search. Sent only when the user provides local context sources.
+ */
+export interface RetrievalQuery {
+  query: string;
+  topK?: number;
+  persona?: string | null;
+  filePath?: string | null;
+  diffSummary?: string | null;
+  filters?: Record<string, string>;
+}
+
+/** Provenance for a grounded finding: a retrieved local context snippet. */
+export interface RetrievedCitation {
+  sourcePath?: string | null;
+  heading?: string | null;
+  snippet: string;
+  score: number;
+  startLine?: number | null;
+  endLine?: number | null;
+  chunkId: string;
+}
+
+/** A single ranked retrieval result surfaced in "Context used". */
+export interface RetrievalResult {
+  chunkId: string;
+  documentId: string;
+  sourcePath?: string | null;
+  heading?: string | null;
+  snippet: string;
+  score: number;
+  startLine?: number | null;
+  endLine?: number | null;
+  metadata?: Record<string, string>;
+}
+
 // ---- Diff models ----
 
 export type LineKind = "added" | "removed" | "context";
@@ -144,6 +183,13 @@ export interface ReviewRequest {
   personaToneProfiles?: Partial<Record<ReviewerPersona, ToneProfile>> | null;
   /** Existing MR/PR comment threads, captured as structured input. */
   commentThreads?: CommentThread[] | null;
+  /**
+   * Local doc/source paths to ground the review on (v0.4 opt-in retrieval).
+   * Allow-listed, local, lexical — never sent unless the user provides sources.
+   */
+  knowledgeSources?: string[] | null;
+  /** Optional local retrieval query/options; backend derives one if omitted. */
+  retrieval?: RetrievalQuery | null;
 }
 
 export interface HunkReference {
@@ -162,6 +208,8 @@ export interface ReviewFinding {
   filePath?: string | null;
   hunkReference?: HunkReference | null;
   confidence?: number | null;
+  /** Provenance-only retrieved context (v0.4). Does not affect severity. */
+  citations?: RetrievedCitation[] | null;
 }
 
 export interface PersonaReview {
@@ -187,4 +235,6 @@ export interface ReviewResponse {
   findings: ReviewFinding[];
   /** Draft, copy-only replies to comment threads. Empty until Phase 15. */
   suggestedReplies: SuggestedReply[];
+  /** Retrieved local context used for grounding (v0.4). Empty when none. */
+  contextUsed?: RetrievalResult[] | null;
 }

@@ -77,6 +77,33 @@ export function personaLabel(persona: ReviewerPersona): string {
   return PERSONA_LABELS[persona] ?? persona;
 }
 
+// ---- Retrieval / grounding (presentation only) ----
+
+/** Honest, reusable caption for retrieved local context. */
+export const RETRIEVAL_PROVENANCE_NOTE =
+  "Retrieved local context (lexical, provenance-only) — not semantic search and " +
+  "not proof of correctness.";
+
+/** Format a retrieval score for display (e.g. 0.4045 -> "0.40"). */
+export function formatScore(score: number): string {
+  return score.toFixed(2);
+}
+
+/** "lines 3–8", "line 3", or null when no range is known. */
+export function formatLineRange(
+  startLine?: number | null,
+  endLine?: number | null,
+): string | null {
+  if (startLine == null && endLine == null) {
+    return null;
+  }
+  if (startLine != null && endLine != null && startLine !== endLine) {
+    return `lines ${startLine}–${endLine}`;
+  }
+  const single = startLine ?? endLine;
+  return single != null ? `line ${single}` : null;
+}
+
 // ---- Reviewer tone (presentation only) ----
 
 /**

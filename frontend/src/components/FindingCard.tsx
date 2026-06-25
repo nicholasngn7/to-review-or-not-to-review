@@ -1,5 +1,6 @@
 import type { ReviewFinding } from "../types/review";
 import { PERSONA_LABELS, SEVERITY_LABELS } from "../lib/reviewLabels";
+import { FindingCitations } from "./FindingCitations";
 
 interface FindingCardProps {
   finding: ReviewFinding;
@@ -54,6 +55,8 @@ export function FindingCard({ finding }: FindingCardProps) {
       </p>
 
       {location && <p className="finding__loc">{location}</p>}
+
+      <FindingCitations citations={finding.citations} />
     </li>
   );
 }

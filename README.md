@@ -481,16 +481,19 @@ dev servers):
 
 ### In progress: v0.4 — RAG-style grounded review context
 
-> **In progress (backend only; no UI yet).** A local **RAG-style retrieval** layer built
-> in phases. Implemented and tested so far: allow-listed local **ingestion** + deterministic
-> **chunking**, a **deterministic local lexical embedding provider** + in-memory cosine
-> **index**, a local-only **retrieval service** and `POST /api/retrieve-context` endpoint,
-> and **opt-in, provenance-only review grounding** — when a review request supplies
+> **In progress.** A local **RAG-style retrieval** layer built in phases. Implemented and
+> tested so far: allow-listed local **ingestion** + deterministic **chunking**, a
+> **deterministic local lexical embedding provider** + in-memory cosine **index**, a
+> local-only **retrieval service** and `POST /api/retrieve-context` endpoint,
+> **opt-in, provenance-only review grounding** — when a review request supplies
 > `knowledgeSources`, the review populates `contextUsed` and attaches per-finding
 > `citations` by lexical overlap, while detection, severity, risk, and the merge
-> recommendation stay **invariant**. A deterministic, offline **evaluation harness**
-> (fixed synthetic corpus + hit@k/precision@k/recall@k regression metrics) guards the
-> lexical retriever. It is a local **RAG architecture demo** —
+> recommendation stay **invariant** — and a **frontend layer** that surfaces it: an optional
+> “local context sources” input, a read-only “Retrieved local context” panel, secondary
+> per-finding “Cited context”, and an optional Markdown “Context used” block (all hidden when
+> absent; the default review flow is unchanged). A deterministic, offline **evaluation
+> harness** (fixed synthetic corpus + hit@k/precision@k/recall@k regression metrics) guards
+> the lexical retriever. It is a local **RAG architecture demo** —
 > lexical/deterministic retrieval, **not** semantic search, production-grade RAG, or any
 > live/Bedrock embedding calls (those remain optional future work). Full plan:
 > [`docs/v0.4-plan-rag-grounded-review.md`](docs/v0.4-plan-rag-grounded-review.md).

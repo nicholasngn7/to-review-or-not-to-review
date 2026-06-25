@@ -1,4 +1,8 @@
-import type { ReviewResponse } from "../types/review";
+import type {
+  RetrievalResult,
+  RetrievedCitation,
+  ReviewResponse,
+} from "../types/review";
 
 /** A small but realistic review result spanning two personas and severities. */
 export const mockReviewResult: ReviewResponse = {
@@ -79,4 +83,48 @@ export const mockReviewResult: ReviewResponse = {
     },
   ],
   suggestedReplies: [],
+};
+
+/** A sample per-finding citation (local, lexical, provenance-only). */
+export const mockCitation: RetrievedCitation = {
+  chunkId: "doc-abc#chunk-2",
+  sourcePath: "docs/decisions.md",
+  heading: "Authentication",
+  snippet: "Avoid eval(); parse input with a safe, explicit parser.",
+  score: 0.4231,
+  startLine: 12,
+  endLine: 18,
+};
+
+/** A sample retrieved context result for the "Context used" panel. */
+export const mockRetrievalResult: RetrievalResult = {
+  chunkId: "doc-abc#chunk-2",
+  documentId: "doc-abc",
+  sourcePath: "docs/decisions.md",
+  heading: "Authentication",
+  snippet: "Avoid eval(); parse input with a safe, explicit parser.",
+  score: 0.4231,
+  startLine: 12,
+  endLine: 18,
+  metadata: { sourceType: "repo_doc" },
+};
+
+/** A review result that includes retrieved context and a per-finding citation. */
+export const mockReviewResultWithContext: ReviewResponse = {
+  ...mockReviewResult,
+  contextUsed: [mockRetrievalResult],
+  personaReviews: mockReviewResult.personaReviews.map((pr) =>
+    pr.persona === "security"
+      ? {
+          ...pr,
+          findings: pr.findings.map((f) => ({
+            ...f,
+            citations: [mockCitation],
+          })),
+        }
+      : pr,
+  ),
+  findings: mockReviewResult.findings.map((f) =>
+    f.reviewer === "security" ? { ...f, citations: [mockCitation] } : f,
+  ),
 };

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import type { CommentThread, ReviewResponse } from "../types/review";
 import type { ReviewStatus } from "../hooks/useReview";
+import { ContextUsedPanel } from "./ContextUsedPanel";
 import { ExportMarkdownButton } from "./ExportMarkdownButton";
 import { FindingsPanel } from "./FindingsPanel";
 import { MergeRecommendationBadge } from "./MergeRecommendationBadge";
@@ -125,6 +126,8 @@ export function ReviewSummary({
       </div>
 
       <FindingsPanel personaReviews={personaReviews} findings={findings} />
+
+      <ContextUsedPanel contextUsed={result.contextUsed} />
 
       <SuggestedRepliesPanel
         replies={result.suggestedReplies}

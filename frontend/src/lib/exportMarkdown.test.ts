@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import { buildReportFilename, exportReviewMarkdown } from "./exportMarkdown";
-import { mockReviewResult } from "../test/fixtures";
+import {
+  mockReviewResult,
+  mockReviewResultWithContext,
+} from "../test/fixtures";
 
 describe("buildReportFilename", () => {
   it("returns the base name when there is no title", () => {
@@ -56,6 +59,44 @@ describe("exportReviewMarkdown", () => {
 
   it("omits the suggested replies section when there are none", () => {
     expect(md).not.toContain("## Suggested replies");
+  });
+
+  it("omits the Context used section when there is no retrieved context", () => {
+    expect(md).not.toContain("## Context used");
+    expect(md).not.toContain("Cited context");
+  });
+
+  it("is unchanged when context and citations are absent", () => {
+    const withoutContext = exportReviewMarkdown(
+      { ...mockReviewResult, contextUsed: [] },
+      "Add login handler",
+    );
+    // Strip the generated timestamp line, which always differs between runs.
+    const stripTimestamp = (text: string) =>
+      text.replace(/- \*\*Generated:\*\* .*/g, "- **Generated:** <ts>");
+    expect(stripTimestamp(withoutContext)).toBe(stripTimestamp(md));
+  });
+
+  it("includes a Context used section and per-finding citations when present", () => {
+    const out = exportReviewMarkdown(
+      mockReviewResultWithContext,
+      "Add login handler",
+    );
+    expect(out).toContain("## Context used");
+    expect(out).toContain("**Cited context**");
+    expect(out).toContain("`docs/decisions.md` · Authentication · lines 12–18");
+    expect(out).toContain("score 0.42");
+    expect(out).toContain("Avoid eval(); parse input with a safe");
+  });
+
+  it("uses honest, provenance-only wording for retrieved context", () => {
+    const out = exportReviewMarkdown(
+      mockReviewResultWithContext,
+      "Add login handler",
+    );
+    expect(out).toMatch(/lexical, provenance-only/i);
+    expect(out).toMatch(/not semantic search/i);
+    expect(out).toMatch(/did not change severity/i);
   });
 
   it("includes suggested replies grouped by thread when present", () => {

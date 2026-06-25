@@ -14,6 +14,10 @@ import {
   toRequestTone,
 } from "../lib/reviewLabels";
 import { CommentThreadsInput } from "./CommentThreadsInput";
+import {
+  ContextSourcesInput,
+  type ContextSourcesValue,
+} from "./ContextSourcesInput";
 import { ImportCommentsPanel } from "./ImportCommentsPanel";
 import { DEFAULT_PERSONAS, PersonaSelector } from "./PersonaSelector";
 import { ReviewerTonePanel } from "./ReviewerTonePanel";
@@ -37,10 +41,21 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
   >({});
   const [commentThreads, setCommentThreads] = useState<CommentThread[]>([]);
   const [importedThreads, setImportedThreads] = useState<CommentThread[]>([]);
+  const [contextSources, setContextSources] = useState<ContextSourcesValue>({
+    sources: [],
+    query: "",
+  });
 
   const handleCommentThreadsChange = useCallback((threads: CommentThread[]) => {
     setCommentThreads(threads);
   }, []);
+
+  const handleContextSourcesChange = useCallback(
+    (value: ContextSourcesValue) => {
+      setContextSources(value);
+    },
+    [],
+  );
 
   const handleLoadImported = useCallback((threads: CommentThread[]) => {
     // Loading replaces the imported set (the on-submit dedupe is a backstop).
@@ -142,6 +157,16 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
     }
     if (merged.length > 0) {
       request.commentThreads = merged;
+    }
+
+    // Opt-in local retrieval grounding. Only attach knowledge sources (and an
+    // optional query) when the user actually entered local source paths, so an
+    // untouched form sends exactly the original payload.
+    if (contextSources.sources.length > 0) {
+      request.knowledgeSources = contextSources.sources;
+      if (contextSources.query) {
+        request.retrieval = { query: contextSources.query };
+      }
     }
 
     onRun(request);
@@ -253,6 +278,11 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
 
       <CommentThreadsInput
         onChange={handleCommentThreadsChange}
+        disabled={isLoading}
+      />
+
+      <ContextSourcesInput
+        onChange={handleContextSourcesChange}
         disabled={isLoading}
       />
 

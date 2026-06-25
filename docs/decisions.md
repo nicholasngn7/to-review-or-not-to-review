@@ -543,3 +543,27 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   **not** prove semantic quality — this is still **not** production RAG, semantic search,
   Bedrock/live provider, or LLM-generated review output. No new dependencies, endpoints, or
   frontend UI.
+- **Phase 7 surfaces opt-in retrieval grounding in the frontend (presentation only).**
+  TypeScript review types gained additive fields mirroring the backend contract
+  (`frontend/src/types/review.ts`): `RetrievalQuery`, `RetrievedCitation`, `RetrievalResult`,
+  plus `ReviewRequest.knowledgeSources`/`retrieval`, `ReviewFinding.citations`, and
+  `ReviewResponse.contextUsed`. A collapsible **“Optional local context sources”** input
+  (`ContextSourcesInput`) collects one local source path per line plus an optional
+  local/lexical **“context query”**; the panel suggests safe local examples (`README.md`,
+  `docs/project-case-study.md`, `docs/decisions.md`) and **never** asks for URLs or tokens or
+  implies GitHub/GitLab fetching. **Default behavior is invariant:** `DiffInputPanel` attaches
+  `knowledgeSources` only when the user enters source paths, and `retrieval` only when a query
+  is also typed — an untouched form sends exactly the pre-v0.4 payload. Results render a
+  read-only, collapsible **“Retrieved local context”** panel (`ContextUsedPanel`) and a
+  secondary, expandable **“Cited context”** detail per finding (`FindingCitations`), each
+  showing source path, heading, line range, a score rounded to two decimals, and the snippet —
+  and are **hidden entirely** when context/citations are absent or empty. Markdown export adds
+  a **“Context used”** section and per-finding citation lines only when present and is
+  otherwise byte-for-byte unchanged (verified by a timestamp-stripped equality test). All copy
+  is honest — retrieved context is **local, deterministic, lexical, and provenance-only**,
+  explicitly *not* semantic search, *not* proof of correctness, and it does **not** change a
+  finding's severity or the merge recommendation. Score/line-range formatting is centralized in
+  `lib/reviewLabels.ts` (`formatScore`, `formatLineRange`, `RETRIEVAL_PROVENANCE_NOTE`). This
+  is a pure presentation/adapter layer: **no backend behavior changed**, no new dependencies,
+  no network behavior beyond the existing `/api/reviews` call, and still **not** production
+  RAG, semantic search, Bedrock/live provider, or LLM-generated review output.

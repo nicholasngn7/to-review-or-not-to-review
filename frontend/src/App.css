@@ -1230,6 +1230,231 @@
   border-top: 1px dashed var(--border);
 }
 
+/* ---- Optional local context input (v0.4 retrieval grounding) ---- */
+.context-input {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  margin-bottom: 1.25rem;
+  padding: 0 0.85rem;
+}
+
+.context-input[open] {
+  padding-bottom: 0.85rem;
+}
+
+.context-input__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  list-style: none;
+  padding: 0.75rem 0.1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.context-input__summary::-webkit-details-marker {
+  display: none;
+}
+
+.context-input__summary::before {
+  content: "▸";
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  transition: transform 0.12s ease;
+}
+
+.context-input[open] .context-input__summary::before {
+  transform: rotate(90deg);
+}
+
+.context-input__title {
+  margin-right: auto;
+}
+
+.context-input__help {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+  line-height: 1.45;
+}
+
+/* ---- Retrieved local context panel (results) ---- */
+.context-used {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.context-used__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.context-used__summary::-webkit-details-marker {
+  display: none;
+}
+
+.context-used__summary::before {
+  content: "▸";
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  transition: transform 0.12s ease;
+}
+
+.context-used[open] .context-used__summary::before {
+  transform: rotate(90deg);
+}
+
+.context-used__note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0.75rem 0 1rem;
+  line-height: 1.45;
+}
+
+.context-used__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.context-result {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+}
+
+.context-result__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.45rem;
+}
+
+.context-result__loc {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.74rem;
+  color: var(--text);
+}
+
+.context-result__loc--muted {
+  color: var(--text-muted);
+}
+
+.context-result__score {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.context-result__snippet {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* ---- Per-finding citations (secondary) ---- */
+.finding-citations {
+  margin: 0.6rem 0 0;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border);
+}
+
+.finding-citations__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.finding-citations__summary::-webkit-details-marker {
+  display: none;
+}
+
+.finding-citations__summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.12s ease;
+}
+
+.finding-citations[open] .finding-citations__summary::before {
+  transform: rotate(90deg);
+}
+
+.finding-citations__count {
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.05rem 0.4rem;
+}
+
+.finding-citations__note {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin: 0.5rem 0 0.6rem;
+  line-height: 1.4;
+}
+
+.finding-citations__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.finding-citation {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+}
+
+.finding-citation__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.3rem;
+}
+
+.finding-citation__loc {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  color: var(--text);
+}
+
+.finding-citation__score {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.finding-citation__snippet {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
 /* ---- Footer ---- */
 .app__footer {
   margin-top: auto;

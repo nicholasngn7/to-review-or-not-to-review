@@ -392,4 +392,69 @@ describe("DiffInputPanel", () => {
     await user.click(screen.getByRole("button", { name: /run review/i }));
     expect(onRun.mock.calls[0][0].commentThreads).toBeUndefined();
   });
+
+  // ---- Optional local context sources (v0.4 retrieval grounding) ----
+
+  it("renders the optional local context input with honest wording", () => {
+    render(<DiffInputPanel isLoading={false} onRun={vi.fn()} />);
+    expect(
+      screen.getByText(/optional local context sources/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/lexical and provenance-only/i),
+    ).toBeInTheDocument();
+  });
+
+  it("does not send knowledgeSources or retrieval when no sources are entered", async () => {
+    const user = userEvent.setup();
+    const onRun = vi.fn();
+    render(<DiffInputPanel isLoading={false} onRun={onRun} />);
+
+    await loadDemo(user);
+    await user.click(screen.getByRole("button", { name: /run review/i }));
+
+    const request = onRun.mock.calls[0][0];
+    expect(request.knowledgeSources).toBeUndefined();
+    expect(request.retrieval).toBeUndefined();
+  });
+
+  it("parses one source path per line and sends knowledgeSources", async () => {
+    const user = userEvent.setup();
+    const onRun = vi.fn();
+    render(<DiffInputPanel isLoading={false} onRun={onRun} />);
+
+    await loadDemo(user);
+    fireEvent.change(screen.getByLabelText(/source paths/i), {
+      target: { value: "README.md\n  docs/decisions.md  \n\n" },
+    });
+    await user.click(screen.getByRole("button", { name: /run review/i }));
+
+    const request = onRun.mock.calls[0][0];
+    // Lines are trimmed and empty lines dropped.
+    expect(request.knowledgeSources).toEqual([
+      "README.md",
+      "docs/decisions.md",
+    ]);
+    // No query typed, so retrieval is omitted (backend derives one).
+    expect(request.retrieval).toBeUndefined();
+  });
+
+  it("sends retrieval with the query when a context query is provided", async () => {
+    const user = userEvent.setup();
+    const onRun = vi.fn();
+    render(<DiffInputPanel isLoading={false} onRun={onRun} />);
+
+    await loadDemo(user);
+    fireEvent.change(screen.getByLabelText(/source paths/i), {
+      target: { value: "README.md" },
+    });
+    fireEvent.change(screen.getByLabelText(/context query/i), {
+      target: { value: "authentication handling" },
+    });
+    await user.click(screen.getByRole("button", { name: /run review/i }));
+
+    const request = onRun.mock.calls[0][0];
+    expect(request.knowledgeSources).toEqual(["README.md"]);
+    expect(request.retrieval).toEqual({ query: "authentication handling" });
+  });
 });

@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 
 import { ReviewSummary } from "./ReviewSummary";
-import { mockReviewResult } from "../test/fixtures";
+import {
+  mockReviewResult,
+  mockReviewResultWithContext,
+} from "../test/fixtures";
 
 describe("ReviewSummary", () => {
   it("shows the idle empty state before a review runs", () => {
@@ -40,6 +43,28 @@ describe("ReviewSummary", () => {
     expect(
       screen.getByRole("button", { name: /export markdown/i }),
     ).toBeInTheDocument();
+  });
+
+  it("does not render any retrieved context UI when there is no context", () => {
+    render(
+      <ReviewSummary status="success" result={mockReviewResult} error={null} />,
+    );
+    expect(
+      screen.queryByText("Retrieved local context"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Cited context")).not.toBeInTheDocument();
+  });
+
+  it("renders the Context used panel and per-finding citations when present", () => {
+    render(
+      <ReviewSummary
+        status="success"
+        result={mockReviewResultWithContext}
+        error={null}
+      />,
+    );
+    expect(screen.getByText("Retrieved local context")).toBeInTheDocument();
+    expect(screen.getByText("Cited context")).toBeInTheDocument();
   });
 
   it("does not render a suggested replies section when there are none", () => {

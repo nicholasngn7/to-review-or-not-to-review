@@ -7,14 +7,19 @@
  */
 
 import type {
+  RetrievalResult,
+  RetrievedCitation,
   ReviewFinding,
   ReviewResponse,
   SuggestedReply,
 } from "../types/review";
 import {
+  formatLineRange,
+  formatScore,
   PERSONA_LABELS,
   PERSONA_ORDER,
   RECOMMENDATION_LABELS,
+  RETRIEVAL_PROVENANCE_NOTE,
   RISK_LABELS,
   SEVERITY_LABELS,
 } from "./reviewLabels";
@@ -48,6 +53,43 @@ function hunkLocation(finding: ReviewFinding): string | null {
   return parts.length > 0 ? parts.join(" · ") : null;
 }
 
+/** Build a compact "path · heading · lines" label for a retrieved snippet. */
+function snippetLocation(
+  ref: RetrievalResult | RetrievedCitation,
+): string | null {
+  const parts: string[] = [];
+  if (ref.sourcePath) {
+    parts.push(`\`${ref.sourcePath}\``);
+  }
+  if (ref.heading) {
+    parts.push(ref.heading);
+  }
+  const range = formatLineRange(ref.startLine, ref.endLine);
+  if (range) {
+    parts.push(range);
+  }
+  return parts.length > 0 ? parts.join(" · ") : null;
+}
+
+/** Per-finding citation lines, secondary to the finding itself. */
+function citationLines(citations: RetrievedCitation[]): string[] {
+  const lines: string[] = [];
+  lines.push(
+    "**Cited context** (local lexical, provenance-only; did not change severity):",
+  );
+  lines.push("");
+  for (const citation of citations) {
+    const location = snippetLocation(citation);
+    const head = location
+      ? `${location} — score ${formatScore(citation.score)}`
+      : `score ${formatScore(citation.score)}`;
+    lines.push(`- ${head}`);
+    lines.push(`  > ${citation.snippet}`);
+  }
+  lines.push("");
+  return lines;
+}
+
 function findingBlock(finding: ReviewFinding): string[] {
   const lines: string[] = [];
   lines.push(`#### [${SEVERITY_LABELS[finding.severity]}] ${finding.title}`);
@@ -73,6 +115,30 @@ function findingBlock(finding: ReviewFinding): string[] {
   lines.push(`**Explanation:** ${finding.explanation}`);
   lines.push("");
   lines.push(`**Recommendation:** ${finding.recommendation}`);
+  lines.push("");
+
+  if (finding.citations && finding.citations.length > 0) {
+    lines.push(...citationLines(finding.citations));
+  }
+
+  return lines;
+}
+
+/** "Context used" section listing retrieved local context (provenance-only). */
+function contextUsedSection(contextUsed: RetrievalResult[]): string[] {
+  const lines: string[] = [];
+  lines.push("## Context used");
+  lines.push("");
+  lines.push(`_${RETRIEVAL_PROVENANCE_NOTE}_`);
+  lines.push("");
+  for (const result of contextUsed) {
+    const location = snippetLocation(result);
+    const head = location
+      ? `${location} — score ${formatScore(result.score)}`
+      : `score ${formatScore(result.score)}`;
+    lines.push(`- ${head}`);
+    lines.push(`  > ${result.snippet}`);
+  }
   lines.push("");
   return lines;
 }
@@ -204,6 +270,11 @@ export function exportReviewMarkdown(
         }
       }
     }
+  }
+
+  // Retrieved local context (only when present)
+  if (result.contextUsed && result.contextUsed.length > 0) {
+    lines.push(...contextUsedSection(result.contextUsed));
   }
 
   // Suggested replies (only when present)
