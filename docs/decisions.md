@@ -314,3 +314,11 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   state) with deterministic, offline tests, keeps provider schemas as tolerant
   `dict` access (flagging assumptions to verify against official docs), and adds no
   security surface (no tokens/SSRF/rate limits) until the mapping layer is proven.
+- **Ship the import contracts before any logic (v0.3 Phase 1).** Added
+  `app/models/git_import.py` (`GitProviderType`, `ExternalCommentReference`,
+  `ImportedCommentThread`, `ImportCommentsRequest`, `ImportCommentsResponse`) and
+  contract tests — and nothing else. `ImportCommentsRequest` intentionally has **no
+  token field** and performs **no** network access; future phases pass
+  already-fetched JSON via `rawPayload`. Provider-native ids live in
+  `ExternalCommentReference` so the core `CommentThread` contract stays clean. This
+  locks the target shape (and camelCase serialization) before mappers/fixtures land.

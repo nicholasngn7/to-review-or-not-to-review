@@ -253,6 +253,44 @@ the reply **wording only** via the resolved `ToneProfile` (per-persona → globa
 default); it never changes reviewer selection, count, or confidence. Replies never
 affect findings, risk, severity, merge recommendation, or diff stats.
 
+### Future: Git provider comment-import contracts (v0.3, Phase 1 — contracts only)
+
+These models exist as **contracts only**. They describe the shape a future
+fixture-based mapping layer would produce when normalizing recorded GitHub/GitLab
+comment JSON into the existing `CommentThread` contract above. As of this phase there
+are **no mappers, no fixtures, no live API calls, no OAuth, no token input, and no
+endpoints** — and no behavior change to reviews or replies. Defined in
+[`backend/app/models/git_import.py`](../backend/app/models/git_import.py); design in
+[`v0.3-plan-git-comment-import-mappers.md`](v0.3-plan-git-comment-import-mappers.md).
+
+`ExternalCommentReference` (provider-native identity; provenance only, never affects
+review behavior):
+
+| Field                | Type                | Notes                                       |
+| -------------------- | ------------------- | ------------------------------------------- |
+| `provider`           | `GitProviderType`   | `github` / `gitlab` (required).             |
+| `repository`         | string \| null      | GitHub `owner/repo`.                        |
+| `projectId`          | string \| null      | GitLab project path or numeric id.          |
+| `pullRequestNumber`  | number \| null      | GitHub PR number.                           |
+| `mergeRequestIid`    | number \| null      | GitLab MR iid.                              |
+| `discussionId`       | string \| null      | GitLab discussion id (thread root).         |
+| `reviewId`           | string \| null      | GitHub review id, if part of a review.      |
+| `commentId`          | string \| null      | Provider comment id (thread root).          |
+| `noteId`             | string \| null      | GitLab note id.                             |
+| `webUrl`             | string \| null      | Human-openable link.                        |
+| `isOutdated`         | boolean \| null     | Source anchored to an outdated line, if known. |
+
+`ImportedCommentThread`: `{ thread: CommentThread, externalReference: ExternalCommentReference, warnings: string[] }`
+— wraps the existing `CommentThread` (consumed unchanged by the pipeline) plus
+provenance and non-fatal normalization notes.
+
+`ImportCommentsRequest` (carries **no token**, triggers **no** network):
+`{ provider: GitProviderType, source?: string | null, rawPayload?: object | array | null }`.
+A future phase supplies already-fetched provider JSON via `rawPayload`.
+
+`ImportCommentsResponse`:
+`{ provider: GitProviderType, threads: ImportedCommentThread[], warnings: string[] }`.
+
 ### `ReviewFinding` (finding card)
 
 | Field            | Type                    | Required | Notes                                  |
@@ -303,6 +341,7 @@ defined for the parser phase; only `DiffStats` is surfaced in the review respons
 | `ToneStrictness`      | `low`, `medium`, `high`                                                |
 | `ToneVerbosity`       | `brief`, `normal`, `detailed`                                          |
 | `CommentThreadStatus` | `open`, `resolved`, `unknown`                                          |
+| `GitProviderType`     | `github`, `gitlab` (future import contracts; not yet wired to anything) |
 
 ## Reviewer personas and responsibilities
 

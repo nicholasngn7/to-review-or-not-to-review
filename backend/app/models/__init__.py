@@ -22,6 +22,13 @@ from .enums import (
     ReviewerPersona,
     RiskLevel,
 )
+from .git_import import (
+    ExternalCommentReference,
+    GitProviderType,
+    ImportCommentsRequest,
+    ImportCommentsResponse,
+    ImportedCommentThread,
+)
 from .review import (
     HunkReference,
     PersonaReview,
@@ -73,4 +80,10 @@ __all__ = [
     "ThreadComment",
     "CommentThread",
     "SuggestedReply",
+    # git import contracts (v0.3, Phase 1 — contracts only)
+    "GitProviderType",
+    "ExternalCommentReference",
+    "ImportedCommentThread",
+    "ImportCommentsRequest",
+    "ImportCommentsResponse",
 ]
