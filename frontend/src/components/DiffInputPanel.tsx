@@ -1,7 +1,8 @@
-import { useId, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import type { ChangeEvent } from "react";
 
 import type {
+  CommentThread,
   ReviewRequest,
   ReviewerPersona,
   ToneProfile,
@@ -12,6 +13,7 @@ import {
   isDefaultTone,
   toRequestTone,
 } from "../lib/reviewLabels";
+import { CommentThreadsInput } from "./CommentThreadsInput";
 import { DEFAULT_PERSONAS, PersonaSelector } from "./PersonaSelector";
 import { ReviewerTonePanel } from "./ReviewerTonePanel";
 
@@ -32,6 +34,11 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
   const [toneOverrides, setToneOverrides] = useState<
     Partial<Record<ReviewerPersona, ToneProfile>>
   >({});
+  const [commentThreads, setCommentThreads] = useState<CommentThread[]>([]);
+
+  const handleCommentThreadsChange = useCallback((threads: CommentThread[]) => {
+    setCommentThreads(threads);
+  }, []);
 
   const titleId = useId();
   const descId = useId();
@@ -107,6 +114,11 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
     }
     if (Object.keys(personaToneProfiles).length > 0) {
       request.personaToneProfiles = personaToneProfiles;
+    }
+
+    // Only attach comment threads when at least one has a real comment body.
+    if (commentThreads.length > 0) {
+      request.commentThreads = commentThreads;
     }
 
     onRun(request);
@@ -213,6 +225,11 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
         overrides={toneOverrides}
         onToggleOverride={toggleOverride}
         onOverrideChange={updateOverride}
+        disabled={isLoading}
+      />
+
+      <CommentThreadsInput
+        onChange={handleCommentThreadsChange}
         disabled={isLoading}
       />
 

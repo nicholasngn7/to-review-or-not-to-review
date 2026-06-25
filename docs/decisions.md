@@ -219,3 +219,28 @@ Adds the "Reviewer voice" controls; no backend or detection changes.
   reusable `ToneProfileEditor` backs both the global and per-persona editors.
 - **Tone never auto-runs a review.** Changing tone only updates local state; the
   user still explicitly clicks "Run Review".
+
+## Comment-thread contract decisions (Phase 14)
+
+Adds the contract and local input foundation for existing MR/PR comment threads;
+no reply generation, no Git provider integration, no auto-posting.
+
+- **Threads are structured input, not an integration.** Comment threads are typed
+  in locally via a small `CommentThreadsInput` form. There is no GitHub/GitLab
+  import and nothing is ever posted back — replies (Phase 15) will be copy-only
+  drafts a human sends.
+- **`suggestedReplies` is reserved now, empty until Phase 15.** Adding the field
+  to `ReviewResponse` as a default-empty list keeps the contract stable and
+  backward-compatible; the frontend can build reply UI against a known shape
+  before generation exists. `SuggestedReply.needsHumanReview` defaults to `true`.
+- **Validation lives in two layers.** The backend rejects empty comment bodies and
+  comment-less threads (Pydantic validators, surfaced as HTTP 422); the frontend
+  also drops empty rows and trims bodies before sending, so only meaningful
+  threads reach the wire.
+- **Threads never affect detection.** `commentThreads` is accepted and validated
+  but does not touch parsing, findings, risk, or recommendation — verified by a
+  test asserting the response (minus `suggestedReplies`) is identical with and
+  without threads.
+- **Optional and out of the way.** The input is an optional, collapsible
+  `<details>` panel; a review runs fine with no threads, preserving the existing
+  flow exactly.

@@ -321,5 +321,10 @@ model is proven (see the plan doc).
 > persona summaries accordingly (see [`docs/review-contract.md`](docs/review-contract.md)).
 > Tone is **presentation only** — findings, severities, overall risk, and the
 > merge recommendation are unchanged, the default voice is an exact no-op, and
-> per-reviewer overrides win over the global voice. Suggested comment replies and
-> real AI-driven tone are still future work.
+> per-reviewer overrides win over the global voice.
+>
+> The contract groundwork for **suggested replies** is also in place: you can
+> capture existing MR/PR **comment threads** (an optional local input on the
+> request) and `ReviewResponse` reserves a `suggestedReplies` list (empty for
+> now). Reply *generation* is the next step (Phase 15) and will be copy-only —
+> nothing is posted back to GitHub/GitLab. Real AI-driven output remains deferred.

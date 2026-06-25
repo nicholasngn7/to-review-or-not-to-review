@@ -41,8 +41,64 @@ and responses emit camelCase.
 | `source`              | string \| null                        | no       | Origin hint, e.g. `gitlab`/`github`.   |
 | `toneProfile`         | `ToneProfile` \| null                 | no       | Global tone for all reviewers.         |
 | `personaToneProfiles` | `{ [persona]: ToneProfile }` \| null  | no       | Per-persona tone overrides.            |
+| `commentThreads`      | `CommentThread[]` \| null             | no       | Existing MR/PR comment threads.        |
 
 \* The field is always present; an empty array is allowed.
+
+### Existing comment threads (v0.2 contract)
+
+`commentThreads` captures existing MR/PR discussion as **structured input** so a
+future feature can draft **suggested replies**. This is framed as *copy-only draft
+replies* — nothing is posted back to GitHub/GitLab, and there is no Git provider
+import. In Phase 14 the endpoint validates `commentThreads` but does not act on
+them; reply generation lands in Phase 15.
+
+```json
+{
+  "commentThreads": [
+    {
+      "id": "t1",
+      "filePath": "app/auth.py",
+      "line": 5,
+      "status": "open",
+      "source": "github",
+      "comments": [
+        {
+          "id": "c1",
+          "author": "Reviewer",
+          "body": "Can we avoid swallowing this exception?",
+          "createdAt": null,
+          "isResolved": null
+        }
+      ]
+    }
+  ]
+}
+```
+
+`CommentThread`:
+
+| Field      | Type                  | Required | Notes                                   |
+| ---------- | --------------------- | -------- | --------------------------------------- |
+| `id`       | string                | yes      | Stable thread identifier.               |
+| `filePath` | string \| null        | no       | File the thread is anchored to.         |
+| `line`     | number \| null        | no       | Line the thread is anchored to.         |
+| `status`   | `CommentThreadStatus` | no       | `open` / `resolved` / `unknown`.        |
+| `comments` | `ThreadComment[]`     | yes      | At least one comment required.          |
+| `source`   | string \| null        | no       | Origin hint, e.g. `gitlab`/`github`.    |
+
+`ThreadComment`:
+
+| Field       | Type            | Required | Notes                                  |
+| ----------- | --------------- | -------- | -------------------------------------- |
+| `id`        | string          | yes      | Stable comment identifier.             |
+| `author`    | string \| null  | no       | Comment author.                        |
+| `body`      | string          | yes      | Comment text; must be non-empty (trimmed). |
+| `createdAt` | string \| null  | no       | Timestamp string.                      |
+| `isResolved`| boolean \| null | no       | Whether this comment is resolved.      |
+
+The frontend only sends `commentThreads` when at least one thread has a non-empty
+comment body; empty rows are dropped and bodies are trimmed.
 
 ### Reviewer tone profiles (v0.2 contract)
 
@@ -162,6 +218,21 @@ Notes:
 - `personaReviews[].findings` are grouped by persona.
 - Top-level `findings` is the flattened list of the same finding cards, convenient
   for rendering a single feed.
+- `suggestedReplies` is **always present** and is an empty list (`[]`) in Phase 14.
+  It reserves the contract for Phase 15's deterministic, copy-only reply drafts.
+
+### `SuggestedReply` (reserved; empty until Phase 15)
+
+| Field             | Type                  | Notes                                       |
+| ----------------- | --------------------- | ------------------------------------------- |
+| `id`              | string                | Stable identifier.                          |
+| `threadId`        | string                | The `CommentThread.id` being replied to.    |
+| `reviewer`        | `ReviewerPersona`     | Persona voice the reply uses.               |
+| `suggestedReply`  | string                | The drafted reply text.                     |
+| `rationale`       | string                | Why this reply was suggested.               |
+| `confidence`      | number \| null        | 0.0–1.0 confidence.                         |
+| `needsHumanReview`| boolean               | Always `true`: replies are human-sent drafts. |
+| `toneProfile`     | `ToneProfile` \| null | Tone used to frame the reply, if any.       |
 
 ### `ReviewFinding` (finding card)
 
@@ -212,6 +283,7 @@ defined for the parser phase; only `DiffStats` is surfaced in the review respons
 | `ToneStyle`           | `direct`, `supportive`, `educational`, `strict`, `curious`, `executive` |
 | `ToneStrictness`      | `low`, `medium`, `high`                                                |
 | `ToneVerbosity`       | `brief`, `normal`, `detailed`                                          |
+| `CommentThreadStatus` | `open`, `resolved`, `unknown`                                          |
 
 ## Reviewer personas and responsibilities
 

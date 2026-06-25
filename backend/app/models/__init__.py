@@ -1,6 +1,12 @@
 """Shared domain models for the MR Review Council review contract."""
 
 from .base import CamelModel
+from .comments import (
+    CommentThread,
+    CommentThreadStatus,
+    SuggestedReply,
+    ThreadComment,
+)
 from .diff import (
     DiffFile,
     DiffHunk,
@@ -62,4 +68,9 @@ __all__ = [
     "ToneProfile",
     "DEFAULT_TONE_PROFILE",
     "resolve_tone_profile",
+    # comments
+    "CommentThreadStatus",
+    "ThreadComment",
+    "CommentThread",
+    "SuggestedReply",
 ]

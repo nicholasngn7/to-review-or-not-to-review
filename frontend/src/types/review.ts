@@ -48,6 +48,38 @@ export interface ToneProfile {
   customInstructions?: string | null;
 }
 
+// ---- Existing MR comment threads & suggested replies (v0.2) ----
+
+export type CommentThreadStatus = "open" | "resolved" | "unknown";
+
+export interface ThreadComment {
+  id: string;
+  author?: string | null;
+  body: string;
+  createdAt?: string | null;
+  isResolved?: boolean | null;
+}
+
+export interface CommentThread {
+  id: string;
+  filePath?: string | null;
+  line?: number | null;
+  status: CommentThreadStatus;
+  comments: ThreadComment[];
+  source?: string | null;
+}
+
+export interface SuggestedReply {
+  id: string;
+  threadId: string;
+  reviewer: ReviewerPersona;
+  suggestedReply: string;
+  rationale: string;
+  confidence?: number | null;
+  needsHumanReview: boolean;
+  toneProfile?: ToneProfile | null;
+}
+
 // ---- Diff models ----
 
 export type LineKind = "added" | "removed" | "context";
@@ -106,6 +138,8 @@ export interface ReviewRequest {
   toneProfile?: ToneProfile | null;
   /** Per-persona tone overrides; these win over toneProfile. */
   personaToneProfiles?: Partial<Record<ReviewerPersona, ToneProfile>> | null;
+  /** Existing MR/PR comment threads, captured as structured input. */
+  commentThreads?: CommentThread[] | null;
 }
 
 export interface HunkReference {
@@ -147,4 +181,6 @@ export interface ReviewResponse {
   diffStats: DiffStats;
   personaReviews: PersonaReview[];
   findings: ReviewFinding[];
+  /** Draft, copy-only replies to comment threads. Empty until Phase 15. */
+  suggestedReplies: SuggestedReply[];
 }

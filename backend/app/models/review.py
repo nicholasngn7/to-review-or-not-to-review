@@ -9,6 +9,7 @@ from typing import Optional
 from pydantic import Field
 
 from .base import CamelModel
+from .comments import CommentThread, SuggestedReply
 from .diff import DiffStats
 from .enums import (
     FindingSeverity,
@@ -45,6 +46,11 @@ class ReviewRequest(CamelModel):
     persona_tone_profiles: Optional[dict[ReviewerPersona, ToneProfile]] = Field(
         default=None,
         description="Per-persona tone overrides; these win over tone_profile.",
+    )
+    comment_threads: Optional[list[CommentThread]] = Field(
+        default=None,
+        description="Existing MR/PR comment threads, captured as structured input. "
+        "Used for future suggested replies (Phase 15); not required to run a review.",
     )
 
 
@@ -118,4 +124,9 @@ class ReviewResponse(CamelModel):
     findings: list[ReviewFinding] = Field(
         default_factory=list,
         description="Flattened finding cards across all personas, for display.",
+    )
+    suggested_replies: list[SuggestedReply] = Field(
+        default_factory=list,
+        description="Draft, copy-only replies to existing comment threads. Empty "
+        "until Phase 15 implements deterministic reply generation.",
     )

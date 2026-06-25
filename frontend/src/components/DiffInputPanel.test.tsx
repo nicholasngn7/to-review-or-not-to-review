@@ -190,4 +190,84 @@ describe("DiffInputPanel", () => {
     expect(request.selectedPersonas).not.toContain("security");
     expect(request.personaToneProfiles).toBeUndefined();
   });
+
+  // ---- Existing comment threads ----
+
+  it("renders the comment threads input", () => {
+    render(<DiffInputPanel isLoading={false} onRun={vi.fn()} />);
+    expect(
+      screen.getByText(/existing comment threads/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /add comment thread/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("does not send commentThreads when none are added", async () => {
+    const user = userEvent.setup();
+    const onRun = vi.fn();
+    render(<DiffInputPanel isLoading={false} onRun={onRun} />);
+
+    await loadDemo(user);
+    await user.click(screen.getByRole("button", { name: /run review/i }));
+    expect(onRun.mock.calls[0][0].commentThreads).toBeUndefined();
+  });
+
+  it("does not send a comment thread row left empty", async () => {
+    const user = userEvent.setup();
+    const onRun = vi.fn();
+    render(<DiffInputPanel isLoading={false} onRun={onRun} />);
+
+    await loadDemo(user);
+    // Add a row but leave the comment body blank.
+    await user.click(screen.getByRole("button", { name: /add comment thread/i }));
+    await user.click(screen.getByRole("button", { name: /run review/i }));
+    expect(onRun.mock.calls[0][0].commentThreads).toBeUndefined();
+  });
+
+  it("includes a valid comment thread with optional fields when provided", async () => {
+    const user = userEvent.setup();
+    const onRun = vi.fn();
+    render(<DiffInputPanel isLoading={false} onRun={onRun} />);
+
+    await loadDemo(user);
+    await user.click(screen.getByRole("button", { name: /add comment thread/i }));
+
+    await user.type(screen.getByLabelText(/file path/i), "app/auth.py");
+    await user.type(screen.getByLabelText(/^line/i), "5");
+    await user.type(screen.getByLabelText(/author/i), "Reviewer");
+    await user.type(
+      screen.getByLabelText("Comment"),
+      "Can we avoid swallowing this exception?",
+    );
+
+    await user.click(screen.getByRole("button", { name: /run review/i }));
+
+    const request = onRun.mock.calls[0][0];
+    expect(request.commentThreads).toHaveLength(1);
+    const thread = request.commentThreads[0];
+    expect(thread.filePath).toBe("app/auth.py");
+    expect(thread.line).toBe(5);
+    expect(thread.status).toBe("open");
+    expect(thread.comments[0].body).toBe(
+      "Can we avoid swallowing this exception?",
+    );
+    expect(thread.comments[0].author).toBe("Reviewer");
+  });
+
+  it("stops sending a thread once it is removed", async () => {
+    const user = userEvent.setup();
+    const onRun = vi.fn();
+    render(<DiffInputPanel isLoading={false} onRun={onRun} />);
+
+    await loadDemo(user);
+    await user.click(screen.getByRole("button", { name: /add comment thread/i }));
+    await user.type(screen.getByLabelText("Comment"), "Please fix this.");
+    await user.click(screen.getByRole("button", { name: /run review/i }));
+    expect(onRun.mock.calls[0][0].commentThreads).toHaveLength(1);
+
+    await user.click(screen.getByRole("button", { name: /remove thread/i }));
+    await user.click(screen.getByRole("button", { name: /run review/i }));
+    expect(onRun.mock.calls[1][0].commentThreads).toBeUndefined();
+  });
 });
