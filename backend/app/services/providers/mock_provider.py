@@ -18,7 +18,9 @@ from typing import Callable, Optional
 from app.models.diff import DiffFile, ParsedDiff
 from app.models.enums import FindingSeverity, ReviewerPersona, RiskLevel
 from app.models.review import HunkReference, PersonaReview, ReviewFinding
+from app.models.tone import DEFAULT_TONE_PROFILE, ToneProfile
 from app.personas.registry import get_persona_spec
+from app.services.tone_renderer import ToneRenderer
 
 from .base import ReviewProvider
 
@@ -671,6 +673,20 @@ class _MockDiffSession:
         return out
 
 
+def _apply_tone(renderer: ToneRenderer, finding: ReviewFinding) -> ReviewFinding:
+    """Return a copy of ``finding`` with only its text fields reworded.
+
+    Detection fields (id, reviewer, severity, file path, hunk reference,
+    confidence, title) are preserved exactly via ``model_copy``.
+    """
+    return finding.model_copy(
+        update={
+            "explanation": renderer.render_explanation(finding.explanation),
+            "recommendation": renderer.render_recommendation(finding.recommendation),
+        }
+    )
+
+
 class MockReviewProvider(ReviewProvider):
     """Deterministic, offline `ReviewProvider` backed by heuristics."""
 
@@ -682,17 +698,29 @@ class MockReviewProvider(ReviewProvider):
         selected_personas: list[ReviewerPersona],
         title: Optional[str] = None,
         description: Optional[str] = None,
+        tone_profiles: Optional[dict[ReviewerPersona, ToneProfile]] = None,
     ) -> list[PersonaReview]:
         session = _MockDiffSession(parsed_diff)
+        tone_profiles = tone_profiles or {}
         reviews: list[PersonaReview] = []
         for persona in selected_personas:
             findings = session.findings_for(persona)
+            # Risk and severities are computed from the raw findings; tone only
+            # reframes wording afterwards and never affects detection.
+            risk = _persona_risk(findings)
+            summary = _persona_summary(persona, findings)
+
+            tone = tone_profiles.get(persona) or DEFAULT_TONE_PROFILE
+            renderer = ToneRenderer(tone, persona)
+            toned_findings = [_apply_tone(renderer, f) for f in findings]
+            toned_summary = renderer.render_summary(summary)
+
             reviews.append(
                 PersonaReview(
                     persona=persona,
-                    risk_level=_persona_risk(findings),
-                    summary=_persona_summary(persona, findings),
-                    findings=findings,
+                    risk_level=risk,
+                    summary=toned_summary,
+                    findings=toned_findings,
                 )
             )
         return reviews

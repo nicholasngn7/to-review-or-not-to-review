@@ -21,6 +21,7 @@ from typing import Optional
 from app.models.diff import ParsedDiff
 from app.models.enums import ReviewerPersona
 from app.models.review import PersonaReview
+from app.models.tone import ToneProfile
 
 from .base import ReviewProvider
 
@@ -42,5 +43,6 @@ class BedrockReviewProvider(ReviewProvider):
         selected_personas: list[ReviewerPersona],
         title: Optional[str] = None,
         description: Optional[str] = None,
+        tone_profiles: Optional[dict[ReviewerPersona, ToneProfile]] = None,
     ) -> list[PersonaReview]:
         raise NotImplementedError(_NOT_IMPLEMENTED_MESSAGE)

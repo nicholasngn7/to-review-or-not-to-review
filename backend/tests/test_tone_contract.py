@@ -173,6 +173,8 @@ def test_tone_does_not_change_detection_results():
         )
     )
 
+    # Detection is identical regardless of tone.
     assert _detection_fingerprint(baseline) == _detection_fingerprint(toned)
-    # Phase 12 is fully behavior-neutral: the whole response is identical.
-    assert baseline.model_dump() == toned.model_dump()
+    # As of Phase 13A tone *does* reword presentation text, so the full responses
+    # are no longer byte-identical — wording-only tone rendering lives in
+    # tests/test_tone_rendering.py. Detection invariance is what matters here.

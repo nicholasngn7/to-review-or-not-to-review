@@ -65,9 +65,30 @@ recommendation, diff parsing, or provider selection.
 (`direct` / `medium` / `normal`). If both fields are omitted, behavior is
 identical to before tone existed (fully backward-compatible).
 
-This is **contract groundwork** (Phase 12). The fields validate and resolve, but
-no wording is changed yet — tone UI and rendering arrive in later phases. Tone
-enum values are listed under [Enum values](#enum-values).
+**Status (Phase 13A):** tone is now **rendered by the deterministic mock
+provider**. When a profile resolves to something other than the default, the
+provider rewords three text fields only — a finding's `explanation`, a finding's
+`recommendation`, and the persona `summary`. Everything else is invariant:
+finding ids, `reviewer`, `severity`, `filePath`, `hunkReference`, `confidence`,
+`title`, `overallRisk`, `mergeRecommendation`, and `diffStats`.
+
+How each axis renders (deterministic, table-driven — no AI):
+
+- **style** sets a leading framing on `recommendation`/`summary`
+  (`direct` = no prefix/baseline; `supportive`, `educational`, `strict`,
+  `curious`, `executive` each add a distinct prefix).
+- **strictness** adjusts emphasis on `recommendation` only (`medium` = baseline;
+  `low` softens, `high` adds a merge-safety nudge). It never changes severity.
+- **verbosity** adjusts `explanation` detail (`normal` = baseline; `brief`
+  trims to the first sentence; `detailed` appends a clarifying note). It never
+  changes the number of findings.
+- **customInstructions**, when present, is appended to the persona `summary` as a
+  short reviewer note.
+
+The default profile (`direct` / `medium` / `normal`, no custom instructions) is an
+exact no-op, so omitting tone is byte-identical to the pre-tone output. Tone enum
+values are listed under [Enum values](#enum-values). Real AI-driven tone rendering
+and a tone-selection UI are still future work.
 
 ## Response shape
 

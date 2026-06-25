@@ -172,3 +172,27 @@ No code is implemented yet.
   a future LLM provider) and the `ReviewProvider` boundary; replies get their own
   endpoint but the same mock-first, provider-agnostic approach. No real AI in
   v0.2.
+
+## Tone rendering decisions (Phase 13A)
+
+Implements the tone contract from Phase 12 in the deterministic mock provider.
+
+- **Tone rendering is deterministic and local.** `app/services/tone_renderer.py`
+  is a small, table-driven renderer (fixed prefixes/suffixes, first-sentence
+  trimming). Given the same profile, persona, and text, output is always
+  identical. No NLG/LLM is involved; real AI-driven tone is still deferred.
+- **Tone reaches the provider via a resolved map, not the whole request.** The
+  engine resolves tone per persona (override → global → default) and passes
+  `tone_profiles: dict[ReviewerPersona, ToneProfile]` to
+  `ReviewProvider.review(...)`. This keeps providers easy to test and avoids
+  coupling them to `ReviewRequest`. The argument is optional and defaults to the
+  built-in tone, so existing provider callers keep working.
+- **Rendering happens after detection.** Findings (ids, severity, file/hunk refs,
+  confidence) and per-persona risk are computed first; the renderer only rewrites
+  `explanation`, `recommendation`, and `summary` afterwards via `model_copy`.
+  Aggregation reads raw severities, so tone cannot move risk or recommendation.
+- **The default profile is an exact no-op.** `direct` / `medium` / `normal` with
+  no custom instructions reproduces the pre-tone output byte-for-byte, verified by
+  a regression test — backward compatibility is preserved.
+- **Tone UI is still future work (Phase 13B).** Only the backend renders tone for
+  now; there is no way to *set* tone from the UI yet.

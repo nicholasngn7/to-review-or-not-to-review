@@ -26,6 +26,7 @@ from app.models.review import (
     ReviewResponse,
     ReviewSummary,
 )
+from app.models.tone import ToneProfile, resolve_tone_profile
 from app.services.diff_parser import parse_diff
 from app.services.providers import ReviewProvider, create_provider
 
@@ -126,11 +127,17 @@ def run_review(
     provider = provider or create_provider()
 
     personas = _dedupe_personas(request.selected_personas)
+    # Resolve tone per persona (per-persona override -> global -> default) and pass
+    # it to the provider. Tone is presentation only and never affects aggregation.
+    tone_profiles: dict[ReviewerPersona, ToneProfile] = {
+        persona: resolve_tone_profile(persona, request) for persona in personas
+    }
     persona_reviews: list[PersonaReview] = provider.review(
         parsed,
         personas,
         title=request.title,
         description=request.description,
+        tone_profiles=tone_profiles,
     )
 
     all_findings: list[ReviewFinding] = [

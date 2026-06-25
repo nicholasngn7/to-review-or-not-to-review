@@ -17,6 +17,7 @@ from typing import Optional
 from app.models.diff import ParsedDiff
 from app.models.enums import ReviewerPersona
 from app.models.review import PersonaReview
+from app.models.tone import ToneProfile
 
 
 class ReviewProvider(ABC):
@@ -32,10 +33,17 @@ class ReviewProvider(ABC):
         selected_personas: list[ReviewerPersona],
         title: Optional[str] = None,
         description: Optional[str] = None,
+        tone_profiles: Optional[dict[ReviewerPersona, ToneProfile]] = None,
     ) -> list[PersonaReview]:
         """Return one `PersonaReview` per selected persona, in the given order.
 
         Implementations should not aggregate across personas; the review engine
         handles overall risk, recommendation, and summary.
+
+        ``tone_profiles`` maps each persona to its already-resolved `ToneProfile`
+        (per-persona override -> global -> default). Tone is presentation only:
+        providers may use it to reword explanation/recommendation/summary text but
+        must not let it change detection, severity, or any aggregate. When omitted,
+        providers must behave as if every persona uses the default tone.
         """
         raise NotImplementedError

@@ -99,7 +99,12 @@ def test_engine_does_not_swallow_provider_errors():
         name = "failing"
 
         def review(
-            self, parsed_diff: ParsedDiff, selected_personas, title=None, description=None
+            self,
+            parsed_diff: ParsedDiff,
+            selected_personas,
+            title=None,
+            description=None,
+            tone_profiles=None,
         ) -> list[PersonaReview]:
             raise RuntimeError("provider exploded")
 
