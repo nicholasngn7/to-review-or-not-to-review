@@ -43,6 +43,16 @@ them in here with the exact filenames below.
    **Normalize comments**, **Load imported threads**, then **Run Review**. Capture
    each of the four states from the v0.3 table above in order.
 
+## Automation (in progress)
+
+A Playwright **demo harness** now exists (`frontend/playwright.config.ts`,
+`frontend/demo/`) — see [`demo-automation-plan.md`](../demo-automation-plan.md). As of
+**Phase A it only scaffolds** the harness and reusable flows; it does **not** generate
+screenshots or videos. Until the capture specs land (Phases B/C), keep capturing the
+images above manually. Generated demo videos will live in
+[`videos/`](videos/). The harness uses the same conventions below (1440×900 @ 2x,
+Chromium) and drives only built-in sample diffs and bundled synthetic import samples.
+
 ## Conventions
 
 - **Format:** PNG.

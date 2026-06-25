@@ -4,3 +4,9 @@ dist-ssr/
 *.local
 .vite/
 *.tsbuildinfo
+
+# Playwright demo automation
+/demo/.artifacts/
+/playwright-report/
+/test-results/
+/.playwright/

@@ -11,5 +11,8 @@ export default defineConfig({
     globals: true,
     setupFiles: "./src/test/setup.ts",
     css: false,
+    // Scope Vitest to the app source so the Playwright demo specs under `demo/`
+    // (which import @playwright/test) are never collected by the unit runner.
+    include: ["src/**/*.{test,spec}.{ts,tsx}"],
   },
 });

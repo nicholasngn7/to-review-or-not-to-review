@@ -1,9 +1,26 @@
 # Demo Automation Plan — MR Review Council (v0.1 / v0.2 / v0.3)
 
-> **Status: planning only.** No automation code, Playwright dependency, screenshots,
-> or videos are added by this document. It describes *how* we will generate
-> screenshots and short demo videos for each milestone in a later implementation
-> phase.
+> **Status: Phase A implemented (harness only).** The Playwright scaffold and reusable
+> demo flow helpers now exist; **no screenshots or videos are generated yet**. The
+> remaining phases (screenshot specs, video specs, docs wiring) are still planning.
+> This document describes *how* we will generate screenshots and short demo videos for
+> each milestone.
+>
+> **Phase A — added (frontend):**
+> - `@playwright/test` as a **dev dependency** (Chromium installed via
+>   `npm run demo:install-browsers`).
+> - `frontend/playwright.config.ts` — `testDir: ./demo`, baseURL `:5173`, viewport
+>   1440×900 @ 2x, Chromium, `screenshot: "only-on-failure"`, `video: "off"`,
+>   `webServer` that reuses or starts `npm run dev` (frontend only; it does **not**
+>   start the backend). Exports `DEMO_VIDEO_DIR = "../docs/assets/videos"` for Phase C.
+> - `frontend/demo/helpers/selectors.ts`, `waitForReview.ts`, `flows.ts` — the ten
+>   reusable, version-tolerant flows (each post-v0.1 feature has an `...IfAvailable`
+>   no-op variant).
+> - `frontend/demo/demo-harness.smoke.spec.ts` — loads `/`, asserts the shell renders;
+>   no captures, no backend needed, no v0.2/v0.3-only dependencies.
+> - `package.json` scripts: `demo:smoke`, `demo:install-browsers`.
+> - Vitest scoped to `src/**` so it never collects the Playwright `demo/` specs;
+>   `demo/.artifacts/` and Playwright report dirs are gitignored.
 >
 > **Honesty guardrails (must hold in any future implementation):** demos use only the
 > built-in sample diffs and **bundled synthetic import samples**. No real
@@ -222,10 +239,11 @@ When assets are generated, update:
 
 ## 11. Proposed implementation phases
 
-1. **Phase A — Playwright scaffold (frontend).** Add Playwright as a dev dependency,
-   `playwright.config.ts` (baseURL, viewport, DPR, `recordVideo`, optional
-   `webServer`), and a `demo/helpers/flows.ts` with the shared scripted flows. No
-   captures yet; verify the harness launches against a running dev server.
+1. **Phase A — Playwright scaffold (frontend). ✅ Done.** Added Playwright as a dev
+   dependency, `playwright.config.ts` (baseURL, viewport, DPR, `webServer`,
+   `DEMO_VIDEO_DIR` for later video output), `demo/helpers/{selectors,waitForReview,flows}.ts`
+   with the shared scripted flows, and a smoke spec verifying the harness launches.
+   No captures generated.
 2. **Phase B — Screenshot scripts + `demo:screenshots`.** Implement the per-milestone
    screenshot specs and the npm script; generate v0.3 shots first (current tree), then
    v0.1/v0.2 from worktrees. Land the new `screenshots/vX/` folders + reconcile links.
@@ -236,12 +254,18 @@ When assets are generated, update:
 
 ## 12. Recommended next implementation prompt
 
-> "Implement Phase A of demo automation for MR Review Council: add Playwright to the
-> frontend as a dev dependency, create `frontend/playwright.config.ts` (baseURL
-> `http://localhost:5173`, viewport 1440×900, deviceScaleFactor 2, `recordVideo` into
-> `docs/assets/videos/`, optional `webServer` running `npm run dev`), and a
-> `frontend/demo/helpers/flows.ts` with reusable, selector-driven flows (load demo
-> diff, run review, open import panel, load sample, normalize, load imported threads,
-> open suggested replies). Do not capture assets yet and do not add live provider
-> calls, OAuth, tokens, URL input, posting, or real AI. Verify the harness launches
-> against the running dev servers, then stop."
+Phase A is complete. The next step is **Phase B — screenshot specs**:
+
+> "Implement Phase B of demo automation for MR Review Council: screenshot capture
+> specs and the `demo:screenshots` script, using the existing Playwright harness and
+> `frontend/demo/helpers/flows.ts`. Create per-milestone screenshot specs that write
+> PNGs into `docs/assets/screenshots/v0.1|v0.2|v0.3/` with the filenames in the demo
+> automation plan, capturing only built-in sample diffs and bundled synthetic import
+> samples. Generate v0.3 shots from the current tree; generate v0.1/v0.2 shots from
+> `git worktree` checkouts of `v0.1.0`/`v0.2.0` (document the worktree steps). Add
+> `npm run demo:screenshots`. Running a review needs the backend on port 8000, so
+> document/verify that prerequisite. Reconcile the existing flat `docs/assets/*.png`
+> placeholders with the new `screenshots/vX/` structure and update README +
+> `docs/assets/README.md` links. Do not add live provider calls, OAuth, tokens, URL
+> input, posting, or real AI, and label any current-app fallback honestly. Then verify
+> a dry run and stop."

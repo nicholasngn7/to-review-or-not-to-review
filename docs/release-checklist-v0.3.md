@@ -20,6 +20,11 @@ or post comments, and adds **no** real AI/LLM calls.
   ```bash
   cd frontend && npm test
   ```
+- [ ] **Demo harness smoke** passes (Playwright scaffold; generates no assets):
+  ```bash
+  cd frontend && npm run demo:install-browsers   # first time only
+  cd frontend && npm run demo:smoke
+  ```
 
 ## Manual demo flow
 
