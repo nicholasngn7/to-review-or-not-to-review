@@ -1,8 +1,38 @@
 # Screenshots & demo assets
 
-This folder holds the screenshots referenced by the root [`README.md`](../../README.md).
-Images are intentionally **not committed yet** — capture them locally and drop
-them in here with the exact filenames below.
+This folder holds the screenshots and (later) demo videos referenced by the root
+[`README.md`](../../README.md).
+
+## Canonical layout (v0.1+ structured)
+
+Screenshots are now organized by milestone and generated from the **real running app**
+by the Playwright demo specs (`frontend/demo/screenshots/`):
+
+```
+docs/assets/screenshots/v0.1/   v0.1-core-review-input.png, v0.1-review-results.png, v0.1-markdown-export.png
+docs/assets/screenshots/v0.2/   v0.2-reviewer-tone-panel.png, v0.2-comment-threads-input.png, v0.2-suggested-replies.png
+docs/assets/screenshots/v0.3/   v0.3-import-sample-panel.png, v0.3-normalized-import-preview.png,
+                                v0.3-imported-threads-review-results.png, v0.3-suggested-replies-from-imported-comments.png
+docs/assets/videos/             (Phase C — not generated yet)
+```
+
+**Generation status:** the **v0.3** set is generated from the `v0.3.0` tree. The
+**v0.1/v0.2** sets are capture targets — generate them from `v0.1.0` / `v0.2.0`
+worktrees (see [`../demo-automation-plan.md`](../demo-automation-plan.md) §1 and the
+per-version commands there). Mark worktree-captured assets as exact-version.
+
+```bash
+# From the frontend dir, with the backend running on :8000:
+npm run demo:screenshots          # all specs (current tree)
+npm run demo:screenshots:v0.1     # v0.1 specs only
+npm run demo:screenshots:v0.2     # v0.2 specs only
+npm run demo:screenshots:v0.3     # v0.3 specs only
+```
+
+> The legacy flat filenames in the table below (`main-review-input.png`,
+> `risky-review-dashboard.png`, `markdown-export.png`) are **superseded** by the
+> structured `screenshots/v0.1/` names above and are kept only as historical
+> capture notes.
 
 ## Images to capture
 
@@ -45,13 +75,14 @@ them in here with the exact filenames below.
 
 ## Automation (in progress)
 
-A Playwright **demo harness** now exists (`frontend/playwright.config.ts`,
-`frontend/demo/`) — see [`demo-automation-plan.md`](../demo-automation-plan.md). As of
-**Phase A it only scaffolds** the harness and reusable flows; it does **not** generate
-screenshots or videos. Until the capture specs land (Phases B/C), keep capturing the
-images above manually. Generated demo videos will live in
-[`videos/`](videos/). The harness uses the same conventions below (1440×900 @ 2x,
-Chromium) and drives only built-in sample diffs and bundled synthetic import samples.
+A Playwright **demo harness** exists (`frontend/playwright.config.ts`,
+`frontend/demo/`) — see [`demo-automation-plan.md`](../demo-automation-plan.md).
+**Phase B added screenshot capture specs** (`frontend/demo/screenshots/`) and the
+`demo:screenshots[:v0.1|v0.2|v0.3]` scripts (see commands above). Demo **videos** are
+still **Phase C** (not generated yet) and will live in [`videos/`](videos/). The
+harness uses the conventions below (1440×900 @ 2x, Chromium) and drives only built-in
+sample diffs and bundled synthetic import samples — no provider fetch, tokens, OAuth,
+or posting.
 
 ## Conventions
 

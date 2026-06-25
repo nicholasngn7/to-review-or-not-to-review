@@ -68,11 +68,31 @@ git worktree add ../mrrc-v0.3 v0.3.0
 ```
 
 Each worktree gets its own backend `.venv` and `npm install` (dependencies may differ
-per tag). Run that worktree's backend + frontend, capture, then tear down:
+per tag). Run that worktree's backend + frontend, capture, then tear down. Full
+per-version capture (repeat for v0.2 / v0.3, swapping the version):
 
 ```bash
-git worktree remove ../mrrc-v0.1   # repeat per version when done
+# 1) Backend deps + server on :8000 (in the worktree)
+cd ../mrrc-v0.1/backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --port 8000 &        # leave running
+
+# 2) Frontend deps + capture (new terminal, in the worktree)
+cd ../mrrc-v0.1/frontend
+npm install
+npm run demo:install-browsers             # first time only
+npm run demo:screenshots:v0.1             # writes docs/assets/screenshots/v0.1/*.png
+
+# 3) Tear down when done
+git worktree remove ../mrrc-v0.1
 ```
+
+> The screenshot scripts write to `docs/assets/screenshots/vX/` **relative to that
+> worktree**. Copy the PNGs back to the primary checkout (or capture from a worktree
+> created inside the primary repo) so the committed assets land in the main tree.
+> **No cross-worktree automation loop is provided** — these documented commands are
+> the supported path.
 
 > **Milestone-style fallback (only if a tag fails to run):** capture all three flows
 > from the current `v0.3.0` app, since it is a superset, and label them truthfully as
@@ -244,9 +264,13 @@ When assets are generated, update:
    `DEMO_VIDEO_DIR` for later video output), `demo/helpers/{selectors,waitForReview,flows}.ts`
    with the shared scripted flows, and a smoke spec verifying the harness launches.
    No captures generated.
-2. **Phase B — Screenshot scripts + `demo:screenshots`.** Implement the per-milestone
-   screenshot specs and the npm script; generate v0.3 shots first (current tree), then
-   v0.1/v0.2 from worktrees. Land the new `screenshots/vX/` folders + reconcile links.
+2. **Phase B — Screenshot scripts + `demo:screenshots`. ✅ Done.** Added
+   `frontend/demo/screenshots/v0.{1,2,3}.screenshots.spec.ts` (built on the Phase A
+   flows + a `helpers/screenshot.ts`), `demo:screenshots[:v0.1|v0.2|v0.3]` scripts, and
+   the `docs/assets/screenshots/vX/` folders. **v0.3 assets were captured from the
+   `v0.3.0` tree**; v0.1/v0.2 remain capture targets via worktrees. Specs `test.skip`
+   gracefully when a feature is absent (so a wrong-version run never writes a
+   misleading image). Reconciled README/`docs/assets` links to the structured paths.
 3. **Phase C — Video scripts + `demo:video:*` / `demo:all`.** Add the three recording
    specs and scripts; produce the `.webm` files into `docs/assets/videos/`.
 4. **Phase D — Docs wiring.** Update README, `demo-script.md`, `docs/assets/README.md`,
@@ -254,18 +278,18 @@ When assets are generated, update:
 
 ## 12. Recommended next implementation prompt
 
-Phase A is complete. The next step is **Phase B — screenshot specs**:
+Phases A and B are complete. The next step is **Phase C — video specs**:
 
-> "Implement Phase B of demo automation for MR Review Council: screenshot capture
-> specs and the `demo:screenshots` script, using the existing Playwright harness and
-> `frontend/demo/helpers/flows.ts`. Create per-milestone screenshot specs that write
-> PNGs into `docs/assets/screenshots/v0.1|v0.2|v0.3/` with the filenames in the demo
-> automation plan, capturing only built-in sample diffs and bundled synthetic import
-> samples. Generate v0.3 shots from the current tree; generate v0.1/v0.2 shots from
-> `git worktree` checkouts of `v0.1.0`/`v0.2.0` (document the worktree steps). Add
-> `npm run demo:screenshots`. Running a review needs the backend on port 8000, so
-> document/verify that prerequisite. Reconcile the existing flat `docs/assets/*.png`
-> placeholders with the new `screenshots/vX/` structure and update README +
-> `docs/assets/README.md` links. Do not add live provider calls, OAuth, tokens, URL
-> input, posting, or real AI, and label any current-app fallback honestly. Then verify
-> a dry run and stop."
+> "Implement Phase C of demo automation for MR Review Council: short demo **video**
+> specs and `demo:video:v0.1|v0.2|v0.3` + `demo:all` scripts, using the existing
+> Playwright harness and `frontend/demo/helpers/flows.ts`. Record one `.webm` per
+> milestone into `docs/assets/videos/` (use a context with `recordVideo` pointed at
+> `DEMO_VIDEO_DIR` from `playwright.config.ts`, and rename the output to the plan's
+> filenames). Drive only built-in sample diffs and bundled synthetic import samples;
+> keep each video ≤90s. Document ffmpeg as an optional (not required) post-step for
+> `.mp4`/`.gif` derivatives. Generate v0.3 from the current tree and v0.1/v0.2 from
+> worktrees. The review/import steps need the backend on port 8000. Do not add live
+> provider calls, OAuth, tokens, URL input, posting, or real AI. Update README
+> (Demo video section), `docs/assets/README.md`, and `docs/release-checklist-v0.3.md`,
+> keeping wording truthful (do not claim assets exist until generated). Verify a v0.3
+> recording and stop."

@@ -232,54 +232,73 @@ reviewer with file/location/confidence. See
 
 ## Screenshots
 
-> **Note:** the images below are placeholders — capture them locally and drop the
-> PNGs into [`docs/assets/`](docs/assets/) using the exact filenames shown. See
-> [`docs/assets/README.md`](docs/assets/README.md) for sizes and the app state to
-> set up for each shot. (Until then, the image links render as their captions.)
+Screenshots are generated from the real running app by the Playwright demo specs
+(`frontend/demo/screenshots/`) and live under
+[`docs/assets/screenshots/v0.1|v0.2|v0.3/`](docs/assets/screenshots/). See
+[`docs/demo-automation-plan.md`](docs/demo-automation-plan.md) for how to (re)generate
+them per exact release tag via git worktrees, and
+[`docs/assets/README.md`](docs/assets/README.md) for capture conventions.
 
-### Main review input
+> **Status:** the **v0.3** images below are generated from the **`v0.3.0`** tree. The
+> **v0.1** and **v0.2** images are **capture targets** — run their specs from `v0.1.0`
+> / `v0.2.0` worktrees (per the demo automation plan) to produce exact-version assets.
+> Until captured, those links render as their captions. No demo **videos** exist yet.
 
-![Main review input screen — diff input with a demo loaded and personas selected](docs/assets/main-review-input.png)
+### v0.1 — core review MVP (capture targets)
 
-*The input panel: load a built-in demo diff (or paste/upload your own), pick
-reviewer personas, and run a review. Shown here with the low-risk frontend demo
-loaded, before running.*
+![Core review input — diff loaded with personas selected](docs/assets/screenshots/v0.1/v0.1-core-review-input.png)
 
-### Risky backend review dashboard
+*The input panel: load a built-in demo diff (or paste/upload your own), pick reviewer
+personas, and run a review.*
 
-![Risky backend review dashboard — high risk verdict, stats, reviewer tabs, and finding cards](docs/assets/risky-review-dashboard.png)
+![Review results — risk verdict, stats, reviewer tabs, and finding cards](docs/assets/screenshots/v0.1/v0.1-review-results.png)
 
-*The results dashboard for the risky backend demo: overall risk and merge
-recommendation badges, diff stats, reviewer tabs, severity filtering, and
-detailed finding cards from the Security/QA/Backend/SRE personas.*
+*The results dashboard: overall risk and merge recommendation badges, diff stats,
+reviewer tabs, severity filtering, and detailed finding cards.*
 
-### Markdown export
+![Markdown export control in the results toolbar](docs/assets/screenshots/v0.1/v0.1-markdown-export.png)
 
-![Markdown export output — the exported report rendered as Markdown](docs/assets/markdown-export.png)
+*The results toolbar with the **Export Markdown** control (downloads the full review
+as a `.md` report).*
 
-*The downloaded `.md` report (rendered): overview with risk/recommendation/stats,
-the council summary, and findings grouped by reviewer — the full review,
-independent of any UI filters.*
+### v0.2 — reviewer tone, comment threads, suggested replies (capture targets)
 
-### v0.3 — Local comment import demo
+![Reviewer voice / tone panel](docs/assets/screenshots/v0.2/v0.2-reviewer-tone-panel.png)
 
-> Placeholders — capture locally per [`docs/assets/README.md`](docs/assets/README.md).
+*The "Reviewer voice" panel: tone / strictness / verbosity controls and optional
+per-persona overrides (presentation only).*
 
-![Import comments panel with bundled sample payload buttons](docs/assets/v0.3-import-sample-panel.png)
+![Existing comment threads input with a synthetic local comment](docs/assets/screenshots/v0.2/v0.2-comment-threads-input.png)
 
-*The "Import comments (local demo)" panel: bundled synthetic sample buttons, provider/source selectors, and the JSON textarea — no URL or token input.*
+*Capturing existing MR/PR discussion comments locally as structured input.*
 
-![Normalized import preview with thread count and warnings](docs/assets/v0.3-normalized-import-preview.png)
+![Suggested replies for submitted comment threads](docs/assets/screenshots/v0.2/v0.2-suggested-replies.png)
 
-*After Normalize comments: the normalized-thread count, any warnings, and a read-only preview of the imported threads.*
+*Deterministic, copy-only suggested replies for the submitted comment threads.*
 
-![Review results from imported comment threads](docs/assets/v0.3-imported-threads-review-results.png)
+### v0.3 — local fixture-based comment import demo (generated from `v0.3.0`)
+
+![Import comments panel with bundled sample payload buttons](docs/assets/screenshots/v0.3/v0.3-import-sample-panel.png)
+
+*The "Import comments (local demo)" panel: bundled synthetic sample buttons,
+provider/source selectors, and the JSON textarea — no URL or token input.*
+
+![Normalized import preview with thread count and warnings](docs/assets/screenshots/v0.3/v0.3-normalized-import-preview.png)
+
+*After Normalize comments: the normalized-thread count, any warnings, and a read-only
+preview of the imported threads.*
+
+![Review results from imported comment threads](docs/assets/screenshots/v0.3/v0.3-imported-threads-review-results.png)
 
 *The review dashboard after loading imported threads and running the review.*
 
-![Suggested replies generated from imported comments](docs/assets/v0.3-suggested-replies-from-imported-comments.png)
+![Suggested replies generated from imported comments](docs/assets/screenshots/v0.3/v0.3-suggested-replies-from-imported-comments.png)
 
-*Deterministic, copy-only suggested replies generated for the imported comment threads, with file/line context.*
+*Deterministic, copy-only suggested replies generated for the imported comment
+threads, with file/line context.*
+
+> The older flat `docs/assets/*.png` placeholders are superseded by the structured
+> `docs/assets/screenshots/vX/` paths above.
 
 ## Portfolio notes
 
