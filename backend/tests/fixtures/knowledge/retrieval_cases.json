@@ -1,0 +1,38 @@
+[
+  {
+    "id": "auth-1",
+    "query": "authentication oauth access token login refresh credentials session",
+    "expectedSourcePaths": ["docs/authentication.md"],
+    "minimumTopKHitCount": 1
+  },
+  {
+    "id": "retrieval-1",
+    "query": "retrieval chunking embedding index citation cosine provenance chunk",
+    "expectedSourcePaths": ["docs/retrieval.md"],
+    "minimumTopKHitCount": 1
+  },
+  {
+    "id": "frontend-1",
+    "query": "frontend react component rendering ui state buttons layout renders",
+    "expectedSourcePaths": ["docs/frontend.md"],
+    "minimumTopKHitCount": 1
+  },
+  {
+    "id": "reliability-1",
+    "query": "reliability retries timeout backoff observability logging metrics jitter",
+    "expectedSourcePaths": ["docs/reliability.md"],
+    "minimumTopKHitCount": 1
+  },
+  {
+    "id": "security-1",
+    "query": "security unsafe path traversal allow-list rejection validation fetched",
+    "expectedSourcePaths": ["docs/security.md"],
+    "minimumTopKHitCount": 1
+  },
+  {
+    "id": "no-hit-1",
+    "query": "authentication oauth token login",
+    "expectedSourcePaths": ["docs/nonexistent.md"],
+    "minimumTopKHitCount": 1
+  }
+]

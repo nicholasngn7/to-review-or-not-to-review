@@ -19,6 +19,14 @@ from .embedding import (
     EmbeddingProvider,
     tokenize,
 )
+from .evaluation import (
+    RetrievalEvaluationReport,
+    RetrievalEvaluationResult,
+    evaluate_case,
+    evaluate_retrieval,
+    load_evaluation_cases,
+    run_cases_against_index,
+)
 from .index import KnowledgeIndex, build_index
 from .ingestion import (
     DEFAULT_ALLOWED_ROOTS,
@@ -40,4 +48,10 @@ __all__ = [
     "build_index",
     "retrieve_context",
     "RetrievalError",
+    "load_evaluation_cases",
+    "evaluate_case",
+    "evaluate_retrieval",
+    "run_cases_against_index",
+    "RetrievalEvaluationResult",
+    "RetrievalEvaluationReport",
 ]

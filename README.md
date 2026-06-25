@@ -488,7 +488,9 @@ dev servers):
 > and **opt-in, provenance-only review grounding** — when a review request supplies
 > `knowledgeSources`, the review populates `contextUsed` and attaches per-finding
 > `citations` by lexical overlap, while detection, severity, risk, and the merge
-> recommendation stay **invariant**. It is a local **RAG architecture demo** —
+> recommendation stay **invariant**. A deterministic, offline **evaluation harness**
+> (fixed synthetic corpus + hit@k/precision@k/recall@k regression metrics) guards the
+> lexical retriever. It is a local **RAG architecture demo** —
 > lexical/deterministic retrieval, **not** semantic search, production-grade RAG, or any
 > live/Bedrock embedding calls (those remain optional future work). Full plan:
 > [`docs/v0.4-plan-rag-grounded-review.md`](docs/v0.4-plan-rag-grounded-review.md).

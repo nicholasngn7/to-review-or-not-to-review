@@ -522,3 +522,24 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   LLM-generated findings. No new dependencies and **no frontend UI** in this phase (the
   contextUsed/citations contract fields already exist from Phase 1B). Frontend surfacing is
   deferred to a later phase.
+- **Phase 6 adds offline retrieval evaluation fixtures + regression metrics only.** A fixed
+  synthetic corpus (`backend/tests/fixtures/knowledge/docs/`: authentication/OAuth,
+  retrieval/chunking/citations, frontend/UI, reliability/retries/observability,
+  security/path-rejection) and fixed cases (`retrieval_cases.json`, parsed into the Phase 1A
+  `RetrievalEvaluationCase`) feed `backend/app/services/knowledge/evaluation.py`, which adds
+  `load_evaluation_cases`, `evaluate_case`, `evaluate_retrieval`, `run_cases_against_index`,
+  and `RetrievalEvaluationResult`/`RetrievalEvaluationReport`. Metric definitions: an
+  expected item is an `expected_chunk_ids` entry matched by a result `chunk_id` or an
+  `expected_source_paths` entry matched by a result `source_path`; **hit_count** =
+  distinct expected items in the top-k; **hit@k** = `hit_count ≥ 1`; **recall@k** =
+  `hit_count / #expected`; **precision@k** = `relevant_top_k_results / #top_k_results`;
+  **passed** = `hit_count ≥ minimum_top_k_hit_count`. Cases use **expected source paths**
+  (stable regardless of repo root, unlike `doc-<sha1>` chunk ids) and lexical query terms
+  the deterministic hashing vectorizer can match — no semantic-synonym expectations. The
+  corpus is synthetic and repo-safe (no credentials, no external URLs, no private content).
+  Everything is deterministic and reproducible across runs, offline, and fixture-based; the
+  evaluator is **never wired into production routes** and does **not** change the review
+  flow. These metrics are **regression checks for the lexical retriever** and explicitly do
+  **not** prove semantic quality — this is still **not** production RAG, semantic search,
+  Bedrock/live provider, or LLM-generated review output. No new dependencies, endpoints, or
+  frontend UI.

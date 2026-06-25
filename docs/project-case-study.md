@@ -112,9 +112,10 @@ and deployment are future work behind the existing seams — see
   cosine index** (Phase 3), a **local-only retrieval service + `POST
   /api/retrieve-context` endpoint** (Phase 4), and **opt-in, provenance-only review
   grounding** (Phase 5 — populating `contextUsed` and per-finding `citations` by lexical
-  overlap, with detection/risk/recommendation kept invariant) are implemented and tested;
-  retrieval-evaluation fixtures and any UI surfacing are not built yet. It is scoped as a
-  local **RAG architecture
+  overlap, with detection/risk/recommendation kept invariant), and **offline retrieval
+  evaluation fixtures + regression metrics** (Phase 6 — deterministic hit@k/precision@k/
+  recall@k over a fixed synthetic corpus) are implemented and tested; UI surfacing of
+  retrieved context is not built yet. It is scoped as a local **RAG architecture
   demo** with lexical/deterministic retrieval — not semantic search, not production-grade
   RAG, and with no live/Bedrock embedding calls unless a real provider is later
   implemented and tested. Full plan:
