@@ -133,9 +133,9 @@ and focused on demonstrating the review pipeline and its architecture.
 - **Demo diffs included.** Built-in sample diffs (`frontend/src/samples/`) make
   the app demoable without a real MR and give repeatable "clean" vs "risky"
   reviews for screenshots and walkthroughs.
-- **Docs as a deliverable.** README (portfolio-oriented), `architecture.md` (flow
-  + Mermaid + where AWS fits), this decision log, and `review-contract.md` are
-  treated as part of the MVP, not an afterthought.
+- **Docs as a deliverable.** The README, `architecture.md` (flow + Mermaid + where
+  AWS fits), this decision log, and `review-contract.md` are treated as part of the
+  MVP, not an afterthought.
 - **Polish over new features.** Phase 10 was scoped to validation, docs, and
   cleanup (no unused imports; consistent route names `GET /health`,
   `POST /api/parse-diff`, `POST /api/reviews`); no new large features were added.

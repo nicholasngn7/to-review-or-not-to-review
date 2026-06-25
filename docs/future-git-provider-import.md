@@ -133,8 +133,8 @@ Reasons:
   Bedrock provider runs against battle-tested input.
 
 **Tradeoffs / when to flip the order:**
-- If the portfolio goal is specifically to show **LLM/Bedrock** skills, do Bedrock
-  first — it's the headline capability, and import can follow.
+- If demonstrating **LLM/Bedrock** integration is the priority, do Bedrock first —
+  it's the headline capability, and import can follow.
 - Import adds **security surface** (tokens, SSRF, rate limits) that must be done
   carefully; if you can't invest in that rigor yet, defer it.
 - The two are independent (one is input, the other is the provider), so either

@@ -120,10 +120,9 @@ A short add-on showing the normalization boundary. Skip it for the 60s cut.
 If you need the short cut (60s), trim the finding-card exploration and the
 closing line.
 
-## 6. What to emphasize technically
+## 6. Technical highlights to emphasize
 
-Work these in naturally (narration or on-screen callouts) — they're the
-portfolio signal:
+Work these in naturally (narration or on-screen callouts):
 
 - **React + TypeScript frontend** — component-driven UI, typed end to end.
 - **Python + FastAPI backend** — `POST /api/reviews` drives the flow.

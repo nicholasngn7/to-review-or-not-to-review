@@ -11,8 +11,8 @@ to Markdown.
 The entire project runs **locally with no cloud credentials and no paid APIs**.
 Reviews are produced by a deterministic *mock* provider behind a clean, pluggable
 interface, so a real Amazon Bedrock / OpenAI / Anthropic provider can drop in later
-**without changing the API or the UI**. It is a portfolio/architecture demonstration,
-shipped in three tagged milestones (`v0.1.0`, `v0.2.0`, `v0.3.0`).
+**without changing the API or the UI**. It is an architecture demonstration, shipped
+in three tagged milestones (`v0.1.0`, `v0.2.0`, `v0.3.0`).
 
 ---
 
@@ -77,11 +77,10 @@ product. This project explores what an automated "review council" could look
 like: many specialized reviewers over one diff, each with a clear focus, rolled
 up into a single risk/recommendation verdict.
 
-It's also a deliberate portfolio piece. The goal was to design the *architecture*
-of an AI-assisted reviewer — a clean diff → review → aggregation pipeline behind a
-provider seam — and prove the full product flow end to end **before** spending a
-cent on tokens or standing up cloud infrastructure. The mock provider keeps the
-app free, fast, deterministic, and easy for anyone to clone and run.
+The design goal was to build the *architecture* of an AI-assisted reviewer — a clean
+diff → review → aggregation pipeline behind a provider seam — and prove the full flow
+end to end **before** spending on tokens or standing up cloud infrastructure. The
+mock provider keeps the app free, fast, deterministic, and easy to clone and run.
 
 ## Key features
 
@@ -377,13 +376,11 @@ threads, with file/line context.*
 > The older flat `docs/assets/*.png` placeholders are superseded by the structured
 > `docs/assets/screenshots/vX/` paths above.
 
-## Portfolio notes
+## Project case study
 
-Positioning material — short/medium/long blurbs, resume bullet options, a LinkedIn
-entry + post draft, a GitHub pinned-repo summary, interview talking points, and a
-final accuracy checklist — lives in
-[`docs/portfolio-package.md`](docs/portfolio-package.md) (with an earlier, shorter
-set of notes in [`docs/portfolio-notes.md`](docs/portfolio-notes.md)).
+A neutral engineering overview — architecture and key decisions, milestones, testing,
+demo automation, and limitations — lives in
+[`docs/project-case-study.md`](docs/project-case-study.md).
 
 ### Future Git provider import (planned, not implemented)
 
