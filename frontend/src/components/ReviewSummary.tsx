@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import type { ReviewResponse } from "../types/review";
 import type { ReviewStatus } from "../hooks/useReview";
+import { ExportMarkdownButton } from "./ExportMarkdownButton";
 import { FindingsPanel } from "./FindingsPanel";
 import { MergeRecommendationBadge } from "./MergeRecommendationBadge";
 import { RiskBadge } from "./RiskBadge";
@@ -10,6 +11,8 @@ interface ReviewSummaryProps {
   status: ReviewStatus;
   result: ReviewResponse | null;
   error: string | null;
+  /** MR title from the submitted request, used in the exported report. */
+  title?: string | null;
 }
 
 function Stat({
@@ -40,7 +43,12 @@ function PanelShell({ children }: { children: ReactNode }) {
   );
 }
 
-export function ReviewSummary({ status, result, error }: ReviewSummaryProps) {
+export function ReviewSummary({
+  status,
+  result,
+  error,
+  title,
+}: ReviewSummaryProps) {
   if (status === "idle") {
     return (
       <PanelShell>
@@ -85,9 +93,14 @@ export function ReviewSummary({ status, result, error }: ReviewSummaryProps) {
 
   return (
     <PanelShell>
-      <div className="verdict">
-        <RiskBadge risk={result.overallRisk} />
-        <MergeRecommendationBadge recommendation={result.mergeRecommendation} />
+      <div className="results__toolbar">
+        <div className="verdict">
+          <RiskBadge risk={result.overallRisk} />
+          <MergeRecommendationBadge
+            recommendation={result.mergeRecommendation}
+          />
+        </div>
+        <ExportMarkdownButton result={result} title={title} />
       </div>
 
       <h3 className="results__headline">{summary.headline}</h3>

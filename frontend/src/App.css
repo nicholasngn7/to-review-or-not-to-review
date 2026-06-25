@@ -252,6 +252,19 @@
   background: var(--accent-hover);
 }
 
+.button--secondary {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+.button--secondary:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent-hover);
+}
+
 .button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -306,12 +319,20 @@
   }
 }
 
-/* ---- Results: verdict + stats ---- */
+/* ---- Results: toolbar + verdict + stats ---- */
+.results__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
 .verdict {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1rem;
 }
 
 .badge {

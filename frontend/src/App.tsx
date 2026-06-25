@@ -5,7 +5,7 @@ import { ReviewSummary } from "./components/ReviewSummary";
 import { useReview } from "./hooks/useReview";
 
 function App() {
-  const { status, result, error, submit } = useReview();
+  const { status, result, error, request, submit } = useReview();
 
   return (
     <div className="app">
@@ -21,7 +21,12 @@ function App() {
 
       <main className="app__main">
         <DiffInputPanel isLoading={status === "loading"} onRun={submit} />
-        <ReviewSummary status={status} result={result} error={error} />
+        <ReviewSummary
+          status={status}
+          result={result}
+          error={error}
+          title={request?.title}
+        />
       </main>
 
       <footer className="app__footer">

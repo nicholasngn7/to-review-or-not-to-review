@@ -45,3 +45,19 @@ A running log of notable choices made during the build.
 - **Empty states:** review-level "No findings found"; per-reviewer positive
   state when a persona that ran has no findings; and "No findings match the
   current filters." when filters exclude everything.
+
+## Markdown export (Phase 7)
+
+- **Client-side only.** Export builds the Markdown string in the browser
+  (`src/lib/exportMarkdown.ts`) and downloads it via a Blob + object URL. No
+  backend export endpoint.
+- **Title source.** `ReviewResponse` does not carry the MR title, so
+  `useReview` now retains the submitted `ReviewRequest`; `App` passes
+  `request.title` into `ReviewSummary` -> `ExportMarkdownButton`. Falls back to
+  "Untitled merge request" when absent.
+- **Full result, not filtered.** The report always reflects every persona and
+  finding via `personaReviews`, independent of the UI's reviewer/severity
+  filters. Findings are grouped by reviewer in canonical `PERSONA_ORDER`.
+- **Filename** is `mr-review-council-report.md`, with a sanitized title slug
+  appended when a title is present.
+- See `docs/sample-review-export.md` for an example of the output structure.

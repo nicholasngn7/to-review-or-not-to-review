@@ -68,6 +68,6 @@ This is an incremental build. What exists today (scaffold step):
 - [x] `POST /api/reviews` endpoint
 - [x] Review flow UI (diff input, persona selector, summary, finding cards)
 - [x] Results dashboard (risk/recommendation badges, stats, reviewer tabs, severity/persona filtering, empty states)
-- [ ] Export to Markdown
+- [x] Export review to Markdown (client-side download)
 
 No AI integration is wired up yet.
