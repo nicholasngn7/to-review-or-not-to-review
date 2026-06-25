@@ -156,6 +156,14 @@ Then explore the results: switch **reviewer tabs**, apply **severity filters**,
 read the finding cards, and click **Export Markdown**. The paste-your-own and
 `.diff`/`.patch` upload workflows work exactly the same way.
 
+## Demo video
+
+> _A recorded walkthrough (60–90s) can be added here later — link the video or
+> embed a GIF in [`docs/assets/`](docs/assets/)._
+
+A ready-to-record script, narration, timing guide, and recording checklist live
+in [`docs/demo-script.md`](docs/demo-script.md).
+
 ## Running tests and builds
 
 Backend tests (parser, review engine, providers, routes):
@@ -250,6 +258,16 @@ detailed finding cards from the Security/QA/Backend/SRE personas.*
 *The downloaded `.md` report (rendered): overview with risk/recommendation/stats,
 the council summary, and findings grouped by reviewer — the full review,
 independent of any UI filters.*
+
+## Portfolio notes
+
+Positioning material — project summary, resume bullet variants, a LinkedIn/GitHub
+blurb, and interview talking points — lives in
+[`docs/portfolio-notes.md`](docs/portfolio-notes.md). Design notes for a future
+GitHub/GitLab MR/PR diff import (adapters, security, proposed `POST /api/import-diff`)
+are in [`docs/future-git-provider-import.md`](docs/future-git-provider-import.md).
+Both are documentation only — no GitHub/GitLab integration, OAuth, or AI calls are
+implemented.
 
 ## Known limitations
 
