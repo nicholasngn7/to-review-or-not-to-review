@@ -1,0 +1,69 @@
+[
+  {
+    "id": 1001,
+    "user": { "login": "reviewer-alpha" },
+    "body": "Can we avoid swallowing this exception and add logging?",
+    "created_at": "2026-01-02T10:00:00Z",
+    "path": "service/auth.py",
+    "line": 42,
+    "original_line": 40,
+    "pull_request_review_id": 555,
+    "html_url": "https://example.test/acme/widgets/pull/7#discussion_r1001"
+  },
+  {
+    "id": 1002,
+    "in_reply_to_id": 1001,
+    "user": { "login": "reviewer-beta" },
+    "body": "Agreed — let's log at warning level and re-raise.",
+    "created_at": "2026-01-02T11:00:00Z",
+    "path": "service/auth.py",
+    "line": 42,
+    "html_url": "https://example.test/acme/widgets/pull/7#discussion_r1002"
+  },
+  {
+    "id": 1003,
+    "user": { "login": "reviewer-alpha" },
+    "body": "General note: please update the PR description before merge.",
+    "created_at": "2026-01-03T09:00:00Z",
+    "html_url": "https://example.test/acme/widgets/pull/7#discussion_r1003"
+  },
+  {
+    "id": 1004,
+    "user": { "login": "reviewer-gamma" },
+    "body": "This was already addressed in an earlier commit — resolving.",
+    "created_at": "2026-01-03T09:30:00Z",
+    "path": "service/config.py",
+    "line": 10,
+    "resolved": true,
+    "html_url": "https://example.test/acme/widgets/pull/7#discussion_r1004"
+  },
+  {
+    "id": 1005,
+    "user": { "login": "reviewer-alpha" },
+    "body": "This block moved during a rebase; the anchor is stale.",
+    "created_at": "2026-01-03T10:00:00Z",
+    "path": "service/legacy.py",
+    "original_line": 88,
+    "outdated": true,
+    "html_url": "https://example.test/acme/widgets/pull/7#discussion_r1005"
+  },
+  {
+    "id": 1006,
+    "user": { "login": "reviewer-beta" },
+    "body": "    ",
+    "created_at": "2026-01-03T10:15:00Z",
+    "path": "service/auth.py",
+    "line": 50,
+    "html_url": "https://example.test/acme/widgets/pull/7#discussion_r1006"
+  },
+  {
+    "id": 1007,
+    "in_reply_to_id": 9999,
+    "user": { "login": "reviewer-delta" },
+    "body": "Replying here, but the original comment seems to be gone.",
+    "created_at": "2026-01-03T11:00:00Z",
+    "path": "service/auth.py",
+    "line": 60,
+    "html_url": "https://example.test/acme/widgets/pull/7#discussion_r1007"
+  }
+]

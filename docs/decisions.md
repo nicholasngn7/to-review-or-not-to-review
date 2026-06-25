@@ -322,3 +322,12 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   already-fetched JSON via `rawPayload`. Provider-native ids live in
   `ExternalCommentReference` so the core `CommentThread` contract stays clean. This
   locks the target shape (and camelCase serialization) before mappers/fixtures land.
+- **GitHub review-comment mapping is pure and fixture-tested first (v0.3 Phase 2).**
+  Added `app/services/git_import/` (shared helpers + `map_github_review_comments_to_threads`)
+  that turns already-parsed GitHub-style dicts into `ImportedCommentThread`s — no
+  network, tokens, HTTP clients, or endpoints. Parsing is deliberately tolerant
+  (defensive `.get`, multiple key spellings) because the synthetic GitHub shape used
+  in `backend/tests/fixtures/github_pr_review_comments.json` **must be verified
+  against official GitHub API docs before any live call**. Mapping is deterministic
+  (first-seen root order, readable synthetic ids) so re-imports are idempotent, and
+  it never affects detection, routing, tone, or reply behavior.
