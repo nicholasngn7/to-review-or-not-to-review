@@ -76,10 +76,11 @@ cd frontend && npm run demo:screenshots:v0.3
 - [ ] `docs/assets/screenshots/v0.3/v0.3-imported-threads-review-results.png`
 - [ ] `docs/assets/screenshots/v0.3/v0.3-suggested-replies-from-imported-comments.png`
 
-> v0.1 / v0.2 screenshots are captured by running this harness against a historical app
-> started from a `v0.1.0` / `v0.2.0` worktree, via `DEMO_BASE_URL` (old tags lack the
+> v0.1 / v0.2 screenshots are **already captured** (committed under
+> `docs/assets/screenshots/v0.1|v0.2/`) from the `v0.1.0` / `v0.2.0` tags, by running
+> this harness against each historical app via `DEMO_BASE_URL` (old tags lack the
 > `demo:*` scripts) — see [`demo-automation-plan.md`](demo-automation-plan.md) §1 and
-> [`../frontend/demo/README.md`](../frontend/demo/README.md).
+> [`../frontend/demo/README.md`](../frontend/demo/README.md). Re-run only to refresh.
 
 ## Demo video (optional)
 
@@ -91,10 +92,10 @@ cd frontend && npm run demo:video:v0.3   # writes mr-review-council-v0.3-local-i
 
 - [ ] `docs/assets/videos/mr-review-council-v0.3-local-import-demo.webm` (from `v0.3.0`)
 
-> v0.1 / v0.2 videos are recorded the same way (current harness + `DEMO_BASE_URL`
-> against a `v0.1.0` / `v0.2.0` worktree app). `ffmpeg` conversion to `.mp4`/`.gif` is
-> optional. The v0.3 import video is a local fixture-based demo, not live
-> GitHub/GitLab integration.
+> v0.1 / v0.2 videos are **already recorded** the same way (current harness +
+> `DEMO_BASE_URL` against a `v0.1.0` / `v0.2.0` worktree app) and committed under
+> `docs/assets/videos/`. `ffmpeg` conversion to `.mp4`/`.gif` is optional. The v0.3
+> import video is a local fixture-based demo, not live GitHub/GitLab integration.
 
 ## Tag the release
 

@@ -33,7 +33,7 @@ test("v0.2 suggested replies demo", async ({ browser, baseURL }) => {
       await beat(page);
       const toneSelect = page.getByLabel("Tone", { exact: true }).first();
       if (await toneSelect.count()) {
-        await toneSelect.selectOptions("supportive").catch(() => {});
+        await toneSelect.selectOption("supportive").catch(() => {});
         await beat(page);
       }
     }

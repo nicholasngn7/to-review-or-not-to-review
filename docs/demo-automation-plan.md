@@ -303,16 +303,25 @@ When assets are generated, update:
    `demo:*` scripts), added [`../frontend/demo/README.md`](../frontend/demo/README.md),
    recaptured the heavy v0.3 results screenshot as a stable-viewport shot (~2.3 MB →
    ~0.5 MB), and wired README / `demo-script.md` / `docs/assets/README.md` /
-   `release-checklist-v0.3.md`. v0.1/v0.2 exact assets remain a manual capture step
-   (run the documented `DEMO_BASE_URL` flow when those worktrees are available).
+   `release-checklist-v0.3.md`.
+5. **Exact-version v0.1/v0.2 capture. ✅ Done.** Created `git worktree`s for `v0.1.0`
+   and `v0.2.0`, installed each historical backend/frontend, started them on :8000/:5173,
+   and ran the **current** harness against them via `DEMO_BASE_URL` to produce the
+   v0.1 (3 screenshots + 1 video) and v0.2 (3 screenshots + 1 video) assets — all
+   visually verified as the genuine tagged builds, then the worktrees were removed.
+   (Fixed one latent harness typo: the v0.2 video used `selectOptions` → corrected to
+   Playwright's `selectOption`.) README/`docs/assets` statuses flipped to
+   "generated from exact tag".
 
-## 12. Recommended next step
+## 12. Status
 
-Phases A–D are complete: the harness, screenshot/video specs, env-configurable capture,
-and docs are all in place; the **v0.3** assets are captured from the `v0.3.0` tree.
+**Phases A–D are complete and all demo assets are captured from their exact release
+tags** (`v0.1.0`, `v0.2.0`, `v0.3.0`):
 
-The only remaining work is **operational, not code**: capture the exact-version
-**v0.1 / v0.2** screenshots and videos by following §1 (worktree + `DEMO_BASE_URL`),
-then flip their README wording from "capture target" to generated-from-tag. No further
-automation changes are required; optionally add an `ffmpeg` `.mp4`/`.gif` step if a
-non-`.webm` format is needed.
+- v0.1 — `docs/assets/screenshots/v0.1/` (3 PNG) + `…-v0.1-core-review-demo.webm`
+- v0.2 — `docs/assets/screenshots/v0.2/` (3 PNG) + `…-v0.2-suggested-replies-demo.webm`
+- v0.3 — `docs/assets/screenshots/v0.3/` (4 PNG) + `…-v0.3-local-import-demo.webm`
+
+No further automation changes are required. To **regenerate** any set, follow §1
+(worktree + `DEMO_BASE_URL`). Total asset footprint is small (~5–6 MB), so regular Git
+is fine; `ffmpeg` `.mp4`/`.gif` conversion and Git LFS both remain **optional**.

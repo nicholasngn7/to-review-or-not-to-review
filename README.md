@@ -164,15 +164,14 @@ video specs (`frontend/demo/videos/`) and saved under
 
 | Milestone | Video |
 | --------- | ----- |
-| v0.1 core review | `mr-review-council-v0.1-core-review-demo.webm` *(capture target — see exact-version flow below)* |
-| v0.2 suggested replies | `mr-review-council-v0.2-suggested-replies-demo.webm` *(capture target — see exact-version flow below)* |
-| v0.3 local import | [`mr-review-council-v0.3-local-import-demo.webm`](docs/assets/videos/mr-review-council-v0.3-local-import-demo.webm) *(recorded from the `v0.3.0` tree)* |
+| v0.1 core review | [`mr-review-council-v0.1-core-review-demo.webm`](docs/assets/videos/mr-review-council-v0.1-core-review-demo.webm) *(recorded from the `v0.1.0` tag)* |
+| v0.2 suggested replies | [`mr-review-council-v0.2-suggested-replies-demo.webm`](docs/assets/videos/mr-review-council-v0.2-suggested-replies-demo.webm) *(recorded from the `v0.2.0` tag)* |
+| v0.3 local import | [`mr-review-council-v0.3-local-import-demo.webm`](docs/assets/videos/mr-review-council-v0.3-local-import-demo.webm) *(recorded from the `v0.3.0` tag)* |
 
-Exact-version videos are produced by running the **current** Playwright harness against
+The v0.1/v0.2 videos were recorded by running the **current** Playwright harness against
 the **historical** app started from the matching `v0.1.0` / `v0.2.0` worktree, via
 `DEMO_BASE_URL` (old tags don't ship the `demo:*` scripts) — see
-[`frontend/demo/README.md`](frontend/demo/README.md). A recording from a newer checkout
-is a truthful **milestone-style** fallback, not an exact build. The v0.3 import video is
+[`frontend/demo/README.md`](frontend/demo/README.md). The v0.3 import video is
 a **local fixture-based demo** (bundled synthetic JSON) — **not** live GitHub/GitLab
 integration. Converting `.webm` to
 `.mp4`/`.gif` with `ffmpeg` is **optional** and not required.
@@ -255,15 +254,14 @@ Screenshots are generated from the real running app by the Playwright demo specs
 them per exact release tag via git worktrees, and
 [`docs/assets/README.md`](docs/assets/README.md) for capture conventions.
 
-> **Status:** the **v0.3** images below are generated from the **`v0.3.0`** tree. The
-> **v0.1** and **v0.2** images are **capture targets** — produce exact-version assets by
-> running the current Playwright harness against a historical app started from a
-> `v0.1.0` / `v0.2.0` worktree, via `DEMO_BASE_URL` (the old tags don't contain the
-> `demo:*` scripts). See [`docs/demo-automation-plan.md`](docs/demo-automation-plan.md)
-> §1 and [`frontend/demo/README.md`](frontend/demo/README.md). Until captured, those
-> links render as their captions.
+> **Status:** all three sets below are **generated from their exact release tags**
+> (`v0.1.0`, `v0.2.0`, `v0.3.0`). The v0.1/v0.2 images were captured by running the
+> current Playwright harness against the historical app started from each tag's worktree
+> via `DEMO_BASE_URL` (the old tags don't contain the `demo:*` scripts). See
+> [`docs/demo-automation-plan.md`](docs/demo-automation-plan.md) §1 and
+> [`frontend/demo/README.md`](frontend/demo/README.md) for the workflow.
 
-### v0.1 — core review MVP (capture targets)
+### v0.1 — core review MVP (from the `v0.1.0` tag)
 
 ![Core review input — diff loaded with personas selected](docs/assets/screenshots/v0.1/v0.1-core-review-input.png)
 
@@ -280,7 +278,7 @@ reviewer tabs, severity filtering, and detailed finding cards.*
 *The results toolbar with the **Export Markdown** control (downloads the full review
 as a `.md` report).*
 
-### v0.2 — reviewer tone, comment threads, suggested replies (capture targets)
+### v0.2 — reviewer tone, comment threads, suggested replies (from the `v0.2.0` tag)
 
 ![Reviewer voice / tone panel](docs/assets/screenshots/v0.2/v0.2-reviewer-tone-panel.png)
 

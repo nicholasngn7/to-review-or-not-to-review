@@ -16,12 +16,13 @@ docs/assets/screenshots/v0.3/   v0.3-import-sample-panel.png, v0.3-normalized-im
 docs/assets/videos/             mr-review-council-v0.{1,2,3}-*.webm (recorded from real app interactions)
 ```
 
-**Generation status:** the **v0.3** set is generated from the `v0.3.0` tree. The
-**v0.1/v0.2** sets are capture targets — generate them by running the **current**
-harness against the **historical** app started from a `v0.1.0` / `v0.2.0` worktree,
-using `DEMO_BASE_URL` (the old tags do **not** contain the `demo:*` scripts). See
+**Generation status:** **all three sets are generated from their exact release tags.**
+The **v0.3** set is from the `v0.3.0` tree (current checkout). The **v0.1** and **v0.2**
+sets were captured by running the **current** harness against the **historical** app
+started from a `v0.1.0` / `v0.2.0` worktree, using `DEMO_BASE_URL` (the old tags do
+**not** contain the `demo:*` scripts). See
 [`../demo-automation-plan.md`](../demo-automation-plan.md) §1 and
-[`../../frontend/demo/README.md`](../../frontend/demo/README.md).
+[`../../frontend/demo/README.md`](../../frontend/demo/README.md) for the exact workflow.
 
 ```bash
 # From the frontend dir, with the backend running on :8000.
@@ -30,8 +31,9 @@ using `DEMO_BASE_URL` (the old tags do **not** contain the `demo:*` scripts). Se
 npm run demo:screenshots          # all specs (current app)
 npm run demo:screenshots:v0.3     # v0.3 specs only
 
-# Exact v0.1/v0.2: start the historical app from a worktree, then point the
-# current harness at it (does NOT auto-start this checkout's dev server):
+# Exact v0.1/v0.2 (how the committed v0.1/v0.2 assets were produced): start the
+# historical app from a worktree, then point the current harness at it (this does
+# NOT auto-start this checkout's dev server):
 DEMO_BASE_URL=http://localhost:5173 npm run demo:screenshots:v0.1
 DEMO_BASE_URL=http://localhost:5173 npm run demo:video:v0.1
 ```
@@ -80,7 +82,7 @@ DEMO_BASE_URL=http://localhost:5173 npm run demo:video:v0.1
    **Normalize comments**, **Load imported threads**, then **Run Review**. Capture
    each of the four states from the v0.3 table above in order.
 
-## Automation (in progress)
+## Automation
 
 A Playwright **demo harness** exists (`frontend/playwright.config.ts`,
 `frontend/demo/`) — see [`demo-automation-plan.md`](../demo-automation-plan.md).
@@ -96,9 +98,9 @@ cd frontend && npm run demo:video:v0.3      # one milestone
 
 Video files:
 
-- `videos/mr-review-council-v0.1-core-review-demo.webm` — capture target (record from a `v0.1.0` worktree)
-- `videos/mr-review-council-v0.2-suggested-replies-demo.webm` — capture target (record from a `v0.2.0` worktree)
-- `videos/mr-review-council-v0.3-local-import-demo.webm` — **recorded from `v0.3.0`**
+- `videos/mr-review-council-v0.1-core-review-demo.webm` — **recorded from the `v0.1.0` tag** (~0.5 MB)
+- `videos/mr-review-council-v0.2-suggested-replies-demo.webm` — **recorded from the `v0.2.0` tag** (~0.7 MB)
+- `videos/mr-review-council-v0.3-local-import-demo.webm` — **recorded from the `v0.3.0` tag** (~0.8 MB)
 
 `ffmpeg` conversion to `.mp4`/`.gif` is **optional**, e.g.:
 
