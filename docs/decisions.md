@@ -288,3 +288,18 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   submitted comment threads; if threads were submitted but nothing matched, an
   explicit "No suggested replies were generated…" message is shown instead of a
   blank/confusing area.
+
+## Git provider comment-import decisions (Phase 17, design-only)
+
+- **GitHub/GitLab comment import is intentionally deferred** until the local
+  comment-thread model is stable. The `CommentThread` / `SuggestedReply` contract is
+  new (Phases 14–16); we want a fixed, proven target before building adapters
+  against real provider data. The design ([`future-git-provider-comment-import.md`](future-git-provider-comment-import.md))
+  normalizes provider PR/MR threads into the **existing** `CommentThread` contract —
+  import is an input adapter only, so detection, routing, tone, and reply generation
+  never change. No API calls, OAuth, or token input are implemented in v0.2.
+- **Auto-posting remains out of scope** until authentication, permissioning, a human
+  preview/confirm step, auditability, and duplicate-prevention safeguards exist.
+  Posting to real PRs/MRs is high-risk and effectively irreversible, so replies stay
+  copy-only and `needsHumanReview: true`. If ever built, posting would be a
+  deliberate, separate, gated phase *after* import — never bundled with it.

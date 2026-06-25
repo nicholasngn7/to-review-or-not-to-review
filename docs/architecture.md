@@ -148,8 +148,14 @@ risk is detected (see
 - **Suggested comment replies.** A new `POST /api/comment-replies` would take
   pasted `CommentThread`s + selected personas (+ tone) and return draft
   `SuggestedReply`s from a deterministic mock reply generator. Copy-only — never
-  posted back. Comment *import* from GitHub/GitLab is a later, separate design
-  (builds on [`future-git-provider-import.md`](future-git-provider-import.md)).
+  posted back. Comment *import* from GitHub/GitLab is a later, separate design: an
+  adapter layer normalizes provider PR/MR review threads into the **existing**
+  `CommentThread` contract (preserving provider-native ids in an
+  `ExternalCommentReference` side-car), so nothing downstream changes — see
+  [`future-git-provider-comment-import.md`](future-git-provider-comment-import.md)
+  (diff import is the sibling design in
+  [`future-git-provider-import.md`](future-git-provider-import.md)). Auto-posting
+  stays out of scope until auth, preview, auditability, and dedupe safeguards exist.
 
 ## Current status
 

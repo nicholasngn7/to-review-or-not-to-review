@@ -265,11 +265,24 @@ independent of any UI filters.*
 
 Positioning material — project summary, resume bullet variants, a LinkedIn/GitHub
 blurb, and interview talking points — lives in
-[`docs/portfolio-notes.md`](docs/portfolio-notes.md). Design notes for a future
-GitHub/GitLab MR/PR diff import (adapters, security, proposed `POST /api/import-diff`)
-are in [`docs/future-git-provider-import.md`](docs/future-git-provider-import.md).
-Both are documentation only — no GitHub/GitLab integration, OAuth, or AI calls are
-implemented.
+[`docs/portfolio-notes.md`](docs/portfolio-notes.md).
+
+### Future Git provider import (planned, not implemented)
+
+Two **design-only** documents sketch how real GitHub/GitLab data *would* be imported
+later, behind the existing contracts:
+
+- **Diff import** — paste a PR/MR URL to fetch the diff (adapters, security,
+  proposed `POST /api/import-diff`):
+  [`docs/future-git-provider-import.md`](docs/future-git-provider-import.md).
+- **Comment import** — import existing PR/MR review comment threads into the current
+  `commentThreads` contract so suggested replies can target real discussions
+  (normalized provider model, GitHub/GitLab adapter boundary, security/token/privacy
+  considerations): [`docs/future-git-provider-comment-import.md`](docs/future-git-provider-comment-import.md).
+
+Both are **documentation only**. There is **no** GitHub/GitLab API integration, no
+OAuth, no token input, no auto-posting, and no AI calls. Comment threads are entered
+locally today, and suggested replies remain deterministic and copy-only.
 
 ## Known limitations
 
