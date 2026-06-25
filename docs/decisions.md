@@ -303,3 +303,14 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   Posting to real PRs/MRs is high-risk and effectively irreversible, so replies stay
   copy-only and `needsHumanReview: true`. If ever built, posting would be a
   deliberate, separate, gated phase *after* import — never bundled with it.
+- **Normalize provider comments through fixture-tested pure mappers before adding
+  live API integration.** The next planned technical phase (see
+  [`v0.3-plan-git-comment-import-mappers.md`](v0.3-plan-git-comment-import-mappers.md))
+  introduces import **contracts** (`GitProviderType`, `ExternalCommentReference`,
+  `ImportedCommentThread`, `ImportCommentsRequest`/`Response`) and **pure mapper
+  functions** that convert recorded GitHub/GitLab comment JSON into the existing
+  `CommentThread` contract. This is deliberately **network-free and fixture-only**:
+  it nails the riskiest correctness work (threading, file/line, resolved/outdated
+  state) with deterministic, offline tests, keeps provider schemas as tolerant
+  `dict` access (flagging assumptions to verify against official docs), and adds no
+  security surface (no tokens/SSRF/rate limits) until the mapping layer is proven.
