@@ -6,7 +6,11 @@
  * and finding), independent of any UI filters.
  */
 
-import type { ReviewFinding, ReviewResponse } from "../types/review";
+import type {
+  ReviewFinding,
+  ReviewResponse,
+  SuggestedReply,
+} from "../types/review";
 import {
   PERSONA_LABELS,
   PERSONA_ORDER,
@@ -70,6 +74,49 @@ function findingBlock(finding: ReviewFinding): string[] {
   lines.push("");
   lines.push(`**Recommendation:** ${finding.recommendation}`);
   lines.push("");
+  return lines;
+}
+
+function suggestedRepliesSection(replies: SuggestedReply[]): string[] {
+  const lines: string[] = [];
+  lines.push("## Suggested replies");
+  lines.push("");
+  lines.push(
+    "_Draft, copy-only replies to existing comment threads. Nothing is posted " +
+      "anywhere; review and edit before sending._",
+  );
+  lines.push("");
+
+  // Group by thread id, preserving first-seen order.
+  const order: string[] = [];
+  const byThread = new Map<string, SuggestedReply[]>();
+  for (const reply of replies) {
+    if (!byThread.has(reply.threadId)) {
+      byThread.set(reply.threadId, []);
+      order.push(reply.threadId);
+    }
+    byThread.get(reply.threadId)!.push(reply);
+  }
+
+  for (const threadId of order) {
+    lines.push(`### Thread \`${threadId}\``);
+    lines.push("");
+    for (const reply of byThread.get(threadId)!) {
+      lines.push(`#### ${PERSONA_LABELS[reply.reviewer]}`);
+      lines.push("");
+      lines.push(`> ${reply.suggestedReply}`);
+      lines.push("");
+      lines.push(`**Rationale:** ${reply.rationale}`);
+      if (reply.confidence != null) {
+        lines.push("");
+        lines.push(`**Confidence:** ${Math.round(reply.confidence * 100)}%`);
+      }
+      lines.push("");
+      lines.push("**Needs human review before sending.**");
+      lines.push("");
+    }
+  }
+
   return lines;
 }
 
@@ -144,6 +191,11 @@ export function exportReviewMarkdown(
         }
       }
     }
+  }
+
+  // Suggested replies (only when present)
+  if (result.suggestedReplies.length > 0) {
+    lines.push(...suggestedRepliesSection(result.suggestedReplies));
   }
 
   // Footer

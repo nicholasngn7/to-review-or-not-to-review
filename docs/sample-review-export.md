@@ -92,6 +92,32 @@ _sre reviewer raised 1 finding(s), 1 medium._
 
 **Recommendation:** Set an explicit timeout and consider retry/backoff handling.
 
+## Suggested replies
+
+_Draft, copy-only replies to existing comment threads. Nothing is posted anywhere; review and edit before sending._
+
+### Thread `t1`
+
+#### Backend
+
+> Thanks for the review comment, Reviewer. From a Backend standpoint, the service-side handling is worth tightening — could we catch the specific exception and validate inputs explicitly? (Draft suggestion; please review before sending.)
+
+**Rationale:** The comment mentions "exception", which maps to the Backend reviewer.
+
+**Confidence:** 60%
+
+**Needs human review before sending.**
+
+#### SRE / On-call
+
+> Thanks for the review comment, Reviewer. From a SRE / On-call standpoint, operational visibility matters here — can we add structured logging (and a timeout/retry where relevant) so failures stay observable? (Draft suggestion; please review before sending.)
+
+**Rationale:** The comment mentions "logging", which maps to the SRE / On-call reviewer.
+
+**Confidence:** 60%
+
+**Needs human review before sending.**
+
 ---
 
 _Generated locally by MR Review Council using a deterministic mock review engine (no AI). This report is meant to support, not replace, human review._

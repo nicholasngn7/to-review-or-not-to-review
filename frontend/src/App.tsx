@@ -26,6 +26,7 @@ function App() {
           result={result}
           error={error}
           title={request?.title}
+          commentThreads={request?.commentThreads}
         />
       </main>
 

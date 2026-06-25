@@ -1,11 +1,12 @@
 import type { ReactNode } from "react";
 
-import type { ReviewResponse } from "../types/review";
+import type { CommentThread, ReviewResponse } from "../types/review";
 import type { ReviewStatus } from "../hooks/useReview";
 import { ExportMarkdownButton } from "./ExportMarkdownButton";
 import { FindingsPanel } from "./FindingsPanel";
 import { MergeRecommendationBadge } from "./MergeRecommendationBadge";
 import { RiskBadge } from "./RiskBadge";
+import { SuggestedRepliesPanel } from "./SuggestedRepliesPanel";
 
 interface ReviewSummaryProps {
   status: ReviewStatus;
@@ -13,6 +14,8 @@ interface ReviewSummaryProps {
   error: string | null;
   /** MR title from the submitted request, used in the exported report. */
   title?: string | null;
+  /** Submitted comment threads, for suggested-reply file/line context. */
+  commentThreads?: CommentThread[] | null;
 }
 
 function Stat({
@@ -48,6 +51,7 @@ export function ReviewSummary({
   result,
   error,
   title,
+  commentThreads,
 }: ReviewSummaryProps) {
   if (status === "idle") {
     return (
@@ -121,6 +125,11 @@ export function ReviewSummary({
       </div>
 
       <FindingsPanel personaReviews={personaReviews} findings={findings} />
+
+      <SuggestedRepliesPanel
+        replies={result.suggestedReplies}
+        commentThreads={commentThreads}
+      />
     </PanelShell>
   );
 }

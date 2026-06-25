@@ -244,3 +244,29 @@ no reply generation, no Git provider integration, no auto-posting.
 - **Optional and out of the way.** The input is an optional, collapsible
   `<details>` panel; a review runs fine with no threads, preserving the existing
   flow exactly.
+
+## Suggested-reply generation decisions (Phase 15)
+
+Generates deterministic, local, copy-only draft replies for comment threads.
+
+- **Replies ride on `/api/reviews`, not a new endpoint.** Since replies are
+  derived from the same request and returned alongside the review, adding a
+  separate `POST /api/comment-replies` endpoint was unnecessary. The generator
+  runs in `run_review` *after* aggregation and only appends `suggestedReplies`.
+- **Generation is deterministic keyword routing — no AI.** A fixed, ordered
+  persona→keywords table routes each thread to relevant **selected** personas;
+  each match yields one reply. This keeps output reproducible and explainable
+  (the rationale names the matched keyword).
+- **Clear fallback.** When nothing matches, a single reply is routed to Product or
+  Architect (if selected), else the first selected persona, with a lower fixed
+  confidence (0.3 vs 0.6) to signal the weaker match.
+- **Tone affects wording only.** Replies reuse the `ToneRenderer` (`render_reply`)
+  with the resolved per-persona tone. Tone never changes reviewer selection,
+  reply count, or confidence — locked in by a test.
+- **Generation never touches detection.** It reads the request and produces
+  replies; findings, severities, risk, recommendation, and diff stats are
+  identical with or without threads (asserted by tests).
+- **Copy-only, human-in-the-loop, deferred posting.** `needsHumanReview` is always
+  `true`; the UI frames replies as drafts with a copy button and an explicit "no
+  comments are posted anywhere" note. Real AI, GitHub/GitLab import, and
+  auto-posting remain out of scope.

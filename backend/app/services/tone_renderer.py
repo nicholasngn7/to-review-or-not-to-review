@@ -94,3 +94,20 @@ class ToneRenderer:
         if custom:
             rendered = f"{rendered} [reviewer note: {custom}]"
         return rendered
+
+    def render_reply(self, text: str) -> str:
+        """Frame a suggested comment-thread reply. Wording only.
+
+        Style/strictness wrap the draft; ``detailed`` verbosity adds an offer of
+        more context (``brief`` keeps it as-is so the reply stays coherent). The
+        default profile is an exact no-op.
+        """
+        prefix = _STYLE_PREFIX[self.tone.style]
+        suffix = _STRICTNESS_SUFFIX[self.tone.strictness]
+        rendered = f"{prefix}{text}{suffix}"
+        if self.tone.verbosity == ToneVerbosity.DETAILED:
+            rendered = f"{rendered} (Happy to add more detail if useful.)"
+        custom = (self.tone.custom_instructions or "").strip()
+        if custom:
+            rendered = f"{rendered} [reviewer note: {custom}]"
+        return rendered

@@ -53,4 +53,33 @@ describe("exportReviewMarkdown", () => {
     const out = exportReviewMarkdown(clean, "Clean change");
     expect(out).toContain("No findings found.");
   });
+
+  it("omits the suggested replies section when there are none", () => {
+    expect(md).not.toContain("## Suggested replies");
+  });
+
+  it("includes suggested replies grouped by thread when present", () => {
+    const withReplies = {
+      ...mockReviewResult,
+      suggestedReplies: [
+        {
+          id: "reply-t1-security",
+          threadId: "t1",
+          reviewer: "security" as const,
+          suggestedReply: "Can we confirm the token is handled safely?",
+          rationale: 'The comment mentions "token", which maps to Security.',
+          confidence: 0.6,
+          needsHumanReview: true,
+        },
+      ],
+    };
+    const out = exportReviewMarkdown(withReplies, "Add login handler");
+    expect(out).toContain("## Suggested replies");
+    expect(out).toContain("### Thread `t1`");
+    expect(out).toContain("#### Security");
+    expect(out).toContain("Can we confirm the token is handled safely?");
+    expect(out).toContain("**Rationale:**");
+    expect(out).toContain("**Confidence:** 60%");
+    expect(out).toContain("**Needs human review before sending.**");
+  });
 });

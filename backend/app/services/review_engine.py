@@ -27,6 +27,7 @@ from app.models.review import (
     ReviewSummary,
 )
 from app.models.tone import ToneProfile, resolve_tone_profile
+from app.services.comment_reply_generator import generate_suggested_replies
 from app.services.diff_parser import parse_diff
 from app.services.providers import ReviewProvider, create_provider
 
@@ -148,6 +149,15 @@ def run_review(
     recommendation = _recommend(all_findings)
     summary = _build_summary(all_findings, recommendation, len(persona_reviews))
 
+    # Suggested replies are derived from the request's comment threads and never
+    # influence detection or aggregation above.
+    suggested_replies = generate_suggested_replies(
+        parsed,
+        request.comment_threads,
+        personas,
+        tone_profiles=tone_profiles,
+    )
+
     return ReviewResponse(
         overall_risk=overall_risk,
         merge_recommendation=recommendation,
@@ -155,4 +165,5 @@ def run_review(
         diff_stats=parsed.stats,
         persona_reviews=persona_reviews,
         findings=all_findings,
+        suggested_replies=suggested_replies,
     )

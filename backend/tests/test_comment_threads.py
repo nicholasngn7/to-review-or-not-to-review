@@ -101,8 +101,8 @@ def test_reviews_route_accepts_comment_threads():
     # Normal review output is present...
     assert "overallRisk" in body
     assert "findings" in body
-    # ...and suggestedReplies is present but empty in Phase 14.
-    assert body["suggestedReplies"] == []
+    # ...and suggestedReplies is present as a list (populated as of Phase 15).
+    assert isinstance(body["suggestedReplies"], list)
 
 
 # 5. Existing behavior unchanged when commentThreads omitted.

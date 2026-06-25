@@ -41,4 +41,50 @@ describe("ReviewSummary", () => {
       screen.getByRole("button", { name: /export markdown/i }),
     ).toBeInTheDocument();
   });
+
+  it("does not render a suggested replies section when there are none", () => {
+    render(
+      <ReviewSummary status="success" result={mockReviewResult} error={null} />,
+    );
+    expect(screen.queryByText("Suggested replies")).not.toBeInTheDocument();
+  });
+
+  it("renders suggested replies when present", () => {
+    const result = {
+      ...mockReviewResult,
+      suggestedReplies: [
+        {
+          id: "reply-t1-security",
+          threadId: "t1",
+          reviewer: "security" as const,
+          suggestedReply: "Can we confirm the token is handled safely?",
+          rationale: 'The comment mentions "token".',
+          confidence: 0.6,
+          needsHumanReview: true,
+        },
+      ],
+    };
+    render(
+      <ReviewSummary
+        status="success"
+        result={result}
+        error={null}
+        commentThreads={[
+          {
+            id: "t1",
+            filePath: "app/auth.py",
+            line: 5,
+            status: "open",
+            comments: [{ id: "c1", body: "Is the token safe?" }],
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("Suggested replies")).toBeInTheDocument();
+    expect(
+      screen.getByText(/Can we confirm the token is handled safely\?/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/app\/auth\.py · line 5/)).toBeInTheDocument();
+  });
 });

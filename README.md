@@ -323,8 +323,11 @@ model is proven (see the plan doc).
 > merge recommendation are unchanged, the default voice is an exact no-op, and
 > per-reviewer overrides win over the global voice.
 >
-> The contract groundwork for **suggested replies** is also in place: you can
-> capture existing MR/PR **comment threads** (an optional local input on the
-> request) and `ReviewResponse` reserves a `suggestedReplies` list (empty for
-> now). Reply *generation* is the next step (Phase 15) and will be copy-only —
-> nothing is posted back to GitHub/GitLab. Real AI-driven output remains deferred.
+> **Suggested replies** are now generated too: capture existing MR/PR **comment
+> threads** (an optional local input) and the review returns deterministic,
+> **copy-only** draft replies, routed to relevant selected personas and framed in
+> the resolved tone. They appear in a grouped "Suggested replies" panel with copy
+> buttons and are included in the Markdown export. Every reply is marked
+> "needs human review" and **nothing is posted anywhere** — there is no
+> GitHub/GitLab integration and no auto-posting. Real AI-driven output remains
+> deferred.

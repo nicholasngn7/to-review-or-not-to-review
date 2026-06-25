@@ -956,6 +956,97 @@
   border-top: 1px dashed var(--border);
 }
 
+/* ---- Suggested replies ---- */
+.replies {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.replies__note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+  line-height: 1.45;
+}
+
+.reply-thread {
+  margin-bottom: 1.25rem;
+}
+
+.reply-thread__title {
+  font-size: 0.85rem;
+  margin: 0 0 0.6rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.reply-thread__title code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--text);
+}
+
+.reply-thread__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reply-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+}
+
+.reply-card__head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+
+.reply-card__badge {
+  color: #fbbf24;
+  border-color: #fbbf24;
+  background: color-mix(in srgb, #fbbf24 14%, var(--bg));
+}
+
+.reply-card__copy {
+  margin-left: auto;
+}
+
+.reply-card__text {
+  margin: 0 0 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 2px solid var(--border);
+  background: var(--bg-elevated);
+  border-radius: 0 6px 6px 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.reply-card__rationale {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.reply-card__rationale-label {
+  font-weight: 600;
+}
+
+.reply-card__loc {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin: 0.5rem 0 0;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border);
+}
+
 /* ---- Footer ---- */
 .app__footer {
   margin-top: auto;

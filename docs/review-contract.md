@@ -218,10 +218,11 @@ Notes:
 - `personaReviews[].findings` are grouped by persona.
 - Top-level `findings` is the flattened list of the same finding cards, convenient
   for rendering a single feed.
-- `suggestedReplies` is **always present** and is an empty list (`[]`) in Phase 14.
-  It reserves the contract for Phase 15's deterministic, copy-only reply drafts.
+- `suggestedReplies` is **always present**. It is empty unless the request
+  included `commentThreads`, in which case it holds deterministic, **copy-only**
+  draft replies (Phase 15). Nothing is ever posted anywhere.
 
-### `SuggestedReply` (reserved; empty until Phase 15)
+### `SuggestedReply` (generated as of Phase 15)
 
 | Field             | Type                  | Notes                                       |
 | ----------------- | --------------------- | ------------------------------------------- |
@@ -233,6 +234,18 @@ Notes:
 | `confidence`      | number \| null        | 0.0–1.0 confidence.                         |
 | `needsHumanReview`| boolean               | Always `true`: replies are human-sent drafts. |
 | `toneProfile`     | `ToneProfile` \| null | Tone used to frame the reply, if any.       |
+
+**Generation (deterministic, local, no AI):** for each `commentThread`, the
+combined comment text is keyword-routed to relevant **selected** personas
+(tests/coverage → QA; auth/token/secret → Security; exception/validation/API →
+Backend; logging/timeout/retry → SRE; component/UI/a11y → Frontend;
+scope/boundary/coupling → Architect; wording/UX/acceptance criteria → Product).
+Each matched-and-selected persona produces one reply (`confidence` 0.6). If no
+keyword matches, a single fallback reply is produced for Product or Architect (if
+selected), else the first selected persona (`confidence` 0.3). Tone is applied to
+the reply **wording only** via the resolved `ToneProfile` (per-persona → global →
+default); it never changes reviewer selection, count, or confidence. Replies never
+affect findings, risk, severity, merge recommendation, or diff stats.
 
 ### `ReviewFinding` (finding card)
 
