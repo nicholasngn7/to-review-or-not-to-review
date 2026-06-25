@@ -66,7 +66,8 @@ This is an incremental build. What exists today (scaffold step):
 - [x] Diff parsing (files / hunks / lines) via `POST /api/parse-diff`
 - [x] Mock review engine + persona findings
 - [x] `POST /api/reviews` endpoint
-- [ ] Results UI (summary, risk score, reviewer tabs, finding cards)
+- [x] Review flow UI (diff input, persona selector, summary, finding cards)
+- [ ] Reviewer tabs + severity/persona filtering
 - [ ] Export to Markdown
 
 No AI integration is wired up yet.
