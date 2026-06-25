@@ -27,6 +27,27 @@ export type MergeRecommendation =
 
 export type FindingSeverity = "info" | "low" | "medium" | "high";
 
+// ---- Reviewer tone profiles (v0.2 contract; presentation only) ----
+
+export type ToneStyle =
+  | "direct"
+  | "supportive"
+  | "educational"
+  | "strict"
+  | "curious"
+  | "executive";
+
+export type ToneStrictness = "low" | "medium" | "high";
+
+export type ToneVerbosity = "brief" | "normal" | "detailed";
+
+export interface ToneProfile {
+  style: ToneStyle;
+  strictness: ToneStrictness;
+  verbosity: ToneVerbosity;
+  customInstructions?: string | null;
+}
+
 // ---- Diff models ----
 
 export type LineKind = "added" | "removed" | "context";
@@ -81,6 +102,10 @@ export interface ReviewRequest {
   title?: string | null;
   description?: string | null;
   source?: string | null;
+  /** Global tone profile for all selected reviewers (presentation only). */
+  toneProfile?: ToneProfile | null;
+  /** Per-persona tone overrides; these win over toneProfile. */
+  personaToneProfiles?: Partial<Record<ReviewerPersona, ToneProfile>> | null;
 }
 
 export interface HunkReference {

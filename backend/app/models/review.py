@@ -16,6 +16,7 @@ from .enums import (
     ReviewerPersona,
     RiskLevel,
 )
+from .tone import ToneProfile
 
 
 class ReviewRequest(CamelModel):
@@ -35,6 +36,15 @@ class ReviewRequest(CamelModel):
     source: Optional[str] = Field(
         default=None,
         description="Optional origin hint, e.g. 'gitlab' or 'github'.",
+    )
+    tone_profile: Optional[ToneProfile] = Field(
+        default=None,
+        description="Global tone profile applied to all selected reviewers "
+        "unless overridden per persona. Presentation only.",
+    )
+    persona_tone_profiles: Optional[dict[ReviewerPersona, ToneProfile]] = Field(
+        default=None,
+        description="Per-persona tone overrides; these win over tone_profile.",
     )
 
 

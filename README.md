@@ -313,3 +313,9 @@ implemented.
 Both will continue to run locally on the deterministic mock provider. GitHub/GitLab
 comment import and any auto-posting are intentionally deferred until the local
 model is proven (see the plan doc).
+
+> **v0.2 progress:** the tone-profile *contract* has landed — `ReviewRequest`
+> accepts optional `toneProfile` / `personaToneProfiles` fields (see
+> [`docs/review-contract.md`](docs/review-contract.md)). They validate and resolve
+> but are **inert**: no wording changes yet, and detection/risk/recommendation are
+> unchanged. Tone UI and rendering come in the next phases.

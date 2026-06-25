@@ -19,19 +19,55 @@ and responses emit camelCase.
   "selectedPersonas": ["architect", "security"],
   "title": "Add rate limiting",
   "description": "Optional MR/PR description",
-  "source": "github"
+  "source": "github",
+  "toneProfile": {
+    "style": "supportive",
+    "strictness": "medium",
+    "verbosity": "normal",
+    "customInstructions": null
+  },
+  "personaToneProfiles": {
+    "security": { "style": "strict", "strictness": "high", "verbosity": "brief" }
+  }
 }
 ```
 
-| Field              | Type                 | Required | Notes                                  |
-| ------------------ | -------------------- | -------- | -------------------------------------- |
-| `diffText`         | string               | yes      | Raw unified diff / patch text.         |
-| `selectedPersonas` | `ReviewerPersona[]`  | yes\*    | Personas to run (may be empty).        |
-| `title`            | string \| null       | no       | MR/PR title for context.               |
-| `description`      | string \| null       | no       | MR/PR description for context.         |
-| `source`           | string \| null       | no       | Origin hint, e.g. `gitlab`/`github`.   |
+| Field                 | Type                                  | Required | Notes                                  |
+| --------------------- | ------------------------------------- | -------- | -------------------------------------- |
+| `diffText`            | string                                | yes      | Raw unified diff / patch text.         |
+| `selectedPersonas`    | `ReviewerPersona[]`                   | yes\*    | Personas to run (may be empty).        |
+| `title`               | string \| null                        | no       | MR/PR title for context.               |
+| `description`         | string \| null                        | no       | MR/PR description for context.         |
+| `source`              | string \| null                        | no       | Origin hint, e.g. `gitlab`/`github`.   |
+| `toneProfile`         | `ToneProfile` \| null                 | no       | Global tone for all reviewers.         |
+| `personaToneProfiles` | `{ [persona]: ToneProfile }` \| null  | no       | Per-persona tone overrides.            |
 
 \* The field is always present; an empty array is allowed.
+
+### Reviewer tone profiles (v0.2 contract)
+
+Tone profiles configure **how** a reviewer communicates — wording, explanation
+style, and recommendation framing. **Tone is presentation only**: it must never
+change which findings are detected, their severity, the overall risk, the merge
+recommendation, diff parsing, or provider selection.
+
+`ToneProfile`:
+
+| Field                | Type             | Default    | Notes                                     |
+| -------------------- | ---------------- | ---------- | ----------------------------------------- |
+| `style`              | `ToneStyle`      | `direct`   | Communication style.                      |
+| `strictness`         | `ToneStrictness` | `medium`   | Framing forcefulness (not severity).      |
+| `verbosity`          | `ToneVerbosity`  | `normal`   | Amount of explanatory detail.             |
+| `customInstructions` | string \| null   | `null`     | Free-form wording guidance (phrasing only). |
+
+**Resolution order** for a given persona: per-persona entry in
+`personaToneProfiles` → global `toneProfile` → the built-in default
+(`direct` / `medium` / `normal`). If both fields are omitted, behavior is
+identical to before tone existed (fully backward-compatible).
+
+This is **contract groundwork** (Phase 12). The fields validate and resolve, but
+no wording is changed yet — tone UI and rendering arrive in later phases. Tone
+enum values are listed under [Enum values](#enum-values).
 
 ## Response shape
 
@@ -141,6 +177,9 @@ defined for the parser phase; only `DiffStats` is surfaced in the review respons
 | `FindingSeverity`     | `info`, `low`, `medium`, `high`                                        |
 | `LineKind`            | `added`, `removed`, `context`                                          |
 | `FileChangeType`      | `added`, `modified`, `deleted`, `renamed`, `unknown`                   |
+| `ToneStyle`           | `direct`, `supportive`, `educational`, `strict`, `curious`, `executive` |
+| `ToneStrictness`      | `low`, `medium`, `high`                                                |
+| `ToneVerbosity`       | `brief`, `normal`, `detailed`                                          |
 
 ## Reviewer personas and responsibilities
 
