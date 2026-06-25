@@ -28,3 +28,20 @@ A running log of notable choices made during the build.
 - **Default personas:** architect, qa, security, backend, sre.
 - **Validation:** Run is disabled when the trimmed diff is empty or no personas
   are selected; diff text is trimmed before sending.
+
+## Results dashboard (Phase 6)
+
+- **Shared labels:** `src/lib/reviewLabels.ts` is the single source of truth for
+  persona/risk/severity/recommendation labels and canonical ordering. Both
+  `PersonaSelector` and the results components consume it (removed the old
+  `PERSONA_OPTIONS` export from `PersonaSelector`).
+- **Presentational split:** `RiskBadge`, `MergeRecommendationBadge`,
+  `FindingCard`, and `ReviewerTabs` are pure presentational components.
+  `FindingsPanel` owns the local filter state (reviewer tab + severity), keeping
+  filtering state inside the results area.
+- **Reviewer tabs double as the persona filter** (an "All" tab plus one per
+  persona that ran). Severity is a separate chip group. Tab counts reflect the
+  active severity filter so they always match the visible list.
+- **Empty states:** review-level "No findings found"; per-reviewer positive
+  state when a persona that ran has no findings; and "No findings match the
+  current filters." when filters exclude everything.

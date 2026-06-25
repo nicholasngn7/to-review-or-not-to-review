@@ -1,20 +1,9 @@
 import type { ReviewerPersona } from "../types/review";
-
-interface PersonaOption {
-  value: ReviewerPersona;
-  label: string;
-  blurb: string;
-}
-
-export const PERSONA_OPTIONS: PersonaOption[] = [
-  { value: "architect", label: "Architect", blurb: "Structure & boundaries" },
-  { value: "qa", label: "QA / Test", blurb: "Coverage & regressions" },
-  { value: "security", label: "Security", blurb: "Secrets & unsafe patterns" },
-  { value: "frontend", label: "Frontend", blurb: "UI, state & a11y" },
-  { value: "backend", label: "Backend", blurb: "APIs & validation" },
-  { value: "sre", label: "SRE / On-call", blurb: "Observability & reliability" },
-  { value: "product", label: "Product", blurb: "Clarity & maintainability" },
-];
+import {
+  PERSONA_BLURBS,
+  PERSONA_LABELS,
+  PERSONA_ORDER,
+} from "../lib/reviewLabels";
 
 export const DEFAULT_PERSONAS: ReviewerPersona[] = [
   "architect",
@@ -47,21 +36,25 @@ export function PersonaSelector({
     <fieldset className="persona-selector" disabled={disabled}>
       <legend className="field__label">Reviewer personas</legend>
       <div className="persona-grid">
-        {PERSONA_OPTIONS.map((option) => {
-          const checked = selected.includes(option.value);
+        {PERSONA_ORDER.map((persona) => {
+          const checked = selected.includes(persona);
           return (
             <label
-              key={option.value}
+              key={persona}
               className={`persona-card${checked ? " persona-card--on" : ""}`}
             >
               <input
                 type="checkbox"
                 className="persona-card__checkbox"
                 checked={checked}
-                onChange={() => toggle(option.value)}
+                onChange={() => toggle(persona)}
               />
-              <span className="persona-card__label">{option.label}</span>
-              <span className="persona-card__blurb">{option.blurb}</span>
+              <span className="persona-card__label">
+                {PERSONA_LABELS[persona]}
+              </span>
+              <span className="persona-card__blurb">
+                {PERSONA_BLURBS[persona]}
+              </span>
             </label>
           );
         })}

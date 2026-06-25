@@ -67,7 +67,7 @@ This is an incremental build. What exists today (scaffold step):
 - [x] Mock review engine + persona findings
 - [x] `POST /api/reviews` endpoint
 - [x] Review flow UI (diff input, persona selector, summary, finding cards)
-- [ ] Reviewer tabs + severity/persona filtering
+- [x] Results dashboard (risk/recommendation badges, stats, reviewer tabs, severity/persona filtering, empty states)
 - [ ] Export to Markdown
 
 No AI integration is wired up yet.
