@@ -1,0 +1,124 @@
+.app {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app__header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.app__badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-hover);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.app__title {
+  font-size: 2.75rem;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.app__tagline {
+  color: var(--text-muted);
+  max-width: 38rem;
+  margin: 0 auto;
+  font-size: 1.05rem;
+}
+
+.app__main {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 720px) {
+  .app__main {
+    grid-template-columns: 3fr 2fr;
+  }
+}
+
+.panel {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.75rem;
+}
+
+.panel__title {
+  font-size: 1.15rem;
+  margin: 0 0 0.75rem;
+}
+
+.panel__text {
+  color: var(--text-muted);
+  margin: 0 0 1.5rem;
+}
+
+.panel__hint {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 0.75rem 0 0;
+}
+
+.button {
+  font: inherit;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.4rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.button--primary {
+  background: var(--accent);
+  color: white;
+}
+
+.button--primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.persona-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.persona-list__item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.app__footer {
+  margin-top: auto;
+  padding-top: 3rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
