@@ -14,6 +14,7 @@ import {
   toRequestTone,
 } from "../lib/reviewLabels";
 import { CommentThreadsInput } from "./CommentThreadsInput";
+import { ImportCommentsPanel } from "./ImportCommentsPanel";
 import { DEFAULT_PERSONAS, PersonaSelector } from "./PersonaSelector";
 import { ReviewerTonePanel } from "./ReviewerTonePanel";
 
@@ -35,10 +36,22 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
     Partial<Record<ReviewerPersona, ToneProfile>>
   >({});
   const [commentThreads, setCommentThreads] = useState<CommentThread[]>([]);
+  const [importedThreads, setImportedThreads] = useState<CommentThread[]>([]);
 
   const handleCommentThreadsChange = useCallback((threads: CommentThread[]) => {
     setCommentThreads(threads);
   }, []);
+
+  const handleLoadImported = useCallback((threads: CommentThread[]) => {
+    // Loading replaces the imported set (the on-submit dedupe is a backstop).
+    setImportedThreads(threads);
+  }, []);
+
+  const removeImported = (id: string) => {
+    setImportedThreads((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const clearImported = () => setImportedThreads([]);
 
   const titleId = useId();
   const descId = useId();
@@ -116,9 +129,19 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
       request.personaToneProfiles = personaToneProfiles;
     }
 
-    // Only attach comment threads when at least one has a real comment body.
-    if (commentThreads.length > 0) {
-      request.commentThreads = commentThreads;
+    // Merge imported (loaded from the local import demo) and manual threads into a
+    // single list, de-duped by id. Imported threads come first.
+    const merged: CommentThread[] = [];
+    const seenIds = new Set<string>();
+    for (const thread of [...importedThreads, ...commentThreads]) {
+      if (seenIds.has(thread.id)) {
+        continue;
+      }
+      seenIds.add(thread.id);
+      merged.push(thread);
+    }
+    if (merged.length > 0) {
+      request.commentThreads = merged;
     }
 
     onRun(request);
@@ -232,6 +255,71 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
         onChange={handleCommentThreadsChange}
         disabled={isLoading}
       />
+
+      <ImportCommentsPanel
+        onLoadThreads={handleLoadImported}
+        disabled={isLoading}
+      />
+
+      {importedThreads.length > 0 && (
+        <div
+          className="imported-group"
+          role="group"
+          aria-label="Imported comments"
+        >
+          <div className="imported-group__head">
+            <span className="imported-group__title">
+              Imported comments
+              <span className="threads-panel__count">
+                {importedThreads.length}
+              </span>
+            </span>
+            <button
+              type="button"
+              className="link-button"
+              onClick={clearImported}
+              disabled={isLoading}
+            >
+              Clear imported
+            </button>
+          </div>
+          <p className="field__hint">
+            Loaded from the local import demo (read-only). Included alongside any
+            manual threads when you run the review.
+          </p>
+          <ul className="imported-list">
+            {importedThreads.map((thread) => {
+              const loc: string[] = [];
+              if (thread.filePath) {
+                loc.push(thread.filePath);
+              }
+              if (thread.line != null) {
+                loc.push(`line ${thread.line}`);
+              }
+              return (
+                <li className="imported-item" key={thread.id}>
+                  <div className="imported-item__info">
+                    <code className="import-preview__id">{thread.id}</code>
+                    <span className="import-preview__meta">
+                      {thread.comments.length} comment
+                      {thread.comments.length === 1 ? "" : "s"}
+                      {loc.length > 0 ? ` · ${loc.join(" · ")}` : ""}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={() => removeImported(thread.id)}
+                    disabled={isLoading}
+                  >
+                    Remove
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
 
       <div className="run-row">
         <button

@@ -289,11 +289,17 @@ network):** pure functions that normalize recorded GitHub/GitLab comment JSON in
 existing `commentThreads` contract. Implemented so far: import contracts; GitHub PR
 review-comment and issue-comment mappers; GitLab MR discussions mapper; a pure
 `import_comments` orchestrator with invariance tests proving imported threads drive the
-review/reply pipeline identically to locally-entered threads; and a **local-only**
-`POST /api/import-comments` endpoint that normalizes a caller-supplied payload to
-exercise/demo the boundary. **No** live API calls, OAuth, token input, URL fetching,
-posting, or UI yet. See
-[`docs/v0.3-plan-git-comment-import-mappers.md`](docs/v0.3-plan-git-comment-import-mappers.md).
+review/reply pipeline identically to locally-entered threads; a **local-only**
+`POST /api/import-comments` endpoint that normalizes a caller-supplied payload; and a
+frontend **"Import comments (local demo)"** panel.
+
+The panel is a **local fixture-based comment import demo**: it **normalizes pasted
+provider-shaped JSON** into comment threads, **does not fetch from GitHub/GitLab**,
+**does not require tokens**, and **does not post comments** — it is **not** live
+GitHub/GitLab integration. **No** live API calls, OAuth, token input, or URL fetching
+exist yet. See
+[`docs/v0.3-plan-git-comment-import-mappers.md`](docs/v0.3-plan-git-comment-import-mappers.md)
+and [`docs/v0.3-plan-frontend-local-comment-import.md`](docs/v0.3-plan-frontend-local-comment-import.md).
 
 ## Known limitations
 

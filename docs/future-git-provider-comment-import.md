@@ -27,10 +27,14 @@
 > proving imported threads drive the review/reply pipeline identically to local
 > `commentThreads`. Phase 6 added a **local-only** `POST /api/import-comments`
 > endpoint that runs the orchestrator over a caller-supplied payload (no network, no
-> tokens, no posting) to exercise/demo the normalization boundary. The GitHub/GitLab
-> payload shapes below and in the fixtures are **synthetic and tolerant** — they must
-> be verified against official GitHub/GitLab API docs before any live integration. No
-> live API calls, OAuth, tokens, or UI exist yet.
+> tokens, no posting) to exercise/demo the normalization boundary; Phase 7 added the
+> frontend **"Import comments (local demo)"** panel that pastes provider-shaped JSON,
+> normalizes it through that endpoint, and loads the result into the existing comment
+> threads — still local-only, with no URL input, tokens, OAuth, or posting (the local
+> stand-in for the still-deferred real import UI). The GitHub/GitLab payload shapes
+> below and in the fixtures are **synthetic and tolerant** — they must be verified
+> against official GitHub/GitLab API docs before any live integration. No live API
+> calls, OAuth, tokens, or live provider UI exist yet.
 
 ## 1. Product goal
 

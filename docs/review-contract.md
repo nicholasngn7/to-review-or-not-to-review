@@ -301,6 +301,15 @@ match `provider`; an unsupported or ambiguous request returns `400` with
 `{ "detail": "..." }`, while an empty payload returns `200` with `threads: []` and a
 warning.
 
+The frontend mirrors these import types in
+[`frontend/src/types/gitImport.ts`](../frontend/src/types/gitImport.ts) and calls the
+endpoint from [`frontend/src/api/importComments.ts`](../frontend/src/api/importComments.ts).
+The **"Import comments (local demo)"** panel pastes provider-shaped JSON, normalizes
+it through this endpoint, previews the result, and loads the normalized
+`CommentThread`s into the existing `commentThreads` flow. It is a **local
+fixture-based demo** — it does not fetch from GitHub/GitLab, require tokens, or post
+comments, and is **not** live provider integration.
+
 ### `ReviewFinding` (finding card)
 
 | Field            | Type                    | Required | Notes                                  |

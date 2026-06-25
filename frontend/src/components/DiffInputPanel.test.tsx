@@ -1,10 +1,41 @@
-import { describe, expect, it, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { DiffInputPanel } from "./DiffInputPanel";
+import { importComments } from "../api/importComments";
+import type { ImportCommentsResponse } from "../types/gitImport";
+
+vi.mock("../api/importComments", async (orig) => {
+  const actual = await orig<typeof import("../api/importComments")>();
+  return { ...actual, importComments: vi.fn() };
+});
+
+const mockImport = vi.mocked(importComments);
+
+function importResponse(
+  threads: ImportCommentsResponse["threads"],
+): ImportCommentsResponse {
+  return { provider: "github", threads, warnings: [] };
+}
+
+function importedThread(id: string, body: string) {
+  return {
+    thread: {
+      id,
+      status: "unknown" as const,
+      comments: [{ id: `${id}-c1`, body }],
+    },
+    externalReference: { provider: "github" as const, commentId: id },
+    warnings: [] as string[],
+  };
+}
 
 describe("DiffInputPanel", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("disables Run Review while the diff is empty", () => {
     render(<DiffInputPanel isLoading={false} onRun={vi.fn()} />);
     const runButton = screen.getByRole("button", { name: /run review/i });
@@ -269,5 +300,96 @@ describe("DiffInputPanel", () => {
     await user.click(screen.getByRole("button", { name: /remove thread/i }));
     await user.click(screen.getByRole("button", { name: /run review/i }));
     expect(onRun.mock.calls[1][0].commentThreads).toBeUndefined();
+  });
+
+  // ---- Local import demo integration ----
+
+  const loadImported = async (
+    user: ReturnType<typeof userEvent.setup>,
+    threads: ImportCommentsResponse["threads"],
+  ) => {
+    mockImport.mockResolvedValueOnce(importResponse(threads));
+    fireEvent.change(screen.getByLabelText(/json payload/i), {
+      target: { value: "[]" },
+    });
+    await user.click(
+      screen.getByRole("button", { name: /normalize comments/i }),
+    );
+    await user.click(
+      await screen.findByRole("button", { name: /load imported threads/i }),
+    );
+  };
+
+  it("includes loaded imported threads in the review request", async () => {
+    const user = userEvent.setup();
+    const onRun = vi.fn();
+    render(<DiffInputPanel isLoading={false} onRun={onRun} />);
+
+    await loadDemo(user);
+    await loadImported(user, [importedThread("imp-1", "Imported comment body.")]);
+
+    // The imported group shows the thread.
+    expect(
+      screen.getByRole("group", { name: /imported comments/i }),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /run review/i }));
+    const request = onRun.mock.calls[0][0];
+    expect(request.commentThreads).toHaveLength(1);
+    expect(request.commentThreads[0].id).toBe("imp-1");
+  });
+
+  it("combines imported threads with manual threads", async () => {
+    const user = userEvent.setup();
+    const onRun = vi.fn();
+    render(<DiffInputPanel isLoading={false} onRun={onRun} />);
+
+    await loadDemo(user);
+    await loadImported(user, [importedThread("imp-1", "Imported one.")]);
+
+    // Add a manual thread too.
+    await user.click(screen.getByRole("button", { name: /add comment thread/i }));
+    await user.type(screen.getByLabelText("Comment"), "Manual comment.");
+
+    await user.click(screen.getByRole("button", { name: /run review/i }));
+    const request = onRun.mock.calls[0][0];
+    const ids = request.commentThreads.map((t: { id: string }) => t.id);
+    expect(ids).toContain("imp-1");
+    expect(request.commentThreads).toHaveLength(2);
+  });
+
+  it("dedupes imported and manual threads by id", async () => {
+    const user = userEvent.setup();
+    const onRun = vi.fn();
+    render(<DiffInputPanel isLoading={false} onRun={onRun} />);
+
+    await loadDemo(user);
+    await loadImported(user, [importedThread("dupe-id", "Imported version.")]);
+
+    // Manual thread with the same id should be de-duped (imported wins, first).
+    await user.click(screen.getByRole("button", { name: /add comment thread/i }));
+    await user.type(screen.getByLabelText(/thread id/i), "dupe-id");
+    await user.type(screen.getByLabelText("Comment"), "Manual version.");
+
+    await user.click(screen.getByRole("button", { name: /run review/i }));
+    const request = onRun.mock.calls[0][0];
+    const matching = request.commentThreads.filter(
+      (t: { id: string }) => t.id === "dupe-id",
+    );
+    expect(matching).toHaveLength(1);
+    expect(matching[0].comments[0].body).toBe("Imported version.");
+  });
+
+  it("can clear imported threads", async () => {
+    const user = userEvent.setup();
+    const onRun = vi.fn();
+    render(<DiffInputPanel isLoading={false} onRun={onRun} />);
+
+    await loadDemo(user);
+    await loadImported(user, [importedThread("imp-1", "Imported one.")]);
+    await user.click(screen.getByRole("button", { name: /clear imported/i }));
+
+    await user.click(screen.getByRole("button", { name: /run review/i }));
+    expect(onRun.mock.calls[0][0].commentThreads).toBeUndefined();
   });
 });

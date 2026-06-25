@@ -76,6 +76,24 @@ Keep it conversational; ~120 words total fits 60–90s comfortably.
 9. **Show the report** — Open the downloaded file in a Markdown previewer and
    scroll briefly through the overview, summary, and findings grouped by reviewer.
 
+## 4a. Optional segment — Import comments (local demo)
+
+A short add-on showing the normalization boundary. Skip it for the 60s cut.
+
+1. With the risky backend demo loaded, expand **Import comments (local demo)**.
+2. Paste a small synthetic GitHub review-comment array (the same shape as
+   `backend/tests/fixtures/github_pr_review_comments.json`), keep **GitHub / PR
+   review comments** selected, and click **Normalize comments**.
+3. Point out the **thread count**, any **warning** (e.g. a reply with a missing
+   root), and the **read-only preview** with file/line.
+4. Click **Load imported threads** — they appear in the **Imported comments** group.
+5. Click **Run Review** and show suggested replies generated for the imported
+   thread, referencing its file/line.
+
+> Say it plainly on-screen and in narration: *"This is a local, fixture-based demo —
+> I'm pasting provider-shaped JSON. Nothing is fetched from GitHub or GitLab, no
+> tokens are used, and no comments are posted anywhere."*
+
 ## 5. Timing guide (target ~75s)
 
 | Section                         | Target time |
@@ -115,6 +133,9 @@ Be explicit that this is an architecture/MVP demo, not a finished AI product:
   `REVIEW_PROVIDER=bedrock` is a placeholder that returns a clear 501.
 - **No GitLab/GitHub OAuth or API integration yet** — diffs are pasted, uploaded,
   or loaded from samples, not fetched from a real MR/PR.
+- **The comment import panel is a local fixture-based demo** — it normalizes pasted
+  provider-shaped JSON; it does not fetch from GitHub/GitLab, require tokens, or post
+  comments, and is **not** live provider integration.
 - **No persistence yet** — reviews aren't stored; Markdown export is the way to
   keep a result.
 

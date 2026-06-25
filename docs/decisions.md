@@ -365,5 +365,16 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   **no** outbound network I/O, accepts **no** tokens/OAuth/URLs, and posts nothing —
   it exists purely to exercise and demo the mapping layer. Orchestrator `ValueError`
   maps to `400 { "detail": ... }` (matching the existing API error style) and empty
-  payloads return `200` with an explanatory warning. Live GitHub/GitLab fetching,
-  auth, and any UI remain deferred.
+  payloads return `200` with an explanatory warning. Live GitHub/GitLab fetching and
+  auth remain deferred.
+- **The frontend import UI is a local fixture-based demo (v0.3 Phase 7).** The
+  "Import comments (local demo)" panel pastes provider-shaped JSON, validates it
+  client-side (`JSON.parse`) before calling `POST /api/import-comments`, previews the
+  normalized threads + warnings, and loads them into the existing `commentThreads`
+  flow. It deliberately has **no** URL input, token field, OAuth, live provider call,
+  or posting — and the copy says so. `DiffInputPanel` owns `importedThreads`
+  separately from manual threads and merges them de-duped by id
+  (`[...importedThreads, ...manualThreads]`) when building the request, so existing
+  behavior is unchanged when nothing is imported. Imported threads are read-only this
+  phase (faithful to multi-comment threads); inline editing and any live provider
+  integration remain deferred.
