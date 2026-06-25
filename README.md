@@ -166,18 +166,20 @@ in [`docs/demo-script.md`](docs/demo-script.md).
 
 ## Running tests and builds
 
-Backend tests (parser, review engine, providers, routes):
+Backend tests (parser, review engine, providers, routes, and edge cases):
 
 ```bash
 cd backend && source .venv/bin/activate
 python -m pytest -q
 ```
 
-Frontend type-check + production build:
+Frontend tests (Vitest + React Testing Library) and the production build:
 
 ```bash
 cd frontend
-npm run build      # runs `tsc -b` then `vite build`
+npm test           # run the Vitest suite once
+npm run test:watch # watch mode
+npm run build      # type-check (`tsc -b`) + production build (`vite build`)
 ```
 
 ## Provider architecture

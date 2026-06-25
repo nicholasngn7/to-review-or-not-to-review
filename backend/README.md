@@ -107,8 +107,16 @@ source .venv/bin/activate
 python -m pytest          # or: python -m pytest -q
 ```
 
-Parser tests live in `tests/test_diff_parser.py`; provider/config tests live in
-`tests/test_providers.py`.
+Test files:
+
+- `tests/test_diff_parser.py` — core parser cases
+- `tests/test_diff_parser_edge_cases.py` — empty/malformed/binary/mode-only/rename
+  with edits/paths with spaces/CRLF/multiple hunks/`/dev/null`
+- `tests/test_review_engine.py` — engine aggregation + persona behavior
+- `tests/test_reviews_route.py` — `POST /api/reviews` route
+- `tests/test_review_edge_cases.py` — empty/no-persona/invalid persona/no-finding
+  personas/provider failures/duplicate security terms
+- `tests/test_providers.py` — provider selection, config, Bedrock placeholder
 
 ## Layout
 
@@ -133,8 +141,10 @@ app/
     reviews.py             # POST /api/reviews
 tests/
   test_diff_parser.py
+  test_diff_parser_edge_cases.py
   test_review_engine.py
   test_reviews_route.py
+  test_review_edge_cases.py
   test_providers.py
 ```
 
