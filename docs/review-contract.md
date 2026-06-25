@@ -291,6 +291,16 @@ A future phase supplies already-fetched provider JSON via `rawPayload`.
 `ImportCommentsResponse`:
 `{ provider: GitProviderType, threads: ImportedCommentThread[], warnings: string[] }`.
 
+**`POST /api/import-comments` (local-only, v0.3 Phase 6).** A thin endpoint that runs
+the pure `import_comments(...)` orchestrator over a **caller-supplied** `rawPayload`
+and returns the camelCase `ImportCommentsResponse`. It is purely a normalization
+boundary for demos/tests — it **does not** call GitHub/GitLab, accepts **no** tokens
+or OAuth, fetches no URLs, and posts nothing. `source` selects the mapper
+(`github_review_comments` / `github_issue_comments` / `gitlab_discussions`) and must
+match `provider`; an unsupported or ambiguous request returns `400` with
+`{ "detail": "..." }`, while an empty payload returns `200` with `threads: []` and a
+warning.
+
 ### `ReviewFinding` (finding card)
 
 | Field            | Type                    | Required | Notes                                  |

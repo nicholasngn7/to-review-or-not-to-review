@@ -358,5 +358,12 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   level. **Invariance is now tested**: imported threads, once normalized into
   `CommentThread`, drive `run_review` byte-identically to hand-authored local
   threads — proving Git import is purely an input adapter that downstream
-  review/reply behavior is oblivious to. Still no endpoint, network, tokens, or UI;
-  live provider integration remains deferred.
+  review/reply behavior is oblivious to. Live provider integration remains deferred.
+- **A local-only import endpoint exposes the normalization boundary (v0.3 Phase 6).**
+  `POST /api/import-comments` runs the pure orchestrator over a **caller-supplied**
+  payload and returns a camelCase `ImportCommentsResponse`. It deliberately does
+  **no** outbound network I/O, accepts **no** tokens/OAuth/URLs, and posts nothing —
+  it exists purely to exercise and demo the mapping layer. Orchestrator `ValueError`
+  maps to `400 { "detail": ... }` (matching the existing API error style) and empty
+  payloads return `200` with an explanatory warning. Live GitHub/GitLab fetching,
+  auth, and any UI remain deferred.

@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from app.api.routes import diff_router, reviews_router
+from app.api.routes import diff_router, import_comments_router, reviews_router
 
 # Local dev origins for the Vite frontend.
 ALLOWED_ORIGINS = [
@@ -33,6 +33,7 @@ app.add_middleware(
 
 app.include_router(diff_router)
 app.include_router(reviews_router)
+app.include_router(import_comments_router)
 
 
 @app.exception_handler(NotImplementedError)

@@ -287,10 +287,12 @@ locally today, and suggested replies remain deterministic and copy-only.
 **In progress — fixture-based Git provider comment-import mappers (backend only, no
 network):** pure functions that normalize recorded GitHub/GitLab comment JSON into the
 existing `commentThreads` contract. Implemented so far: import contracts; GitHub PR
-review-comment and issue-comment mappers; GitLab MR discussions mapper; and a pure
+review-comment and issue-comment mappers; GitLab MR discussions mapper; a pure
 `import_comments` orchestrator with invariance tests proving imported threads drive the
-review/reply pipeline identically to locally-entered threads. **No** live API calls,
-OAuth, token input, endpoints, or UI yet. See
+review/reply pipeline identically to locally-entered threads; and a **local-only**
+`POST /api/import-comments` endpoint that normalizes a caller-supplied payload to
+exercise/demo the boundary. **No** live API calls, OAuth, token input, URL fetching,
+posting, or UI yet. See
 [`docs/v0.3-plan-git-comment-import-mappers.md`](docs/v0.3-plan-git-comment-import-mappers.md).
 
 ## Known limitations

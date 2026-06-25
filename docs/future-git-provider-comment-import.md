@@ -25,10 +25,12 @@
 > **orchestrator** (`import_comments`) that dispatches an `ImportCommentsRequest` to
 > the right mapper and returns an `ImportCommentsResponse` — with **invariance tests**
 > proving imported threads drive the review/reply pipeline identically to local
-> `commentThreads`. The GitHub/GitLab payload shapes below and in the fixtures are
-> **synthetic and tolerant** — they must be verified against official GitHub/GitLab
-> API docs before any live integration. No live API calls, OAuth, tokens, endpoints,
-> or UI exist yet.
+> `commentThreads`. Phase 6 added a **local-only** `POST /api/import-comments`
+> endpoint that runs the orchestrator over a caller-supplied payload (no network, no
+> tokens, no posting) to exercise/demo the normalization boundary. The GitHub/GitLab
+> payload shapes below and in the fixtures are **synthetic and tolerant** — they must
+> be verified against official GitHub/GitLab API docs before any live integration. No
+> live API calls, OAuth, tokens, or UI exist yet.
 
 ## 1. Product goal
 
