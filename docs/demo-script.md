@@ -4,6 +4,14 @@ A script for a tight **60–90 second** screen recording that shows the full
 review flow end to end. Everything uses the built-in demo diffs, so no real
 merge request is needed.
 
+> **Automated alternative:** short `.webm` demos are also recorded directly from real
+> app interactions by the Playwright video specs (`frontend/demo/videos/`) — run
+> `npm run demo:video:v0.1|v0.2|v0.3` (backend on :8000) to regenerate them into
+> `docs/assets/videos/`. Record exact-version videos from `v0.1.0`/`v0.2.0`/`v0.3.0`
+> worktrees; the v0.3 import video is a **local fixture-based demo**, not live
+> GitHub/GitLab integration. `ffmpeg` conversion to `.mp4`/`.gif` is optional. This
+> hand script remains useful for a narrated screen recording.
+
 ## 1. Goal of the demo
 
 Show that MR Review Council takes a merge-request diff, reviews it through

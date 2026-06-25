@@ -13,7 +13,7 @@ docs/assets/screenshots/v0.1/   v0.1-core-review-input.png, v0.1-review-results.
 docs/assets/screenshots/v0.2/   v0.2-reviewer-tone-panel.png, v0.2-comment-threads-input.png, v0.2-suggested-replies.png
 docs/assets/screenshots/v0.3/   v0.3-import-sample-panel.png, v0.3-normalized-import-preview.png,
                                 v0.3-imported-threads-review-results.png, v0.3-suggested-replies-from-imported-comments.png
-docs/assets/videos/             (Phase C — not generated yet)
+docs/assets/videos/             mr-review-council-v0.{1,2,3}-*.webm (recorded from real app interactions)
 ```
 
 **Generation status:** the **v0.3** set is generated from the `v0.3.0` tree. The
@@ -77,12 +77,32 @@ npm run demo:screenshots:v0.3     # v0.3 specs only
 
 A Playwright **demo harness** exists (`frontend/playwright.config.ts`,
 `frontend/demo/`) — see [`demo-automation-plan.md`](../demo-automation-plan.md).
-**Phase B added screenshot capture specs** (`frontend/demo/screenshots/`) and the
-`demo:screenshots[:v0.1|v0.2|v0.3]` scripts (see commands above). Demo **videos** are
-still **Phase C** (not generated yet) and will live in [`videos/`](videos/). The
-harness uses the conventions below (1440×900 @ 2x, Chromium) and drives only built-in
-sample diffs and bundled synthetic import samples — no provider fetch, tokens, OAuth,
-or posting.
+**Phase B added screenshot capture specs** (`frontend/demo/screenshots/`) and
+**Phase C added video specs** (`frontend/demo/videos/`), with the
+`demo:screenshots[:vX]` and `demo:video[:vX]` scripts (and `demo:all`). Videos are
+**recorded from real app interactions** and written to [`videos/`](videos/) as `.webm`:
+
+```bash
+cd frontend && npm run demo:video           # all video specs (current tree)
+cd frontend && npm run demo:video:v0.3      # one milestone
+```
+
+Video files:
+
+- `videos/mr-review-council-v0.1-core-review-demo.webm` — capture target (record from a `v0.1.0` worktree)
+- `videos/mr-review-council-v0.2-suggested-replies-demo.webm` — capture target (record from a `v0.2.0` worktree)
+- `videos/mr-review-council-v0.3-local-import-demo.webm` — **recorded from `v0.3.0`**
+
+`ffmpeg` conversion to `.mp4`/`.gif` is **optional**, e.g.:
+
+```bash
+ffmpeg -i videos/mr-review-council-v0.3-local-import-demo.webm videos/mr-review-council-v0.3-local-import-demo.mp4
+```
+
+The harness uses the conventions below (1440×900 @ 2x, Chromium) and drives only
+built-in sample diffs and bundled synthetic import samples — no provider fetch,
+tokens, OAuth, or posting. The v0.3 import video is a **local fixture-based demo**, not
+live GitHub/GitLab integration.
 
 ## Conventions
 

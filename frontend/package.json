@@ -14,7 +14,12 @@
     "demo:screenshots": "playwright test screenshots",
     "demo:screenshots:v0.1": "playwright test screenshots/v0.1.screenshots.spec.ts",
     "demo:screenshots:v0.2": "playwright test screenshots/v0.2.screenshots.spec.ts",
-    "demo:screenshots:v0.3": "playwright test screenshots/v0.3.screenshots.spec.ts"
+    "demo:screenshots:v0.3": "playwright test screenshots/v0.3.screenshots.spec.ts",
+    "demo:video": "playwright test videos",
+    "demo:video:v0.1": "playwright test videos/v0.1.video.spec.ts",
+    "demo:video:v0.2": "playwright test videos/v0.2.video.spec.ts",
+    "demo:video:v0.3": "playwright test videos/v0.3.video.spec.ts",
+    "demo:all": "playwright test"
   },
   "dependencies": {
     "react": "^18.3.1",

@@ -158,11 +158,24 @@ read the finding cards, and click **Export Markdown**. The paste-your-own and
 
 ## Demo video
 
-> _A recorded walkthrough (60–90s) can be added here later — link the video or
-> embed a GIF in [`docs/assets/`](docs/assets/)._
+Short (≤90s) walkthroughs are **recorded from real app interactions** by the Playwright
+video specs (`frontend/demo/videos/`) and saved under
+[`docs/assets/videos/`](docs/assets/videos/):
 
-A ready-to-record script, narration, timing guide, and recording checklist live
-in [`docs/demo-script.md`](docs/demo-script.md).
+| Milestone | Video |
+| --------- | ----- |
+| v0.1 core review | `mr-review-council-v0.1-core-review-demo.webm` *(capture target — record from a `v0.1.0` worktree)* |
+| v0.2 suggested replies | `mr-review-council-v0.2-suggested-replies-demo.webm` *(capture target — record from a `v0.2.0` worktree)* |
+| v0.3 local import | [`mr-review-council-v0.3-local-import-demo.webm`](docs/assets/videos/mr-review-council-v0.3-local-import-demo.webm) *(recorded from the `v0.3.0` tree)* |
+
+Exact-version videos should be recorded from the matching `v0.1.0` / `v0.2.0` / `v0.3.0`
+worktree; a recording from a newer checkout is a truthful **milestone-style** fallback,
+not an exact build. The v0.3 import video is a **local fixture-based demo** (bundled
+synthetic JSON) — **not** live GitHub/GitLab integration. Converting `.webm` to
+`.mp4`/`.gif` with `ffmpeg` is **optional** and not required.
+
+A ready-to-record script, narration, timing guide, and recording checklist live in
+[`docs/demo-script.md`](docs/demo-script.md).
 
 ## Running tests and builds
 

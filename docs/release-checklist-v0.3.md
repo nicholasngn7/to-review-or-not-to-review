@@ -77,8 +77,21 @@ cd frontend && npm run demo:screenshots:v0.3
 - [ ] `docs/assets/screenshots/v0.3/v0.3-suggested-replies-from-imported-comments.png`
 
 > v0.1 / v0.2 screenshots are captured from `v0.1.0` / `v0.2.0` worktrees — see
-> [`demo-automation-plan.md`](demo-automation-plan.md). Demo **videos** are Phase C
-> (not generated yet).
+> [`demo-automation-plan.md`](demo-automation-plan.md).
+
+## Demo video (optional)
+
+Recorded from real app interactions into `docs/assets/videos/` (backend on :8000):
+
+```bash
+cd frontend && npm run demo:video:v0.3   # writes mr-review-council-v0.3-local-import-demo.webm
+```
+
+- [ ] `docs/assets/videos/mr-review-council-v0.3-local-import-demo.webm` (from `v0.3.0`)
+
+> v0.1 / v0.2 videos are recorded from `v0.1.0` / `v0.2.0` worktrees. `ffmpeg`
+> conversion to `.mp4`/`.gif` is optional. The v0.3 import video is a local
+> fixture-based demo, not live GitHub/GitLab integration.
 
 ## Tag the release
 

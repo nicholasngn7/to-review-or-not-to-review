@@ -83,6 +83,7 @@ cd ../mrrc-v0.1/frontend
 npm install
 npm run demo:install-browsers             # first time only
 npm run demo:screenshots:v0.1             # writes docs/assets/screenshots/v0.1/*.png
+npm run demo:video:v0.1                   # writes docs/assets/videos/...v0.1...webm
 
 # 3) Tear down when done
 git worktree remove ../mrrc-v0.1
@@ -271,25 +272,30 @@ When assets are generated, update:
    `v0.3.0` tree**; v0.1/v0.2 remain capture targets via worktrees. Specs `test.skip`
    gracefully when a feature is absent (so a wrong-version run never writes a
    misleading image). Reconciled README/`docs/assets` links to the structured paths.
-3. **Phase C — Video scripts + `demo:video:*` / `demo:all`.** Add the three recording
-   specs and scripts; produce the `.webm` files into `docs/assets/videos/`.
+3. **Phase C — Video scripts + `demo:video:*` / `demo:all`. ✅ Done.** Added
+   `frontend/demo/videos/v0.{1,2,3}.video.spec.ts` plus a `helpers/video.ts` that
+   records each demo in its own `recordVideo` context and renames the artifact to the
+   plan's filename (deleting the throwaway if the version's defining feature is
+   absent). Added `demo:video[:v0.1|v0.2|v0.3]` and `demo:all` scripts. **The v0.3
+   video was recorded from the `v0.3.0` tree**; v0.1/v0.2 are worktree capture targets.
+   Recording is enabled **only** inside the video specs (never globally), and short
+   intentional `beat()` pauses keep the videos watchable while still using deterministic
+   waits for state. `ffmpeg` → `.mp4`/`.gif` is optional, not required.
 4. **Phase D — Docs wiring.** Update README, `demo-script.md`, `docs/assets/README.md`,
    and `release-checklist-v0.3.md` to reference the generated assets and scripts.
 
 ## 12. Recommended next implementation prompt
 
-Phases A and B are complete. The next step is **Phase C — video specs**:
+Phases A, B, and C are complete (harness, screenshots, videos). The remaining work is
+**Phase D — capture the exact-version v0.1/v0.2 assets and final docs wiring**:
 
-> "Implement Phase C of demo automation for MR Review Council: short demo **video**
-> specs and `demo:video:v0.1|v0.2|v0.3` + `demo:all` scripts, using the existing
-> Playwright harness and `frontend/demo/helpers/flows.ts`. Record one `.webm` per
-> milestone into `docs/assets/videos/` (use a context with `recordVideo` pointed at
-> `DEMO_VIDEO_DIR` from `playwright.config.ts`, and rename the output to the plan's
-> filenames). Drive only built-in sample diffs and bundled synthetic import samples;
-> keep each video ≤90s. Document ffmpeg as an optional (not required) post-step for
-> `.mp4`/`.gif` derivatives. Generate v0.3 from the current tree and v0.1/v0.2 from
-> worktrees. The review/import steps need the backend on port 8000. Do not add live
-> provider calls, OAuth, tokens, URL input, posting, or real AI. Update README
-> (Demo video section), `docs/assets/README.md`, and `docs/release-checklist-v0.3.md`,
-> keeping wording truthful (do not claim assets exist until generated). Verify a v0.3
-> recording and stop."
+> "Complete demo automation Phase D for MR Review Council: capture the exact-version
+> v0.1 and v0.2 screenshots and videos by creating `git worktree`s for `v0.1.0` and
+> `v0.2.0`, installing their backend/frontend deps, starting each backend on :8000,
+> and running `demo:screenshots:v0.1` / `demo:video:v0.1` (and the v0.2 equivalents)
+> from each worktree; copy the resulting PNGs/webm into the primary checkout under
+> `docs/assets/screenshots/v0.1|v0.2/` and `docs/assets/videos/`. Then flip the README
+> wording for v0.1/v0.2 from 'capture target' to generated-from-tag, verify all asset
+> links resolve, and optionally add an `ffmpeg` snippet for `.mp4`/`.gif` derivatives.
+> Do not add live provider calls, OAuth, tokens, URL input, posting, or real AI; keep
+> the v0.3 import described as a local fixture-based demo."
