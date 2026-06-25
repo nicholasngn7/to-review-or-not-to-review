@@ -284,10 +284,13 @@ Both are **documentation only**. There is **no** GitHub/GitLab API integration, 
 OAuth, no token input, no auto-posting, and no AI calls. Comment threads are entered
 locally today, and suggested replies remain deterministic and copy-only.
 
-**Next planned technical phase (planned, not implemented):** fixture-based Git
-provider comment-import mappers — pure functions that normalize recorded GitHub/GitLab
-comment JSON into the existing `commentThreads` contract, with no network calls,
-OAuth, or token input. See
+**In progress — fixture-based Git provider comment-import mappers (backend only, no
+network):** pure functions that normalize recorded GitHub/GitLab comment JSON into the
+existing `commentThreads` contract. Implemented so far: import contracts; GitHub PR
+review-comment and issue-comment mappers; GitLab MR discussions mapper; and a pure
+`import_comments` orchestrator with invariance tests proving imported threads drive the
+review/reply pipeline identically to locally-entered threads. **No** live API calls,
+OAuth, token input, endpoints, or UI yet. See
 [`docs/v0.3-plan-git-comment-import-mappers.md`](docs/v0.3-plan-git-comment-import-mappers.md).
 
 ## Known limitations

@@ -349,3 +349,14 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   default; line nulled + warning when explicitly included). Same guardrails: pure,
   tolerant parsing, deterministic, fixture-only, and **the synthetic GitLab shape
   must be verified against official GitLab docs before live integration**.
+- **A pure orchestrator dispatches imports; never guesses a mapper (v0.3 Phase 5).**
+  `import_comments(request)` routes by `source` (validated against the provider) and
+  only infers the source when a provider has a single mapper (GitLab); ambiguous
+  GitHub or unsupported provider/source combinations raise a clear `ValueError`
+  rather than silently picking a mapper. Empty payloads return an empty response with
+  a single warning; per-thread warnings are preserved and also surfaced at the top
+  level. **Invariance is now tested**: imported threads, once normalized into
+  `CommentThread`, drive `run_review` byte-identically to hand-authored local
+  threads — proving Git import is purely an input adapter that downstream
+  review/reply behavior is oblivious to. Still no endpoint, network, tokens, or UI;
+  live provider integration remains deferred.

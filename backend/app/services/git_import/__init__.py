@@ -18,6 +18,12 @@ from .github import (
     map_github_review_comments_to_threads,
 )
 from .gitlab import map_gitlab_discussions_to_threads
+from .orchestrator import (
+    SOURCE_GITHUB_ISSUE_COMMENTS,
+    SOURCE_GITHUB_REVIEW_COMMENTS,
+    SOURCE_GITLAB_DISCUSSIONS,
+    import_comments,
+)
 
 __all__ = [
     "clean_body",
@@ -27,4 +33,8 @@ __all__ = [
     "map_github_review_comments_to_threads",
     "map_github_issue_comments_to_threads",
     "map_gitlab_discussions_to_threads",
+    "import_comments",
+    "SOURCE_GITHUB_REVIEW_COMMENTS",
+    "SOURCE_GITHUB_ISSUE_COMMENTS",
+    "SOURCE_GITLAB_DISCUSSIONS",
 ]

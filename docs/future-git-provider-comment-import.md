@@ -21,10 +21,14 @@
 > maps line-less PR conversation comments to single-comment threads; Phase 4 added a
 > pure **GitLab MR discussions** mapper (`map_gitlab_discussions_to_threads`) that
 > maps one discussion → one thread with ordered notes (system notes filtered,
-> positional file/line, resolved/outdated handling). The GitHub/GitLab payload shapes
-> below and in the fixtures are **synthetic and tolerant** — they must be verified
-> against official GitHub/GitLab API docs before any live integration. No live API
-> calls, OAuth, tokens, endpoints, or UI exist yet.
+> positional file/line, resolved/outdated handling). Phase 5 added a pure
+> **orchestrator** (`import_comments`) that dispatches an `ImportCommentsRequest` to
+> the right mapper and returns an `ImportCommentsResponse` — with **invariance tests**
+> proving imported threads drive the review/reply pipeline identically to local
+> `commentThreads`. The GitHub/GitLab payload shapes below and in the fixtures are
+> **synthetic and tolerant** — they must be verified against official GitHub/GitLab
+> API docs before any live integration. No live API calls, OAuth, tokens, endpoints,
+> or UI exist yet.
 
 ## 1. Product goal
 
