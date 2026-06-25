@@ -62,7 +62,8 @@ This is an incremental build. What exists today (scaffold step):
 - [x] Monorepo structure (`frontend/`, `backend/`, `docs/`)
 - [x] Backend `GET /health` returning `{ "status": "ok" }`
 - [x] Frontend landing page with project name, description, and a "Start Review" placeholder
-- [ ] Diff parsing (files / hunks / lines)
+- [x] Shared review contract models (backend Pydantic + frontend TypeScript)
+- [x] Diff parsing (files / hunks / lines) via `POST /api/parse-diff`
 - [ ] Mock review engine + persona findings
 - [ ] `POST /api/review` endpoint
 - [ ] Results UI (summary, risk score, reviewer tabs, finding cards)

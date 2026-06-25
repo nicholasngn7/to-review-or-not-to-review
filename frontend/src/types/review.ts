@@ -31,7 +31,12 @@ export type FindingSeverity = "info" | "low" | "medium" | "high";
 
 export type LineKind = "added" | "removed" | "context";
 
-export type FileChangeType = "added" | "modified" | "deleted" | "renamed";
+export type FileChangeType =
+  | "added"
+  | "modified"
+  | "deleted"
+  | "renamed"
+  | "unknown";
 
 export interface DiffLine {
   kind: LineKind;

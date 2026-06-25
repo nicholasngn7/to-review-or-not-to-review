@@ -14,8 +14,8 @@ from .base import CamelModel
 LineKind = Literal["added", "removed", "context"]
 """Whether a diff line was added, removed, or is unchanged context."""
 
-FileChangeType = Literal["added", "modified", "deleted", "renamed"]
-"""How a file changed in the diff."""
+FileChangeType = Literal["added", "modified", "deleted", "renamed", "unknown"]
+"""How a file changed in the diff. `unknown` when it can't be reliably detected."""
 
 
 class DiffLine(CamelModel):

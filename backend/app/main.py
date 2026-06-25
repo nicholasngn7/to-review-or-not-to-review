@@ -8,6 +8,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from app.api.routes import diff_router
+
 # Local dev origins for the Vite frontend.
 ALLOWED_ORIGINS = [
     "http://localhost:5173",
@@ -27,6 +29,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(diff_router)
 
 
 class HealthResponse(BaseModel):

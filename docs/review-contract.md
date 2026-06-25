@@ -140,7 +140,7 @@ defined for the parser phase; only `DiffStats` is surfaced in the review respons
 | `MergeRecommendation` | `ready`, `ready_with_followups`, `needs_changes`, `needs_human_review` |
 | `FindingSeverity`     | `info`, `low`, `medium`, `high`                                        |
 | `LineKind`            | `added`, `removed`, `context`                                          |
-| `FileChangeType`      | `added`, `modified`, `deleted`, `renamed`                              |
+| `FileChangeType`      | `added`, `modified`, `deleted`, `renamed`, `unknown`                   |
 
 ## Reviewer personas and responsibilities
 
