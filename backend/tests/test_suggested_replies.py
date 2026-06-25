@@ -30,11 +30,18 @@ DIFF = (
 )
 
 
-def _thread(body: str, *, tid: str = "t1", author: str = "Reviewer") -> CommentThread:
+def _thread(
+    body: str,
+    *,
+    tid: str = "t1",
+    author: str = "Reviewer",
+    file_path: str | None = "app/auth.py",
+    line: int | None = 5,
+) -> CommentThread:
     return CommentThread(
         id=tid,
-        file_path="app/auth.py",
-        line=5,
+        file_path=file_path,
+        line=line,
         comments=[ThreadComment(id=f"{tid}-c1", author=author, body=body)],
     )
 
@@ -222,6 +229,82 @@ def test_reviews_route_returns_suggested_replies():
     assert first["threadId"] == "t1"
     assert first["needsHumanReview"] is True
     assert "suggestedReply" in first and first["suggestedReply"]
+
+
+# Phase 16: replies carry source-thread file/line context.
+def test_reply_includes_file_and_line_from_thread():
+    resp = run_review(
+        _request(
+            "Can we avoid swallowing this exception and add logging?",
+            [ReviewerPersona.BACKEND, ReviewerPersona.SRE],
+        )
+    )
+    assert resp.suggested_replies
+    assert all(r.file_path == "app/auth.py" for r in resp.suggested_replies)
+    assert all(r.line == 5 for r in resp.suggested_replies)
+
+
+def test_reply_omits_file_and_line_when_thread_lacks_them():
+    req = ReviewRequest(
+        diff_text=DIFF,
+        selected_personas=[ReviewerPersona.BACKEND],
+        comment_threads=[
+            _thread("Avoid swallowing this exception.", file_path=None, line=None)
+        ],
+    )
+    resp = run_review(req)
+    assert resp.suggested_replies
+    assert all(r.file_path is None for r in resp.suggested_replies)
+    assert all(r.line is None for r in resp.suggested_replies)
+
+
+def test_file_line_context_does_not_change_routing_or_detection():
+    personas = [ReviewerPersona.BACKEND, ReviewerPersona.SRE]
+    body = "Can we avoid swallowing this exception and add logging?"
+    with_ctx = run_review(_request(body, personas))
+    without_ctx = run_review(
+        _request(body, personas, file_path=None, line=None)
+    )
+
+    def routing(resp):
+        return [
+            (r.reviewer, r.confidence, r.needs_human_review)
+            for r in resp.suggested_replies
+        ]
+
+    # Routing/selection/confidence identical regardless of file/line context.
+    assert routing(with_ctx) == routing(without_ctx)
+    # Detection unaffected.
+    assert with_ctx.overall_risk == without_ctx.overall_risk
+    assert with_ctx.merge_recommendation == without_ctx.merge_recommendation
+    assert [f.id for f in with_ctx.findings] == [
+        f.id for f in without_ctx.findings
+    ]
+
+
+def test_route_returns_file_and_line_in_replies():
+    resp = client.post(
+        "/api/reviews",
+        json={
+            "diffText": DIFF,
+            "selectedPersonas": ["backend"],
+            "commentThreads": [
+                {
+                    "id": "t1",
+                    "filePath": "app/auth.py",
+                    "line": 5,
+                    "status": "open",
+                    "comments": [
+                        {"id": "c1", "body": "Handle this exception explicitly."}
+                    ],
+                }
+            ],
+        },
+    )
+    assert resp.status_code == 200
+    reply = resp.json()["suggestedReplies"][0]
+    assert reply["filePath"] == "app/auth.py"
+    assert reply["line"] == 5
 
 
 # Determinism: identical inputs -> identical replies.

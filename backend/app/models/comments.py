@@ -105,3 +105,11 @@ class SuggestedReply(CamelModel):
     tone_profile: Optional[ToneProfile] = Field(
         default=None, description="Tone used to frame the reply, if any."
     )
+    file_path: Optional[str] = Field(
+        default=None,
+        description="File the source thread is anchored to, copied for context.",
+    )
+    line: Optional[int] = Field(
+        default=None,
+        description="Line the source thread is anchored to, copied for context.",
+    )

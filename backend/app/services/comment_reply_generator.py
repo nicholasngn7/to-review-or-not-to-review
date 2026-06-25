@@ -184,6 +184,8 @@ def _make_reply(
         confidence=confidence,
         needs_human_review=True,
         tone_profile=tone,
+        file_path=thread.file_path,
+        line=thread.line,
     )
 
 

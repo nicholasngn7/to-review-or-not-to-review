@@ -326,8 +326,10 @@ model is proven (see the plan doc).
 > **Suggested replies** are now generated too: capture existing MR/PR **comment
 > threads** (an optional local input) and the review returns deterministic,
 > **copy-only** draft replies, routed to relevant selected personas and framed in
-> the resolved tone. They appear in a grouped "Suggested replies" panel with copy
-> buttons and are included in the Markdown export. Every reply is marked
+> the resolved tone. Each reply is **self-contained** — it carries the source
+> thread's `filePath`/`line` for context. They appear in a grouped "Suggested
+> replies" panel with per-reply copy and a "copy all replies for this thread"
+> action, and are included in the Markdown export. Every reply is marked
 > "needs human review" and **nothing is posted anywhere** — there is no
 > GitHub/GitLab integration and no auto-posting. Real AI-driven output remains
 > deferred.

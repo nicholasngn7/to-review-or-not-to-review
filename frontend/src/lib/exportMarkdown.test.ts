@@ -70,6 +70,8 @@ describe("exportReviewMarkdown", () => {
           rationale: 'The comment mentions "token", which maps to Security.',
           confidence: 0.6,
           needsHumanReview: true,
+          filePath: "app/auth.py",
+          line: 5,
         },
       ],
     };
@@ -77,6 +79,7 @@ describe("exportReviewMarkdown", () => {
     expect(out).toContain("## Suggested replies");
     expect(out).toContain("### Thread `t1`");
     expect(out).toContain("#### Security");
+    expect(out).toContain("**Location:** `app/auth.py` · line 5");
     expect(out).toContain("Can we confirm the token is handled safely?");
     expect(out).toContain("**Rationale:**");
     expect(out).toContain("**Confidence:** 60%");

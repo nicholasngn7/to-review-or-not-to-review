@@ -104,6 +104,19 @@ function suggestedRepliesSection(replies: SuggestedReply[]): string[] {
     for (const reply of byThread.get(threadId)!) {
       lines.push(`#### ${PERSONA_LABELS[reply.reviewer]}`);
       lines.push("");
+
+      const loc: string[] = [];
+      if (reply.filePath) {
+        loc.push(`\`${reply.filePath}\``);
+      }
+      if (reply.line != null) {
+        loc.push(`line ${reply.line}`);
+      }
+      if (loc.length > 0) {
+        lines.push(`**Location:** ${loc.join(" · ")}`);
+        lines.push("");
+      }
+
       lines.push(`> ${reply.suggestedReply}`);
       lines.push("");
       lines.push(`**Rationale:** ${reply.rationale}`);

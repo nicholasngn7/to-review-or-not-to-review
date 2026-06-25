@@ -1,14 +1,13 @@
 import { useState } from "react";
 
-import type { CommentThread, SuggestedReply } from "../types/review";
+import type { SuggestedReply } from "../types/review";
 import { PERSONA_LABELS } from "../lib/reviewLabels";
 
 interface SuggestedReplyCardProps {
   reply: SuggestedReply;
-  thread?: CommentThread;
 }
 
-export function SuggestedReplyCard({ reply, thread }: SuggestedReplyCardProps) {
+export function SuggestedReplyCard({ reply }: SuggestedReplyCardProps) {
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -22,12 +21,13 @@ export function SuggestedReplyCard({ reply, thread }: SuggestedReplyCardProps) {
     }
   };
 
+  // File/line come directly from the reply (self-contained as of Phase 16).
   const location: string[] = [];
-  if (thread?.filePath) {
-    location.push(thread.filePath);
+  if (reply.filePath) {
+    location.push(reply.filePath);
   }
-  if (thread?.line != null) {
-    location.push(`line ${thread.line}`);
+  if (reply.line != null) {
+    location.push(`line ${reply.line}`);
   }
 
   return (

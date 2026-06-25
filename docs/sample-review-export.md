@@ -100,6 +100,8 @@ _Draft, copy-only replies to existing comment threads. Nothing is posted anywher
 
 #### Backend
 
+**Location:** `app/auth.py` · line 5
+
 > Thanks for the review comment, Reviewer. From a Backend standpoint, the service-side handling is worth tightening — could we catch the specific exception and validate inputs explicitly? (Draft suggestion; please review before sending.)
 
 **Rationale:** The comment mentions "exception", which maps to the Backend reviewer.
@@ -109,6 +111,8 @@ _Draft, copy-only replies to existing comment threads. Nothing is posted anywher
 **Needs human review before sending.**
 
 #### SRE / On-call
+
+**Location:** `app/auth.py` · line 5
 
 > Thanks for the review comment, Reviewer. From a SRE / On-call standpoint, operational visibility matters here — can we add structured logging (and a timeout/retry where relevant) so failures stay observable? (Draft suggestion; please review before sending.)
 

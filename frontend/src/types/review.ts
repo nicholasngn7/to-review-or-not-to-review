@@ -78,6 +78,10 @@ export interface SuggestedReply {
   confidence?: number | null;
   needsHumanReview: boolean;
   toneProfile?: ToneProfile | null;
+  /** File the source thread is anchored to, copied for context. */
+  filePath?: string | null;
+  /** Line the source thread is anchored to, copied for context. */
+  line?: number | null;
 }
 
 // ---- Diff models ----

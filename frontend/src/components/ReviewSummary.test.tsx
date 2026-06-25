@@ -61,30 +61,20 @@ describe("ReviewSummary", () => {
           rationale: 'The comment mentions "token".',
           confidence: 0.6,
           needsHumanReview: true,
+          filePath: "app/auth.py",
+          line: 5,
         },
       ],
     };
     render(
-      <ReviewSummary
-        status="success"
-        result={result}
-        error={null}
-        commentThreads={[
-          {
-            id: "t1",
-            filePath: "app/auth.py",
-            line: 5,
-            status: "open",
-            comments: [{ id: "c1", body: "Is the token safe?" }],
-          },
-        ]}
-      />,
+      <ReviewSummary status="success" result={result} error={null} />,
     );
 
     expect(screen.getByText("Suggested replies")).toBeInTheDocument();
     expect(
       screen.getByText(/Can we confirm the token is handled safely\?/),
     ).toBeInTheDocument();
+    // File/line render directly from the reply, no commentThreads prop needed.
     expect(screen.getByText(/app\/auth\.py · line 5/)).toBeInTheDocument();
   });
 });

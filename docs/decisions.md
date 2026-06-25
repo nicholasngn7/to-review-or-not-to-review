@@ -270,3 +270,21 @@ Generates deterministic, local, copy-only draft replies for comment threads.
   `true`; the UI frames replies as drafts with a copy button and an explicit "no
   comments are posted anywhere" note. Real AI, GitHub/GitLab import, and
   auto-posting remain out of scope.
+
+## Suggested-reply polish decisions (Phase 16)
+
+Makes replies self-contained and easier to use in a demo; no behavior changes.
+
+- **`SuggestedReply` carries its own `filePath`/`line`.** Copied from the source
+  thread at generation time, so the UI and Markdown export no longer re-join
+  replies against the request to show where they belong. This is purely additive
+  context — it never affects routing, reviewer selection, confidence, tone, or
+  detection (asserted by a test).
+- **Copy-all per thread.** Each thread group has a "Copy all replies for this
+  thread" action that concatenates the replies with reviewer labels (e.g.
+  `Security: …`) so a pasted block is readable. The per-reply copy still copies
+  only that reply's text.
+- **Honest empty states.** No suggested-replies section appears unless the user
+  submitted comment threads; if threads were submitted but nothing matched, an
+  explicit "No suggested replies were generated…" message is shown instead of a
+  blank/confusing area.

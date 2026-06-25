@@ -234,6 +234,12 @@ Notes:
 | `confidence`      | number \| null        | 0.0–1.0 confidence.                         |
 | `needsHumanReview`| boolean               | Always `true`: replies are human-sent drafts. |
 | `toneProfile`     | `ToneProfile` \| null | Tone used to frame the reply, if any.       |
+| `filePath`        | string \| null        | File copied from the source thread, for context. |
+| `line`            | number \| null        | Line copied from the source thread, for context. |
+
+Each `SuggestedReply` is **self-contained**: `filePath`/`line` are copied from the
+source `CommentThread` (Phase 16), so consumers don't need to re-join against the
+request to show where a reply belongs.
 
 **Generation (deterministic, local, no AI):** for each `commentThread`, the
 combined comment text is keyword-routed to relevant **selected** personas

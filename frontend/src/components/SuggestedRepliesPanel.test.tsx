@@ -14,6 +14,8 @@ const REPLIES: SuggestedReply[] = [
     rationale: 'The comment mentions "token", which maps to the Security reviewer.',
     confidence: 0.6,
     needsHumanReview: true,
+    filePath: "app/auth.py",
+    line: 5,
   },
   {
     id: "reply-t1-qa",
@@ -23,6 +25,8 @@ const REPLIES: SuggestedReply[] = [
     rationale: 'The comment mentions "test", which maps to the QA reviewer.',
     confidence: 0.6,
     needsHumanReview: true,
+    filePath: "app/auth.py",
+    line: 5,
   },
 ];
 
@@ -41,45 +45,63 @@ describe("SuggestedRepliesPanel", () => {
     vi.restoreAllMocks();
   });
 
-  it("renders nothing when there are no replies", () => {
+  it("renders nothing when there are no replies and no threads were submitted", () => {
     const { container } = render(<SuggestedRepliesPanel replies={[]} />);
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("renders replies grouped under their thread with metadata", () => {
-    render(
-      <SuggestedRepliesPanel replies={REPLIES} commentThreads={THREADS} />,
-    );
+  it("shows an empty state when threads were submitted but no replies generated", () => {
+    render(<SuggestedRepliesPanel replies={[]} commentThreads={THREADS} />);
+    expect(
+      screen.getByText(
+        /no suggested replies were generated for the submitted comment threads/i,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("renders replies with file/line taken from each reply", () => {
+    render(<SuggestedRepliesPanel replies={REPLIES} />);
 
     expect(screen.getByText("Suggested replies")).toBeInTheDocument();
     expect(
       screen.getByText(/Can we confirm the token is safe\?/),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Could we add a regression test/),
-    ).toBeInTheDocument();
-    // Persona labels and human-review badges.
     expect(screen.getByText("Security")).toBeInTheDocument();
     expect(screen.getByText("QA / Test")).toBeInTheDocument();
     expect(screen.getAllByText(/needs human review/i)).toHaveLength(2);
-    // File/line context comes from the thread (one per reply in the thread).
+    // File/line render straight from the reply (no thread lookup).
     expect(screen.getAllByText(/app\/auth\.py · line 5/)).toHaveLength(2);
   });
 
-  it("copies only the suggested reply text", async () => {
+  it("copies a single reply's text", async () => {
     const user = userEvent.setup();
-    // userEvent.setup() installs a clipboard stub; spy on it.
     const writeText = vi.spyOn(navigator.clipboard, "writeText");
 
-    render(
-      <SuggestedRepliesPanel replies={[REPLIES[0]]} commentThreads={THREADS} />,
+    render(<SuggestedRepliesPanel replies={[REPLIES[0]]} />);
+
+    await user.click(screen.getByRole("button", { name: /^copy reply$/i }));
+    expect(writeText).toHaveBeenCalledWith(REPLIES[0].suggestedReply);
+    expect(
+      await screen.findByRole("button", { name: /^copied$/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("copies all replies for a thread with reviewer labels", async () => {
+    const user = userEvent.setup();
+    const writeText = vi.spyOn(navigator.clipboard, "writeText");
+
+    render(<SuggestedRepliesPanel replies={REPLIES} />);
+
+    await user.click(
+      screen.getByRole("button", { name: /copy all replies for this thread/i }),
     );
 
-    await user.click(screen.getByRole("button", { name: /copy reply/i }));
-    expect(writeText).toHaveBeenCalledWith(REPLIES[0].suggestedReply);
-    // Temporary confirmation appears.
+    const expected =
+      `Security: ${REPLIES[0].suggestedReply}\n\n` +
+      `QA / Test: ${REPLIES[1].suggestedReply}`;
+    expect(writeText).toHaveBeenCalledWith(expected);
     expect(
-      await screen.findByRole("button", { name: /copied/i }),
+      await screen.findByRole("button", { name: /copied thread replies/i }),
     ).toBeInTheDocument();
   });
 });
