@@ -109,9 +109,11 @@ and deployment are future work behind the existing seams — see
   attach citations to findings. So far the **contract models** (Phase 1A), **additive
   review-contract fields** (Phase 1B), **local offline ingestion + deterministic
   chunking** (Phase 2), a **deterministic local lexical embedding provider + in-memory
-  cosine index** (Phase 3), and a **local-only retrieval service + `POST
-  /api/retrieve-context` endpoint** (Phase 4) are implemented and tested; review-flow
-  integration (populating citations/context) and UI are not built yet. It is scoped as a
+  cosine index** (Phase 3), a **local-only retrieval service + `POST
+  /api/retrieve-context` endpoint** (Phase 4), and **opt-in, provenance-only review
+  grounding** (Phase 5 — populating `contextUsed` and per-finding `citations` by lexical
+  overlap, with detection/risk/recommendation kept invariant) are implemented and tested;
+  retrieval-evaluation fixtures and any UI surfacing are not built yet. It is scoped as a
   local **RAG architecture
   demo** with lexical/deterministic retrieval — not semantic search, not production-grade
   RAG, and with no live/Bedrock embedding calls unless a real provider is later

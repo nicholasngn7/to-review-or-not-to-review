@@ -498,3 +498,27 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   integration: `review_engine` does not import or call retrieval, and
   `ReviewFinding.citations`/`ReviewResponse.context_used` stay unpopulated. Review
   integration, citations/contextUsed population, and any UI stay deferred to Phase 5+.
+- **Phase 5 wires retrieval into review as opt-in, provenance-only grounding.**
+  `backend/app/services/knowledge/review_context.py` adds `should_retrieve`,
+  `resolve_retrieval_query`, and `attach_citations`, and `review_engine.run_review` calls
+  them **after** computing risk/recommendation/summary/suggested replies. **Opt-in:**
+  retrieval runs only when `ReviewRequest.knowledge_sources` is non-empty (a `retrieval`
+  query alone has no files to read); when no retrieval query is supplied, one is derived
+  deterministically from the MR title + description + changed file paths. Results populate
+  `ReviewResponse.context_used`. **Citation mapping rule (documented + tested):** a
+  retrieved result is cited by a finding when their *meaningful* tokens (length ≥ 3,
+  excluding common stopwords) overlap — taken from the finding's
+  title/explanation/recommendation/file path vs. the result's snippet/heading/source path —
+  in rank order, capped at 2 per finding. Citations are **provenance only** and attached
+  via `model_copy`, so detection, severity, confidence, risk, merge recommendation,
+  summary, tone wording, and suggested replies are **invariant** whether or not knowledge
+  sources are supplied (proven by invariance tests). The engine pins the repo root +
+  ingestion allow-list (`README.md` + `docs/`); unsafe/outside/URL-like sources raise
+  `RetrievalError`, which `POST /api/reviews` maps to **400** (consistent with the other
+  local routes). When knowledge fields are absent, **no retrieval runs** and
+  `contextUsed`/`citations` stay empty; when retrieval returns nothing, the review is
+  produced normally with empty context/citations. Still local, offline, deterministic, and
+  **lexical** — **not** production RAG, semantic search, Bedrock/live provider, or
+  LLM-generated findings. No new dependencies and **no frontend UI** in this phase (the
+  contextUsed/citations contract fields already exist from Phase 1B). Frontend surfacing is
+  deferred to a later phase.

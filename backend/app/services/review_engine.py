@@ -11,14 +11,17 @@ API response contract is independent of which provider runs.
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Optional
 
+from app.models.diff import ParsedDiff
 from app.models.enums import (
     FindingSeverity,
     MergeRecommendation,
     ReviewerPersona,
     RiskLevel,
 )
+from app.models.knowledge import RetrievalResult
 from app.models.review import (
     PersonaReview,
     ReviewFinding,
@@ -29,10 +32,53 @@ from app.models.review import (
 from app.models.tone import ToneProfile, resolve_tone_profile
 from app.services.comment_reply_generator import generate_suggested_replies
 from app.services.diff_parser import parse_diff
+from app.services.knowledge.retrieval import retrieve_context
+from app.services.knowledge.review_context import (
+    attach_citations,
+    resolve_retrieval_query,
+    should_retrieve,
+)
 from app.services.providers import ReviewProvider, create_provider
 
 # Personas whose high-severity findings warrant a human's eyes before merge.
 _SENSITIVE_PERSONAS = {ReviewerPersona.SECURITY, ReviewerPersona.ARCHITECT}
+
+# Pinned project root for opt-in retrieval grounding:
+# .../<repo>/backend/app/services/review_engine.py -> parents[3] is the repo root,
+# which (with the ingestion allow-list) restricts retrieval to README.md + docs/.
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+
+
+def _ground_with_retrieval(
+    request: ReviewRequest,
+    parsed: ParsedDiff,
+    persona_reviews: list[PersonaReview],
+) -> tuple[list[PersonaReview], list[RetrievalResult]]:
+    """Opt-in, provenance-only grounding.
+
+    When `knowledge_sources` are provided, retrieve local context and attach citations to
+    findings. Returns possibly-updated persona reviews and the retrieved context. Never
+    changes detection, severity, confidence, risk, recommendation, summary, tone, or
+    suggested replies. Raises `RetrievalError` for unsafe/outside/URL-like sources, which
+    the route surfaces as a 400.
+    """
+    if not should_retrieve(request):
+        return persona_reviews, []
+
+    query = resolve_retrieval_query(request, parsed)
+    results = retrieve_context(
+        query,
+        source_paths=list(request.knowledge_sources or []),
+        repo_root=_REPO_ROOT,
+    )
+    if not results:
+        return persona_reviews, []
+
+    grounded = [
+        pr.model_copy(update={"findings": attach_citations(pr.findings, results)})
+        for pr in persona_reviews
+    ]
+    return grounded, results
 
 
 def _dedupe_personas(personas: list[ReviewerPersona]) -> list[ReviewerPersona]:
@@ -145,6 +191,8 @@ def run_review(
         finding for pr in persona_reviews for finding in pr.findings
     ]
 
+    # Aggregation is computed from the detected findings and is independent of any
+    # retrieval grounding below — citations are provenance only and never affect these.
     overall_risk = _aggregate_risk(all_findings)
     recommendation = _recommend(all_findings)
     summary = _build_summary(all_findings, recommendation, len(persona_reviews))
@@ -158,6 +206,14 @@ def run_review(
         tone_profiles=tone_profiles,
     )
 
+    # Opt-in retrieval grounding: attaches provenance-only citations to findings and
+    # surfaces the retrieved context. No-op (and no retrieval call) unless the request
+    # provides knowledge_sources.
+    persona_reviews, context_used = _ground_with_retrieval(
+        request, parsed, persona_reviews
+    )
+    all_findings = [finding for pr in persona_reviews for finding in pr.findings]
+
     return ReviewResponse(
         overall_risk=overall_risk,
         merge_recommendation=recommendation,
@@ -166,4 +222,5 @@ def run_review(
         persona_reviews=persona_reviews,
         findings=all_findings,
         suggested_replies=suggested_replies,
+        context_used=context_used,
     )

@@ -177,18 +177,12 @@ def test_results_conform_to_model(tmp_path: Path):
     assert "chunkId" in payload
 
 
-# 11. No review behavior changes: review engine is untouched by retrieval, and the
-#     additive review-contract fields still default to empty (no citations/contextUsed).
-def test_no_review_behavior_changes():
-    import app.services.review_engine as review_engine
+# 11. Retrieval contracts stay additive: the review fields still default to empty/None,
+#     so a request without knowledge fields produces no citations/contextUsed.
+#     (Phase 5 wires opt-in retrieval into the engine; the opt-out path is unchanged.)
+def test_review_retrieval_fields_default_empty():
     from app.models import ReviewFinding, ReviewRequest, ReviewResponse
 
-    with open(review_engine.__file__, encoding="utf-8") as handle:
-        source = handle.read()
-    for ref in ("retrieve_context", "KnowledgeIndex", "build_index", "knowledge"):
-        assert ref not in source
-
-    # Additive retrieval fields still default to empty/None (placeholders only).
     assert ReviewFinding.model_fields["citations"].default_factory() == []
     assert ReviewResponse.model_fields["context_used"].default_factory() == []
     assert ReviewRequest.model_fields["retrieval"].default is None
