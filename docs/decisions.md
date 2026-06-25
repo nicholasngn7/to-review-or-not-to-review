@@ -442,3 +442,20 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   defaults (e.g. `suggestedReplies: []`), so adding `citations: []`/`contextUsed: []` is
   consistent with current API output. Ingestion/chunking/embedding/retrieval stay deferred
   to Phase 2+.
+- **Phase 2 adds local ingestion + deterministic chunking only.**
+  `backend/app/services/knowledge/ingestion.py` exposes `ingest_local_file(...)`, which
+  reads **allow-listed** local text files (default roots: `README.md`, `docs/`) into
+  `KnowledgeDocument`s. It rejects paths outside the allow-list, path traversal (paths are
+  resolved before the allow-list check), missing files, directories, and binary/non-text
+  files (NUL byte / non-UTF-8). Document ids are deterministic (`doc-<sha1(relative_path)>`),
+  titles are inferred from the first Markdown H1 (else the filename), and content is stored
+  verbatim. `chunking.py` exposes `chunk_document(...)`, a **pure, idempotent** function that
+  splits by headings, paragraphs, and fenced code blocks into stable
+  `{document.id}#chunk-{ordinal}` chunks, preserves heading + `startLine`/`endLine` metadata,
+  adds an approximate whitespace-based `tokenEstimate`, keeps code fences intact where
+  practical, and splits oversized prose deterministically by line/char boundaries. It is
+  **offline only**: no network, URL, token/OAuth, embeddings, vector similarity, retrieval,
+  endpoints, UI, or new dependencies; review behavior is unchanged and
+  `citations`/`contextUsed` stay unpopulated. This is **not** production RAG, semantic
+  retrieval, or Bedrock/live-provider integration. Embedding/retrieval stay deferred to
+  Phase 3+.

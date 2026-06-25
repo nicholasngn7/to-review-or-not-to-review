@@ -103,10 +103,13 @@ and deployment are future work behind the existing seams — see
 
 ## Planned work
 
-- **v0.4 — RAG-style grounded review context (planned, not implemented).** A design plan
-  to ingest selected local docs, chunk and embed them behind an embedding-provider
-  abstraction (a deterministic local provider first), retrieve relevant context before a
-  review, and attach citations to findings. It is scoped as a local **RAG architecture
+- **v0.4 — RAG-style grounded review context (in progress).** A design plan to ingest
+  selected local docs, chunk and embed them behind an embedding-provider abstraction (a
+  deterministic local provider first), retrieve relevant context before a review, and
+  attach citations to findings. So far the **contract models** (Phase 1A), **additive
+  review-contract fields** (Phase 1B), and **local offline ingestion + deterministic
+  chunking** (Phase 2) are implemented and tested; embeddings, retrieval, endpoints, UI,
+  and review integration are not built yet. It is scoped as a local **RAG architecture
   demo** with lexical/deterministic retrieval — not semantic search, not production-grade
   RAG, and with no live/Bedrock embedding calls unless a real provider is later
   implemented and tested. Full plan:
