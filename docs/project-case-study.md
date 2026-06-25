@@ -108,9 +108,11 @@ and deployment are future work behind the existing seams — see
   deterministic local provider first), retrieve relevant context before a review, and
   attach citations to findings. So far the **contract models** (Phase 1A), **additive
   review-contract fields** (Phase 1B), **local offline ingestion + deterministic
-  chunking** (Phase 2), and a **deterministic local lexical embedding provider + in-memory
-  cosine index** (Phase 3) are implemented and tested; retrieval API/endpoints, UI, and
-  review integration are not built yet. It is scoped as a local **RAG architecture
+  chunking** (Phase 2), a **deterministic local lexical embedding provider + in-memory
+  cosine index** (Phase 3), and a **local-only retrieval service + `POST
+  /api/retrieve-context` endpoint** (Phase 4) are implemented and tested; review-flow
+  integration (populating citations/context) and UI are not built yet. It is scoped as a
+  local **RAG architecture
   demo** with lexical/deterministic retrieval — not semantic search, not production-grade
   RAG, and with no live/Bedrock embedding calls unless a real provider is later
   implemented and tested. Full plan:

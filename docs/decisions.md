@@ -479,3 +479,22 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   **no** new dependencies. There is still **no** review integration: the index is not
   called from `review_engine`, and `ReviewFinding.citations`/`ReviewResponse.context_used`
   stay unpopulated. Endpoints/UI/review integration stay deferred to Phase 4+.
+- **Phase 4 adds a local-only retrieval service + optional endpoint only.**
+  `backend/app/services/knowledge/retrieval.py` exposes `retrieve_context(query, *,
+  source_paths, repo_root=None, allowed_roots=None, provider=None, max_chars=1200)`, a thin
+  deterministic orchestrator that composes ingest → chunk → `build_index` → `search` on
+  each call (**no persistence, no cache, no hidden global state**) and returns
+  `list[RetrievalResult]`. It enforces the ingestion allow-list, **rejects URL-like inputs**
+  (e.g. `scheme://…`, `git@…`, `ssh://…`) without ever fetching them, and raises a clear
+  `RetrievalError` (a `ValueError`) for URL-like/outside-root/missing/non-text sources;
+  empty `source_paths` and low-signal queries return `[]` (chosen over raising).
+  `backend/app/api/routes/retrieve_context.py` adds `POST /api/retrieve-context` with a
+  small route model (`query: RetrievalQuery`, `sourcePaths: list[str]`) returning
+  `{ results, warnings }` in camelCase; the **repo root and allow-list are pinned
+  server-side** (`README.md` + `docs/`), so callers cannot read arbitrary filesystem paths,
+  and `RetrievalError` maps to HTTP 400. Retrieval is offline, deterministic, and
+  **lexical** — **not** semantic search, production RAG, or Bedrock/live/paid integration;
+  no network/URL/token/OAuth and no new dependencies. There is still **no** review
+  integration: `review_engine` does not import or call retrieval, and
+  `ReviewFinding.citations`/`ReviewResponse.context_used` stay unpopulated. Review
+  integration, citations/contextUsed population, and any UI stay deferred to Phase 5+.

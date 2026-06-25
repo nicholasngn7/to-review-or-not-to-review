@@ -4,6 +4,8 @@
   and **chunking** (split documents into stable `KnowledgeChunk`s).
 * Phase 3: a **deterministic local lexical embedding provider** and an **in-memory
   `KnowledgeIndex`** with cosine search.
+* Phase 4: a **local-only retrieval service** (`retrieve_context`) composing
+  ingest → chunk → index → search.
 
 Everything here is offline and deterministic: no network, no URL/token/OAuth, no neural/
 semantic models, no external dependencies, no persistence, and **no** review integration
@@ -23,6 +25,7 @@ from .ingestion import (
     IngestionError,
     ingest_local_file,
 )
+from .retrieval import RetrievalError, retrieve_context
 
 __all__ = [
     "ingest_local_file",
@@ -35,4 +38,6 @@ __all__ = [
     "tokenize",
     "KnowledgeIndex",
     "build_index",
+    "retrieve_context",
+    "RetrievalError",
 ]
