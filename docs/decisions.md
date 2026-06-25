@@ -459,3 +459,23 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   `citations`/`contextUsed` stay unpopulated. This is **not** production RAG, semantic
   retrieval, or Bedrock/live-provider integration. Embedding/retrieval stay deferred to
   Phase 3+.
+- **Phase 3 adds a deterministic local embedding provider + in-memory index only.**
+  `backend/app/services/knowledge/embedding.py` defines an `EmbeddingProvider` protocol and
+  `DeterministicLocalEmbeddingProvider` — a **lexical feature-hashing** vectorizer (default
+  128 dims, stdlib-only). It normalizes (NFKC + lowercase) and tokenizes text, hashes each
+  token into a signed bucket using a **stable SHA-1 digest** (deliberately not Python's
+  per-process salted `hash()`, so vectors are reproducible across runs/processes), weights
+  by term frequency, and L2-normalizes; empty/whitespace/low-signal text returns a safe
+  zero vector (chosen over raising). Vectors carry
+  `EmbeddingProviderType.deterministic_local` with `dimensions == len(values)`.
+  `index.py` defines `KnowledgeIndex` and `build_index(chunks, provider=None)`: an
+  in-memory map of chunks + vectors whose `search(RetrievalQuery) -> list[RetrievalResult]`
+  embeds the query with the same provider, ranks by cosine similarity (dot product of
+  normalized vectors), applies optional `source_path`/`heading`/metadata `filters`, drops
+  non-positive scores, limits to `top_k`, and tie-breaks deterministically (score desc,
+  then chunk id asc). Similarity is **lexical, not semantic**; this is **not**
+  neural-embedding quality, production RAG, or Bedrock/live/paid integration. It is offline
+  and **in-memory only** (no vector DB, disk index, network, URL, or token/OAuth) with
+  **no** new dependencies. There is still **no** review integration: the index is not
+  called from `review_engine`, and `ReviewFinding.citations`/`ReviewResponse.context_used`
+  stay unpopulated. Endpoints/UI/review integration stay deferred to Phase 4+.
