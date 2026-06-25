@@ -314,11 +314,12 @@ Both will continue to run locally on the deterministic mock provider. GitHub/Git
 comment import and any auto-posting are intentionally deferred until the local
 model is proven (see the plan doc).
 
-> **v0.2 progress:** the tone-profile *contract* and **backend rendering** have
-> landed. `ReviewRequest` accepts optional `toneProfile` / `personaToneProfiles`
-> fields (see [`docs/review-contract.md`](docs/review-contract.md)), and the
-> deterministic mock provider now rewords finding explanations, recommendations,
-> and persona summaries based on the resolved tone. Tone is **presentation only**:
-> findings, severities, overall risk, and the merge recommendation are unchanged,
-> and the default profile is an exact no-op. A tone-selection **UI** is the next
-> step (Phase 13B); real AI-driven tone is still deferred.
+> **v0.2 progress:** reviewer tone is now end-to-end. The **"Reviewer voice" UI**
+> lets you pick a global tone (style / strictness / verbosity + optional custom
+> instructions) and optional per-reviewer overrides before running a review; the
+> deterministic mock provider rewords finding explanations, recommendations, and
+> persona summaries accordingly (see [`docs/review-contract.md`](docs/review-contract.md)).
+> Tone is **presentation only** — findings, severities, overall risk, and the
+> merge recommendation are unchanged, the default voice is an exact no-op, and
+> per-reviewer overrides win over the global voice. Suggested comment replies and
+> real AI-driven tone are still future work.

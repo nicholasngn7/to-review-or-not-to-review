@@ -252,6 +252,146 @@
   color: var(--text-muted);
 }
 
+/* ---- Reviewer voice (tone) ---- */
+.tone-panel {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  margin-bottom: 1.25rem;
+  padding: 0 0.85rem;
+}
+
+.tone-panel[open] {
+  padding-bottom: 0.85rem;
+}
+
+.tone-panel__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  cursor: pointer;
+  list-style: none;
+  padding: 0.75rem 0.1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.tone-panel__summary::-webkit-details-marker {
+  display: none;
+}
+
+.tone-panel__summary::before {
+  content: "▸";
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  transition: transform 0.12s ease;
+}
+
+.tone-panel[open] .tone-panel__summary::before {
+  transform: rotate(90deg);
+}
+
+.tone-panel__title {
+  margin-right: auto;
+}
+
+.tone-panel__state {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.1rem 0.55rem;
+}
+
+.tone-panel__state--on {
+  color: var(--accent-hover);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+}
+
+.tone-panel__help {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+  line-height: 1.45;
+}
+
+.tone-panel__group {
+  border: none;
+  padding: 0;
+  margin: 0 0 1.25rem;
+}
+
+.tone-panel__group:last-child {
+  margin-bottom: 0;
+}
+
+.tone-editor__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.6rem;
+}
+
+.tone-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.tone-field--custom {
+  margin-top: 0.75rem;
+}
+
+.tone-field__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tone-field__select {
+  padding: 0.45rem 0.5rem;
+}
+
+.tone-field__hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.tone-overrides {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.tone-override {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
+  background: var(--bg-elevated);
+}
+
+.tone-override__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.tone-override__toggle input {
+  accent-color: var(--accent);
+}
+
+.tone-override .tone-editor {
+  margin-top: 0.7rem;
+}
+
 /* ---- Run row ---- */
 .run-row {
   display: flex;

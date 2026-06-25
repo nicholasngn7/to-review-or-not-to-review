@@ -1,9 +1,19 @@
 import { useId, useState } from "react";
 import type { ChangeEvent } from "react";
 
-import type { ReviewRequest, ReviewerPersona } from "../types/review";
+import type {
+  ReviewRequest,
+  ReviewerPersona,
+  ToneProfile,
+} from "../types/review";
 import { SAMPLE_DIFFS, type SampleDiff } from "../samples/sampleDiffs";
+import {
+  DEFAULT_TONE_PROFILE,
+  isDefaultTone,
+  toRequestTone,
+} from "../lib/reviewLabels";
 import { DEFAULT_PERSONAS, PersonaSelector } from "./PersonaSelector";
+import { ReviewerTonePanel } from "./ReviewerTonePanel";
 
 interface DiffInputPanelProps {
   isLoading: boolean;
@@ -17,6 +27,11 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
   const [personas, setPersonas] =
     useState<ReviewerPersona[]>(DEFAULT_PERSONAS);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [globalTone, setGlobalTone] =
+    useState<ToneProfile>(DEFAULT_TONE_PROFILE);
+  const [toneOverrides, setToneOverrides] = useState<
+    Partial<Record<ReviewerPersona, ToneProfile>>
+  >({});
 
   const titleId = useId();
   const descId = useId();
@@ -47,6 +62,23 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
     setFileName(null);
   };
 
+  const toggleOverride = (persona: ReviewerPersona, enabled: boolean) => {
+    setToneOverrides((prev) => {
+      const next = { ...prev };
+      if (enabled) {
+        // Seed a new override from the current global voice as a starting point.
+        next[persona] = { ...globalTone };
+      } else {
+        delete next[persona];
+      }
+      return next;
+    });
+  };
+
+  const updateOverride = (persona: ReviewerPersona, tone: ToneProfile) => {
+    setToneOverrides((prev) => ({ ...prev, [persona]: tone }));
+  };
+
   const handleSubmit = () => {
     if (!canRun) {
       return;
@@ -57,6 +89,26 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
       title: title.trim() || undefined,
       description: description.trim() || undefined,
     };
+
+    // Only send a global tone when it differs from the default voice, so an
+    // untouched form reproduces the original payload exactly.
+    if (!isDefaultTone(globalTone)) {
+      request.toneProfile = toRequestTone(globalTone);
+    }
+
+    // Include overrides only for personas that are still selected.
+    const personaToneProfiles: Partial<Record<ReviewerPersona, ToneProfile>> =
+      {};
+    for (const persona of personas) {
+      const override = toneOverrides[persona];
+      if (override) {
+        personaToneProfiles[persona] = toRequestTone(override);
+      }
+    }
+    if (Object.keys(personaToneProfiles).length > 0) {
+      request.personaToneProfiles = personaToneProfiles;
+    }
+
     onRun(request);
   };
 
@@ -151,6 +203,16 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
       <PersonaSelector
         selected={personas}
         onChange={setPersonas}
+        disabled={isLoading}
+      />
+
+      <ReviewerTonePanel
+        globalTone={globalTone}
+        onGlobalToneChange={setGlobalTone}
+        selectedPersonas={personas}
+        overrides={toneOverrides}
+        onToggleOverride={toggleOverride}
+        onOverrideChange={updateOverride}
         disabled={isLoading}
       />
 

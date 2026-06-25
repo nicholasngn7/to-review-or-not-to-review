@@ -196,3 +196,26 @@ Implements the tone contract from Phase 12 in the deterministic mock provider.
   a regression test — backward compatibility is preserved.
 - **Tone UI is still future work (Phase 13B).** Only the backend renders tone for
   now; there is no way to *set* tone from the UI yet.
+
+## Reviewer tone UI decisions (Phase 13B)
+
+Adds the "Reviewer voice" controls; no backend or detection changes.
+
+- **The default voice sends nothing.** The form starts at `direct` / `medium` /
+  `normal` with empty custom instructions. `toneProfile` is included only when the
+  global voice is customized (`isDefaultTone` check), so an untouched form
+  produces the exact same payload as before tone existed (backward compatible).
+- **Overrides are scoped to selected personas.** Override toggles render only for
+  currently-selected personas, and the request builder emits `personaToneProfiles`
+  only for personas that are still selected. An override left enabled for a
+  later-deselected persona is silently ignored rather than sent.
+- **Per-persona overrides win over the global voice.** This mirrors the backend
+  resolution order; the UI states it explicitly in helper text and seeds a new
+  override from the current global voice as a convenient starting point.
+- **Never send blank custom instructions.** `toRequestTone` trims and drops
+  empty/whitespace-only custom instructions before they reach the wire.
+- **Kept off the main flow.** Tone lives in a collapsible `<details>` panel with a
+  "Default / Customized" indicator so it doesn't crowd the primary input, and a
+  reusable `ToneProfileEditor` backs both the global and per-persona editors.
+- **Tone never auto-runs a review.** Changing tone only updates local state; the
+  user still explicitly clicks "Run Review".

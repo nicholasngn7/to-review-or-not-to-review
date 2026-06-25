@@ -87,8 +87,19 @@ How each axis renders (deterministic, table-driven — no AI):
 
 The default profile (`direct` / `medium` / `normal`, no custom instructions) is an
 exact no-op, so omitting tone is byte-identical to the pre-tone output. Tone enum
-values are listed under [Enum values](#enum-values). Real AI-driven tone rendering
-and a tone-selection UI are still future work.
+values are listed under [Enum values](#enum-values).
+
+**Status (Phase 13B):** a **"Reviewer voice" UI** in the diff input panel now lets
+users configure the global tone and optional per-persona overrides. The frontend
+builds the request conservatively:
+
+- `toneProfile` is sent only when the global voice differs from the default
+  (an untouched form sends no tone fields, reproducing the original payload).
+- `personaToneProfiles` is sent only for personas that are *both* selected and
+  have an override enabled; overrides for deselected personas are dropped.
+- empty/whitespace-only `customInstructions` are never sent.
+
+Real AI-driven tone rendering remains future work.
 
 ## Response shape
 
