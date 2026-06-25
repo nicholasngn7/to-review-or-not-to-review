@@ -18,10 +18,13 @@
 > shared mapper helpers and a pure **GitHub PR review-comment** mapper
 > (`app/services/git_import/`) with a synthetic fixture; Phase 3 added a pure
 > **GitHub PR issue-comment** mapper (`map_github_issue_comments_to_threads`) that
-> maps line-less PR conversation comments to single-comment threads. The GitHub
-> payload shapes below and in the fixtures are **synthetic and tolerant** — they must
-> be verified against official GitHub API docs before any live integration. No live
-> API calls, OAuth, tokens, endpoints, or UI exist yet.
+> maps line-less PR conversation comments to single-comment threads; Phase 4 added a
+> pure **GitLab MR discussions** mapper (`map_gitlab_discussions_to_threads`) that
+> maps one discussion → one thread with ordered notes (system notes filtered,
+> positional file/line, resolved/outdated handling). The GitHub/GitLab payload shapes
+> below and in the fixtures are **synthetic and tolerant** — they must be verified
+> against official GitHub/GitLab API docs before any live integration. No live API
+> calls, OAuth, tokens, endpoints, or UI exist yet.
 
 ## 1. Product goal
 

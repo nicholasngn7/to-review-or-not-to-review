@@ -1,0 +1,135 @@
+[
+  {
+    "id": "disc-1",
+    "notes": [
+      {
+        "id": 11,
+        "system": false,
+        "author": { "username": "alpha" },
+        "body": "Should we validate this input before using it?",
+        "created_at": "2026-03-01T09:00:00Z",
+        "resolvable": true,
+        "resolved": false,
+        "position": {
+          "new_path": "service/api.py",
+          "new_line": 12,
+          "old_path": "service/api.py",
+          "old_line": 10
+        },
+        "web_url": "https://example.test/grp/proj/-/merge_requests/3#note_11"
+      },
+      {
+        "id": 12,
+        "system": false,
+        "author": { "username": "beta" },
+        "body": "Good catch — I'll add a guard clause.",
+        "created_at": "2026-03-01T09:30:00Z",
+        "resolvable": true,
+        "resolved": false
+      }
+    ]
+  },
+  {
+    "id": "disc-2",
+    "notes": [
+      {
+        "id": 21,
+        "system": true,
+        "body": "changed the description",
+        "created_at": "2026-03-01T10:00:00Z"
+      },
+      {
+        "id": 22,
+        "system": false,
+        "body": "Please rebase onto main before merge."
+      }
+    ]
+  },
+  {
+    "id": "disc-3",
+    "notes": [
+      { "id": 31, "system": false, "body": "   " },
+      { "id": 32, "system": false, "body": "" }
+    ]
+  },
+  {
+    "id": "disc-4",
+    "notes": [
+      {
+        "id": 41,
+        "system": false,
+        "author": { "username": "gamma" },
+        "body": "  ",
+        "created_at": "2026-03-02T07:30:00Z"
+      },
+      {
+        "id": 42,
+        "system": false,
+        "author": { "username": "gamma" },
+        "body": "Add a test for the empty-input case.",
+        "created_at": "2026-03-02T08:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "disc-5",
+    "resolved": true,
+    "notes": [
+      {
+        "id": 51,
+        "system": false,
+        "author": { "username": "delta" },
+        "body": "This is handled now — resolving.",
+        "created_at": "2026-03-02T09:00:00Z",
+        "resolvable": true,
+        "resolved": true,
+        "position": { "new_path": "service/config.py", "new_line": 5 }
+      }
+    ]
+  },
+  {
+    "id": "disc-6",
+    "notes": [
+      {
+        "id": 61,
+        "system": false,
+        "author": { "name": "Echo Reviewer" },
+        "body": "This removed line still needs handling elsewhere.",
+        "created_at": "2026-03-02T10:00:00Z",
+        "position": { "old_path": "service/legacy.py", "old_line": 88 }
+      }
+    ]
+  },
+  {
+    "id": "disc-7",
+    "notes": [
+      {
+        "id": 71,
+        "system": false,
+        "author": { "username": "alpha" },
+        "body": "This anchor moved after a rebase.",
+        "created_at": "2026-03-02T11:00:00Z",
+        "outdated": true,
+        "position": { "new_path": "service/moved.py", "new_line": 40 },
+        "web_url": "https://example.test/grp/proj/-/merge_requests/3#note_71"
+      }
+    ]
+  },
+  {
+    "id": "disc-8",
+    "individual_note": false,
+    "extra_field": { "foo": "bar" },
+    "notes": [
+      {
+        "id": 81,
+        "system": false,
+        "author": { "username": "foxtrot" },
+        "body": "LGTM after the nits above.",
+        "created_at": "2026-03-02T12:00:00Z",
+        "noteable_type": "MergeRequest",
+        "resolvable": false,
+        "extra": 123
+      }
+    ]
+  }
+]

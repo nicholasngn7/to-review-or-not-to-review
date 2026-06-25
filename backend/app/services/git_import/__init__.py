@@ -17,6 +17,7 @@ from .github import (
     map_github_issue_comments_to_threads,
     map_github_review_comments_to_threads,
 )
+from .gitlab import map_gitlab_discussions_to_threads
 
 __all__ = [
     "clean_body",
@@ -25,4 +26,5 @@ __all__ = [
     "resolve_status",
     "map_github_review_comments_to_threads",
     "map_github_issue_comments_to_threads",
+    "map_gitlab_discussions_to_threads",
 ]

@@ -339,3 +339,13 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   `isOutdated`) `None`. Same guardrails as Phase 2: pure, tolerant parsing,
   deterministic, fixture-only, and **the synthetic shape must be verified against
   official GitHub docs before live integration**.
+- **GitLab discussions map one discussion → one thread (v0.3 Phase 4).**
+  `map_gitlab_discussions_to_threads` turns ordered, non-system, non-empty notes into
+  ordered `ThreadComment`s; system notes (`system: true`) and empty bodies are
+  dropped, and a discussion with no usable notes is dropped entirely. File/line come
+  from `position.new_*` (fallback `old_*`); non-positional discussions are line-less.
+  Resolution is derived from notes' `resolvable`/`resolved` and mapped to the existing
+  `CommentThreadStatus`; outdated positions are handled conservatively (skipped by
+  default; line nulled + warning when explicitly included). Same guardrails: pure,
+  tolerant parsing, deterministic, fixture-only, and **the synthetic GitLab shape
+  must be verified against official GitLab docs before live integration**.
