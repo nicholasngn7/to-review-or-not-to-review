@@ -293,3 +293,23 @@ implemented.
 - CI integration: post the review as an MR/PR comment automatically.
 - Richer findings (inline diff annotations, dedupe/ranking, confidence tuning).
 - Deployment automation (API Gateway/Lambda or ECS) with infrastructure-as-code.
+
+## Next iteration: v0.2 (planned)
+
+> These are **planned/future** capabilities, not current MVP behavior. They do not
+> add real AI, GitHub/GitLab integration, or any auto-posting. Full design:
+> [`docs/v0.2-plan-reviewer-tone-and-comment-replies.md`](docs/v0.2-plan-reviewer-tone-and-comment-replies.md).
+
+- **Reviewer voice/tone profiles** — configure each persona's communication style
+  (tone: direct / supportive / educational / strict / curious / executive;
+  strictness; verbosity; optional custom instructions). Tone changes *wording and
+  framing only* — it will **not** change risk detection, severities, or the merge
+  recommendation.
+- **Suggested replies to existing MR/PR comments** — paste existing comment
+  threads and generate *draft* replies from selected reviewer perspectives.
+  Copy-only: replies are never posted back automatically; you review and post them
+  yourself.
+
+Both will continue to run locally on the deterministic mock provider. GitHub/GitLab
+comment import and any auto-posting are intentionally deferred until the local
+model is proven (see the plan doc).

@@ -125,6 +125,32 @@ seams for them:
 - **Auth / VCS integration.** GitLab/GitHub OAuth + diff fetch would live in front
   of the existing request flow, replacing manual paste/upload with fetch-by-URL.
 
+## Future (v0.2, planned — not implemented)
+
+Two planned capabilities slot into the current architecture without changing how
+risk is detected (see
+[`v0.2-plan-reviewer-tone-and-comment-replies.md`](v0.2-plan-reviewer-tone-and-comment-replies.md)):
+
+- **Reviewer tone profiles.** A `ToneProfile` (tone / strictness / verbosity /
+  optional custom instructions) would be passed on `ReviewRequest`. Tone is a
+  **rendering layer**: after the provider returns `PersonaReview`s, a
+  deterministic `ToneRenderer` rewrites finding *wording* (title / explanation /
+  recommendation). Risk aggregation reads only the raw severities, so tone never
+  affects `overallRisk`, `mergeRecommendation`, or which findings appear. A future
+  LLM provider would instead fold tone into its per-persona prompt (built from the
+  persona registry).
+
+  ```text
+  provider.review() -> raw PersonaReviews --> ToneRenderer(toneProfile) -->
+      reworded findings (same severities) --> engine aggregation (unchanged)
+  ```
+
+- **Suggested comment replies.** A new `POST /api/comment-replies` would take
+  pasted `CommentThread`s + selected personas (+ tone) and return draft
+  `SuggestedReply`s from a deterministic mock reply generator. Copy-only — never
+  posted back. Comment *import* from GitHub/GitLab is a later, separate design
+  (builds on [`future-git-provider-import.md`](future-git-provider-import.md)).
+
 ## Current status
 
 MVP complete and runnable locally end to end: diff parsing, the deterministic

@@ -139,3 +139,36 @@ and focused on demonstrating the review pipeline and its architecture.
 - **Polish over new features.** Phase 10 was scoped to validation, docs, and
   cleanup (no unused imports; consistent route names `GET /health`,
   `POST /api/parse-diff`, `POST /api/reviews`); no new large features were added.
+
+## v0.2 planning decisions (reviewer tone & suggested replies)
+
+Planning-only decisions for the next iteration (full design in
+[`v0.2-plan-reviewer-tone-and-comment-replies.md`](v0.2-plan-reviewer-tone-and-comment-replies.md)).
+No code is implemented yet.
+
+- **Tone is presentation/framing, not detection.** Tone profiles (tone,
+  strictness, verbosity, custom instructions) only change finding *wording* and
+  recommendation framing. They must **not** change which findings are produced,
+  their severities, `overallRisk`, or `mergeRecommendation`. This is enforced
+  architecturally (a `ToneRenderer` runs *after* the provider, and aggregation
+  reads only raw severities) and by a planned tone-invariance test.
+- **Strictness affects emphasis, not thresholds.** Strictness is the easiest thing
+  to accidentally leak into detection; it is explicitly scoped to recommendation
+  phrasing ("consider" vs "must"), never severity thresholds.
+- **Tone fields are additive and optional.** `ReviewRequest` gains optional tone
+  fields with sensible defaults; omitting them reproduces today's behavior exactly
+  (backward compatible).
+- **Comment replies start local and copy-only.** Suggested replies are generated
+  by the deterministic mock from pasted threads and are framed as *drafts*. They
+  are copied/exported by the user — never posted back automatically.
+- **GitHub/GitLab import comes after the local model works.** Prove tone rendering
+  and reply generation on deterministic input first; importing real threads adds
+  tokens/scopes/SSRF/rate-limit surface that shouldn't gate the core feature.
+- **Auto-posting is intentionally deferred.** Writing comments back to real MRs is
+  high-risk (wrong/noisy comments, permissions) and would require auth and
+  guardrails. Keeping replies copy-only keeps a human in the loop; auto-posting,
+  if ever, is a separate gated phase after import.
+- **Reuse the existing seams.** Tone uses the persona registry (prompt helpers for
+  a future LLM provider) and the `ReviewProvider` boundary; replies get their own
+  endpoint but the same mock-first, provider-agnostic approach. No real AI in
+  v0.2.
