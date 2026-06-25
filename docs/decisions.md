@@ -378,3 +378,12 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   behavior is unchanged when nothing is imported. Imported threads are read-only this
   phase (faithful to multi-comment threads); inline editing and any live provider
   integration remain deferred.
+- **Bundled synthetic sample payloads ship with the import demo (v0.3 Phase 8).** To
+  make the demo usable without hand-pasting JSON, `frontend/src/fixtures/importSamples.ts`
+  carries three fabricated payloads (GitHub review comments, GitHub issue comments,
+  GitLab discussions) and the panel renders a "Load sample payload" button per sample.
+  A sample click only sets the provider/source and pretty-prints the JSON into the
+  textarea — the user still clicks **Normalize comments** — so it stays explicit that
+  the app normalizes supplied JSON rather than fetching anything. All sample data is
+  synthetic (no real repos/people/tokens, `example.test` URLs); nothing is fetched,
+  posted, and there is still no URL/token/OAuth input.

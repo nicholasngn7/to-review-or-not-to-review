@@ -296,8 +296,11 @@ frontend **"Import comments (local demo)"** panel.
 The panel is a **local fixture-based comment import demo**: it **normalizes pasted
 provider-shaped JSON** into comment threads, **does not fetch from GitHub/GitLab**,
 **does not require tokens**, and **does not post comments** — it is **not** live
-GitHub/GitLab integration. **No** live API calls, OAuth, token input, or URL fetching
-exist yet. See
+GitHub/GitLab integration. It ships **bundled synthetic sample payloads** (one button
+each for GitHub review comments, GitHub issue comments, and GitLab discussions) so the
+demo works without pasting JSON; loading a sample only fills the form, and you still
+click **Normalize comments**. **No** live API calls, OAuth, token input, or URL
+fetching exist yet. See
 [`docs/v0.3-plan-git-comment-import-mappers.md`](docs/v0.3-plan-git-comment-import-mappers.md)
 and [`docs/v0.3-plan-frontend-local-comment-import.md`](docs/v0.3-plan-frontend-local-comment-import.md).
 

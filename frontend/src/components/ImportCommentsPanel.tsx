@@ -7,6 +7,7 @@ import type {
   ImportSource,
 } from "../types/gitImport";
 import { ImportApiError, importComments } from "../api/importComments";
+import { IMPORT_SAMPLES, type ImportSample } from "../fixtures/importSamples";
 
 interface ImportCommentsPanelProps {
   onLoadThreads: (threads: CommentThread[]) => void;
@@ -62,6 +63,17 @@ export function ImportCommentsPanel({
     setSource(SOURCE_OPTIONS[next][0].value);
     setResult(null);
     setApiError(null);
+  };
+
+  const handleLoadSample = (sample: ImportSample) => {
+    // Only populate the form — the user still clicks "Normalize comments". This
+    // keeps it explicit that we normalize supplied JSON rather than fetch anything.
+    setProvider(sample.provider);
+    setSource(sample.source);
+    setRawText(`${JSON.stringify(sample.payload, null, 2)}\n`);
+    setJsonError(null);
+    setApiError(null);
+    setResult(null);
   };
 
   const handleNormalize = async () => {
@@ -123,6 +135,27 @@ export function ImportCommentsPanel({
         No tokens, OAuth, or GitHub/GitLab API calls are used — this is a local
         normalization demo, not live GitHub/GitLab integration.
       </p>
+
+      <div className="import-samples" role="group" aria-label="Load sample payload">
+        <span className="import-samples__label">Load sample payload</span>
+        <div className="import-samples__buttons">
+          {IMPORT_SAMPLES.map((sample) => (
+            <button
+              type="button"
+              key={sample.id}
+              className="button button--secondary import-samples__button"
+              title={sample.description}
+              disabled={disabled || isImporting}
+              onClick={() => handleLoadSample(sample)}
+            >
+              {sample.label}
+            </button>
+          ))}
+        </div>
+        <p className="field__hint">
+          Fills the form with synthetic JSON. You still click “Normalize comments”.
+        </p>
+      </div>
 
       <div className="thread-card__row">
         <div className="thread-field">

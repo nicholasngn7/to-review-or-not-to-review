@@ -496,6 +496,32 @@
 
 /* ---- Local import demo ---- */
 
+.import-samples {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.85rem;
+}
+
+.import-samples__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.import-samples__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.import-samples__button {
+  font-size: 0.82rem;
+  padding: 0.4rem 0.7rem;
+}
+
 .import-panel__actions {
   display: flex;
   justify-content: flex-start;

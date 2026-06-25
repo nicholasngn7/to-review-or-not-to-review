@@ -183,4 +183,86 @@ describe("ImportCommentsPanel", () => {
     expect(screen.queryByLabelText(/url/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/oauth/i)).not.toBeInTheDocument();
   });
+
+  // ---- Bundled sample payloads ----
+
+  it("renders a button for each bundled sample", () => {
+    render(<ImportCommentsPanel onLoadThreads={vi.fn()} />);
+    const group = screen.getByRole("group", { name: /load sample payload/i });
+    expect(
+      within(group).getByRole("button", { name: /github review comments/i }),
+    ).toBeInTheDocument();
+    expect(
+      within(group).getByRole("button", { name: /github issue comments/i }),
+    ).toBeInTheDocument();
+    expect(
+      within(group).getByRole("button", { name: /gitlab discussions/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("loads the GitHub review sample into provider/source/JSON without calling the API", async () => {
+    const user = userEvent.setup();
+    render(<ImportCommentsPanel onLoadThreads={vi.fn()} />);
+
+    await user.click(
+      screen.getByRole("button", { name: /github review comments/i }),
+    );
+
+    expect(screen.getByLabelText("Provider")).toHaveValue("github");
+    expect(screen.getByLabelText("Source")).toHaveValue("github_review_comments");
+    const json = screen.getByLabelText(/json payload/i) as HTMLTextAreaElement;
+    expect(json.value).toContain("in_reply_to_id");
+    expect(json.value).toContain("service/auth.py");
+    // Pretty-printed (indented) JSON, and the API is untouched until Normalize.
+    expect(json.value).toContain("\n  ");
+    expect(mockImport).not.toHaveBeenCalled();
+  });
+
+  it("loads the GitHub issue sample into provider/source/JSON", async () => {
+    const user = userEvent.setup();
+    render(<ImportCommentsPanel onLoadThreads={vi.fn()} />);
+
+    await user.click(
+      screen.getByRole("button", { name: /github issue comments/i }),
+    );
+
+    expect(screen.getByLabelText("Provider")).toHaveValue("github");
+    expect(screen.getByLabelText("Source")).toHaveValue("github_issue_comments");
+    const json = screen.getByLabelText(/json payload/i) as HTMLTextAreaElement;
+    expect(json.value).toContain("issuecomment-2001");
+    expect(mockImport).not.toHaveBeenCalled();
+  });
+
+  it("loads the GitLab sample into provider/source/JSON", async () => {
+    const user = userEvent.setup();
+    render(<ImportCommentsPanel onLoadThreads={vi.fn()} />);
+
+    await user.click(
+      screen.getByRole("button", { name: /gitlab discussions/i }),
+    );
+
+    expect(screen.getByLabelText("Provider")).toHaveValue("gitlab");
+    expect(screen.getByLabelText("Source")).toHaveValue("gitlab_discussions");
+    const json = screen.getByLabelText(/json payload/i) as HTMLTextAreaElement;
+    expect(json.value).toContain("disc-1");
+    expect(mockImport).not.toHaveBeenCalled();
+  });
+
+  it("requires an explicit Normalize click after loading a sample", async () => {
+    const user = userEvent.setup();
+    mockImport.mockResolvedValueOnce(
+      response({ threads: [importedThread("t-1", "Sample body")] }),
+    );
+    render(<ImportCommentsPanel onLoadThreads={vi.fn()} />);
+
+    await user.click(
+      screen.getByRole("button", { name: /github review comments/i }),
+    );
+    expect(mockImport).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: /normalize comments/i }));
+    expect(mockImport).toHaveBeenCalledTimes(1);
+    expect(mockImport.mock.calls[0][0].provider).toBe("github");
+    expect(mockImport.mock.calls[0][0].source).toBe("github_review_comments");
+  });
 });
