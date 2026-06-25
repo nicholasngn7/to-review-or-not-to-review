@@ -75,3 +75,14 @@ def test_reviews_invalid_persona_is_validation_error():
         json={"diffText": SAMPLE_DIFF, "selectedPersonas": ["wizard"]},
     )
     assert resp.status_code == 422
+
+
+def test_reviews_bedrock_provider_returns_clear_501(monkeypatch):
+    monkeypatch.setenv("REVIEW_PROVIDER", "bedrock")
+    resp = client.post(
+        "/api/reviews",
+        json={"diffText": SAMPLE_DIFF, "selectedPersonas": ["security"]},
+    )
+    assert resp.status_code == 501
+    assert "not implemented" in resp.json()["detail"].lower()
+

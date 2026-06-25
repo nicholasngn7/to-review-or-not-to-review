@@ -2,9 +2,11 @@
 
 Produces credible, repeatable findings for each reviewer persona from a
 `ParsedDiff` using simple heuristics. There is no AI/LLM here -- given the same
-diff and persona, the output is always identical. A real provider (Bedrock /
-OpenAI / Anthropic) will replace this behind a provider interface in a later
-phase.
+diff and persona, the output is always identical.
+
+This is the default provider so the whole app runs locally with no credentials
+or paid API calls. A real provider (Bedrock / OpenAI / Anthropic) implements the
+same `ReviewProvider` interface and slots in behind `REVIEW_PROVIDER`.
 """
 
 from __future__ import annotations
@@ -14,8 +16,11 @@ from dataclasses import dataclass
 from typing import Callable, Optional
 
 from app.models.diff import DiffFile, ParsedDiff
-from app.models.enums import FindingSeverity, ReviewerPersona
-from app.models.review import HunkReference, ReviewFinding
+from app.models.enums import FindingSeverity, ReviewerPersona, RiskLevel
+from app.models.review import HunkReference, PersonaReview, ReviewFinding
+from app.personas.registry import get_persona_spec
+
+from .base import ReviewProvider
 
 # ---- File classification ---------------------------------------------------
 
@@ -106,8 +111,6 @@ def _collect_lines(parsed: ParsedDiff, kind: str) -> list[LineRef]:
     return refs
 
 
-# ---- Provider ---------------------------------------------------------------
-
 # Security term -> (severity, human label). Lowercased substring match unless the
 # term itself is case-sensitive code (eval(, innerHTML, etc.).
 _SECURITY_TERMS: dict[str, tuple[FindingSeverity, str]] = {
@@ -125,9 +128,43 @@ _SECURITY_TERMS: dict[str, tuple[FindingSeverity, str]] = {
     "http://": (FindingSeverity.LOW, "insecure http:// URL"),
 }
 
+_SEVERITY_ORDER = {
+    FindingSeverity.INFO: 0,
+    FindingSeverity.LOW: 1,
+    FindingSeverity.MEDIUM: 2,
+    FindingSeverity.HIGH: 3,
+}
 
-class MockReviewProvider:
-    """Generates deterministic findings per persona for a parsed diff."""
+
+def _persona_risk(findings: list[ReviewFinding]) -> RiskLevel:
+    if not findings:
+        return RiskLevel.LOW
+    top = max(_SEVERITY_ORDER[f.severity] for f in findings)
+    if top >= _SEVERITY_ORDER[FindingSeverity.HIGH]:
+        return RiskLevel.HIGH
+    if top >= _SEVERITY_ORDER[FindingSeverity.MEDIUM]:
+        return RiskLevel.MEDIUM
+    return RiskLevel.LOW
+
+
+def _persona_summary(
+    persona: ReviewerPersona, findings: list[ReviewFinding]
+) -> str:
+    label = get_persona_spec(persona).display_name
+    if not findings:
+        return f"No concerns from the {label} reviewer."
+    highs = sum(1 for f in findings if f.severity == FindingSeverity.HIGH)
+    mediums = sum(1 for f in findings if f.severity == FindingSeverity.MEDIUM)
+    parts = [f"{len(findings)} finding(s)"]
+    if highs:
+        parts.append(f"{highs} high")
+    if mediums:
+        parts.append(f"{mediums} medium")
+    return f"{label} reviewer raised " + ", ".join(parts) + "."
+
+
+class _MockDiffSession:
+    """Holds per-diff state and produces deterministic findings per persona."""
 
     def __init__(self, parsed: ParsedDiff) -> None:
         self.parsed = parsed
@@ -135,8 +172,7 @@ class MockReviewProvider:
         self.removed = _collect_lines(parsed, "removed")
         self._counters: dict[str, int] = {}
 
-    # -- registry --
-    def review(self, persona: ReviewerPersona) -> list[ReviewFinding]:
+    def findings_for(self, persona: ReviewerPersona) -> list[ReviewFinding]:
         handlers: dict[ReviewerPersona, Callable[[], list[ReviewFinding]]] = {
             ReviewerPersona.ARCHITECT: self._architect,
             ReviewerPersona.QA: self._qa,
@@ -633,3 +669,30 @@ class MockReviewProvider:
                 )
 
         return out
+
+
+class MockReviewProvider(ReviewProvider):
+    """Deterministic, offline `ReviewProvider` backed by heuristics."""
+
+    name = "mock"
+
+    def review(
+        self,
+        parsed_diff: ParsedDiff,
+        selected_personas: list[ReviewerPersona],
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> list[PersonaReview]:
+        session = _MockDiffSession(parsed_diff)
+        reviews: list[PersonaReview] = []
+        for persona in selected_personas:
+            findings = session.findings_for(persona)
+            reviews.append(
+                PersonaReview(
+                    persona=persona,
+                    risk_level=_persona_risk(findings),
+                    summary=_persona_summary(persona, findings),
+                    findings=findings,
+                )
+            )
+        return reviews

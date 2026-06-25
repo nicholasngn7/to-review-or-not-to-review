@@ -4,8 +4,9 @@ This is the scaffold step: the app only exposes a health check. Diff parsing,
 the mock review engine, and the review endpoint are added in later phases.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from app.api.routes import diff_router, reviews_router
@@ -32,6 +33,18 @@ app.add_middleware(
 
 app.include_router(diff_router)
 app.include_router(reviews_router)
+
+
+@app.exception_handler(NotImplementedError)
+async def not_implemented_handler(
+    request: Request, exc: NotImplementedError
+) -> JSONResponse:
+    """Surface not-yet-implemented providers (e.g. Bedrock) as a clear 501.
+
+    Without this, an unimplemented provider would return an opaque 500. A 501
+    with the explanatory message makes the deferred integration obvious.
+    """
+    return JSONResponse(status_code=501, content={"detail": str(exc)})
 
 
 class HealthResponse(BaseModel):

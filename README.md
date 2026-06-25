@@ -44,6 +44,11 @@ uvicorn app.main:app --reload --port 8000
 The API is then available at `http://localhost:8000`. Health check:
 `http://localhost:8000/health`.
 
+Reviews run through a pluggable provider chosen by the `REVIEW_PROVIDER`
+environment variable (default `mock`, fully offline). The `bedrock` value is a
+placeholder seam that intentionally returns a clear `501` until a real provider
+is implemented. See [`backend/README.md`](backend/README.md#review-providers).
+
 ### Frontend
 
 ```bash
@@ -100,5 +105,6 @@ This is an incremental build. What exists today (scaffold step):
 - [x] Results dashboard (risk/recommendation badges, stats, reviewer tabs, severity/persona filtering, empty states)
 - [x] Export review to Markdown (client-side download)
 - [x] Built-in demo sample diffs ("Load a demo diff")
+- [x] Pluggable review provider interface (`REVIEW_PROVIDER`: `mock` default, `bedrock` placeholder)
 
 No AI integration is wired up yet.

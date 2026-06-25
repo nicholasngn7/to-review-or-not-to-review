@@ -1,11 +1,17 @@
-"""Review engine: orchestrates personas and aggregates their findings.
+"""Review engine: selects a provider and aggregates its per-persona reviews.
 
-Parses the diff, runs the selected personas through the mock provider, and
-aggregates everything into the shared `ReviewResponse` contract. Deterministic
-and fully offline.
+The engine parses the diff, hands it to the configured `ReviewProvider` (mock by
+default), and aggregates the returned `PersonaReview`s into the shared
+`ReviewResponse` contract: overall risk, merge recommendation, summary, diff
+stats, persona reviews, and a flattened findings list.
+
+Provider selection is driven by `REVIEW_PROVIDER` (see `app.core.config`). The
+API response contract is independent of which provider runs.
 """
 
 from __future__ import annotations
+
+from typing import Optional
 
 from app.models.enums import (
     FindingSeverity,
@@ -21,17 +27,10 @@ from app.models.review import (
     ReviewSummary,
 )
 from app.services.diff_parser import parse_diff
-from app.services.mock_review_provider import MockReviewProvider
+from app.services.providers import ReviewProvider, create_provider
 
 # Personas whose high-severity findings warrant a human's eyes before merge.
 _SENSITIVE_PERSONAS = {ReviewerPersona.SECURITY, ReviewerPersona.ARCHITECT}
-
-_SEVERITY_ORDER = {
-    FindingSeverity.INFO: 0,
-    FindingSeverity.LOW: 1,
-    FindingSeverity.MEDIUM: 2,
-    FindingSeverity.HIGH: 3,
-}
 
 
 def _dedupe_personas(personas: list[ReviewerPersona]) -> list[ReviewerPersona]:
@@ -43,32 +42,6 @@ def _dedupe_personas(personas: list[ReviewerPersona]) -> list[ReviewerPersona]:
             seen.add(persona)
             ordered.append(persona)
     return ordered
-
-
-def _persona_risk(findings: list[ReviewFinding]) -> RiskLevel:
-    if not findings:
-        return RiskLevel.LOW
-    top = max(_SEVERITY_ORDER[f.severity] for f in findings)
-    if top >= _SEVERITY_ORDER[FindingSeverity.HIGH]:
-        return RiskLevel.HIGH
-    if top >= _SEVERITY_ORDER[FindingSeverity.MEDIUM]:
-        return RiskLevel.MEDIUM
-    return RiskLevel.LOW
-
-
-def _persona_summary(
-    persona: ReviewerPersona, findings: list[ReviewFinding]
-) -> str:
-    if not findings:
-        return f"No concerns from the {persona.value} reviewer."
-    highs = sum(1 for f in findings if f.severity == FindingSeverity.HIGH)
-    mediums = sum(1 for f in findings if f.severity == FindingSeverity.MEDIUM)
-    parts = [f"{len(findings)} finding(s)"]
-    if highs:
-        parts.append(f"{highs} high")
-    if mediums:
-        parts.append(f"{mediums} medium")
-    return f"{persona.value} reviewer raised " + ", ".join(parts) + "."
 
 
 def _aggregate_risk(findings: list[ReviewFinding]) -> RiskLevel:
@@ -141,30 +114,32 @@ def _build_summary(
     )
 
 
-def run_review(request: ReviewRequest) -> ReviewResponse:
-    """Run the selected personas over the request's diff and aggregate results."""
-    parsed = parse_diff(request.diff_text)
-    provider = MockReviewProvider(parsed)
+def run_review(
+    request: ReviewRequest, provider: Optional[ReviewProvider] = None
+) -> ReviewResponse:
+    """Run the selected personas over the request's diff and aggregate results.
 
-    persona_reviews: list[PersonaReview] = []
-    all_findings: list[ReviewFinding] = []
+    `provider` can be injected (mainly for tests); otherwise the configured
+    provider (`REVIEW_PROVIDER`, default ``mock``) is used.
+    """
+    parsed = parse_diff(request.diff_text)
+    provider = provider or create_provider()
 
     personas = _dedupe_personas(request.selected_personas)
-    for persona in personas:
-        findings = provider.review(persona)
-        persona_reviews.append(
-            PersonaReview(
-                persona=persona,
-                risk_level=_persona_risk(findings),
-                summary=_persona_summary(persona, findings),
-                findings=findings,
-            )
-        )
-        all_findings.extend(findings)
+    persona_reviews: list[PersonaReview] = provider.review(
+        parsed,
+        personas,
+        title=request.title,
+        description=request.description,
+    )
+
+    all_findings: list[ReviewFinding] = [
+        finding for pr in persona_reviews for finding in pr.findings
+    ]
 
     overall_risk = _aggregate_risk(all_findings)
     recommendation = _recommend(all_findings)
-    summary = _build_summary(all_findings, recommendation, len(personas))
+    summary = _build_summary(all_findings, recommendation, len(persona_reviews))
 
     return ReviewResponse(
         overall_risk=overall_risk,

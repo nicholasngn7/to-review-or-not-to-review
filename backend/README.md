@@ -69,6 +69,37 @@ curl -s -X POST http://localhost:8000/api/reviews \
 The response includes `overallRisk`, `mergeRecommendation`, `summary`,
 `diffStats`, `personaReviews`, and a flattened `findings` list.
 
+## Review providers
+
+Review generation sits behind a `ReviewProvider` interface
+(`app/services/providers/base.py`). The engine parses the diff, asks the
+configured provider for one `PersonaReview` per selected persona, and aggregates
+the result — the API response contract is identical regardless of provider.
+
+Provider selection is controlled by the `REVIEW_PROVIDER` environment variable:
+
+| Value     | Behavior                                                              |
+| --------- | -------------------------------------------------------------------- |
+| `mock`    | **Default.** Deterministic, offline heuristics. No AI, no creds.     |
+| `bedrock` | Placeholder seam. Fails with a clear `501` — not implemented yet.    |
+
+```bash
+# Default (mock) — fully local:
+uvicorn app.main:app --reload --port 8000
+
+# Explicitly select a provider:
+REVIEW_PROVIDER=mock uvicorn app.main:app --reload --port 8000
+
+# Bedrock placeholder: /api/reviews returns 501 with an explanatory message.
+REVIEW_PROVIDER=bedrock uvicorn app.main:app --reload --port 8000
+```
+
+An unknown value (e.g. `REVIEW_PROVIDER=foo`) fails fast with a `ValueError`
+listing the valid options. Persona definitions (focus, output expectations,
+severity guidance) live in `app/personas/registry.py` and are shared by the mock
+provider and any future LLM provider. Real AI calls are intentionally deferred
+(no paid API usage, no AWS credentials required to run locally).
+
 ## Tests
 
 ```bash
@@ -76,18 +107,27 @@ source .venv/bin/activate
 python -m pytest          # or: python -m pytest -q
 ```
 
-Parser tests live in `tests/test_diff_parser.py`.
+Parser tests live in `tests/test_diff_parser.py`; provider/config tests live in
+`tests/test_providers.py`.
 
 ## Layout
 
 ```text
 app/
-  main.py                  # FastAPI app + /health, includes routers
+  main.py                  # FastAPI app + /health, routers, 501 handler
+  core/
+    config.py              # Settings + REVIEW_PROVIDER selection
+  personas/
+    registry.py            # PersonaSpec registry (focus / output / severity)
   models/                  # Pydantic contract (enums, diff, review)
   services/
     diff_parser.py         # unified-diff -> ParsedDiff
-    mock_review_provider.py # deterministic per-persona heuristics
-    review_engine.py       # orchestrate personas + aggregate ReviewResponse
+    review_engine.py       # select provider + aggregate ReviewResponse
+    providers/
+      base.py              # ReviewProvider interface
+      mock_provider.py     # deterministic per-persona heuristics (default)
+      bedrock_provider.py  # placeholder seam (raises NotImplementedError)
+      __init__.py          # create_provider() factory + validation
   api/routes/
     diff.py                # POST /api/parse-diff
     reviews.py             # POST /api/reviews
@@ -95,7 +135,8 @@ tests/
   test_diff_parser.py
   test_review_engine.py
   test_reviews_route.py
+  test_providers.py
 ```
 
-A real AI provider (Bedrock/OpenAI/Anthropic) will replace the mock provider
-behind a provider interface in a later phase.
+A real AI provider (Bedrock/OpenAI/Anthropic) implements `ReviewProvider` and
+slots in behind `REVIEW_PROVIDER`; the rest of the engine is unchanged.

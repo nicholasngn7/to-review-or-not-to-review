@@ -75,3 +75,36 @@ A running log of notable choices made during the build.
   auth (security/QA/backend/SRE), and mixed full-stack (architect/product/QA).
 - The paste/upload workflow is unchanged; demo loading just sets the same form
   state.
+
+## Provider interface (Phase 9)
+
+- **Provider seam.** Review generation now sits behind a `ReviewProvider` ABC
+  (`app/services/providers/base.py`) with a single method:
+  `review(parsed_diff, selected_personas, title=None, description=None) -> list[PersonaReview]`.
+  The `review_engine` parses the diff, calls the provider, and aggregates overall
+  risk / recommendation / summary / diff stats / flattened findings. The API
+  response contract is unchanged.
+- **Mock stays default.** The existing heuristic logic moved verbatim into
+  `MockReviewProvider` (`mock_provider.py`); `mock_review_provider.py` was
+  removed. Per-persona risk + summary computation moved with it (it's a
+  provider-level concern now that providers return `PersonaReview`). Existing
+  parser/engine/route tests pass unchanged.
+- **Configuration.** `REVIEW_PROVIDER` (read in `app/core/config.py`,
+  default `mock`) selects the provider. Validation lives in the
+  `create_provider()` factory so an unknown value raises a `ValueError` listing
+  valid options rather than silently falling back. Settings are read at call time
+  (no caching) so env overrides work without a restart.
+- **Bedrock is a placeholder only.** `BedrockReviewProvider` does not import
+  boto3 or touch AWS; selecting it raises `NotImplementedError`. A FastAPI
+  exception handler maps that to a `501` with the explanatory message, so the API
+  fails clearly instead of returning an opaque `500` or pretending to work. No
+  new dependencies were added.
+- **Persona registry.** `app/personas/registry.py` holds one `PersonaSpec` per
+  persona (display name, description, review focus, output expectations, severity
+  guidance) plus a `persona_prompt()` renderer. This is the shared source of
+  truth: the mock provider uses it for display names, and a future LLM provider
+  can build prompts from it without duplicating persona knowledge.
+- **Why defer real AI.** Keeping reviews deterministic and offline means the app
+  runs for free with no credentials, tests stay fast and deterministic, and the
+  extensibility seam is proven before spending on tokens. The Bedrock provider is
+  the obvious, isolated place to add the integration later.
