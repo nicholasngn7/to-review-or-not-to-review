@@ -261,6 +261,26 @@ detailed finding cards from the Security/QA/Backend/SRE personas.*
 the council summary, and findings grouped by reviewer — the full review,
 independent of any UI filters.*
 
+### v0.3 — Local comment import demo
+
+> Placeholders — capture locally per [`docs/assets/README.md`](docs/assets/README.md).
+
+![Import comments panel with bundled sample payload buttons](docs/assets/v0.3-import-sample-panel.png)
+
+*The "Import comments (local demo)" panel: bundled synthetic sample buttons, provider/source selectors, and the JSON textarea — no URL or token input.*
+
+![Normalized import preview with thread count and warnings](docs/assets/v0.3-normalized-import-preview.png)
+
+*After Normalize comments: the normalized-thread count, any warnings, and a read-only preview of the imported threads.*
+
+![Review results from imported comment threads](docs/assets/v0.3-imported-threads-review-results.png)
+
+*The review dashboard after loading imported threads and running the review.*
+
+![Suggested replies generated from imported comments](docs/assets/v0.3-suggested-replies-from-imported-comments.png)
+
+*Deterministic, copy-only suggested replies generated for the imported comment threads, with file/line context.*
+
 ## Portfolio notes
 
 Positioning material — project summary, resume bullet variants, a LinkedIn/GitHub
@@ -284,25 +304,62 @@ Both are **documentation only**. There is **no** GitHub/GitLab API integration, 
 OAuth, no token input, no auto-posting, and no AI calls. Comment threads are entered
 locally today, and suggested replies remain deterministic and copy-only.
 
-**In progress — fixture-based Git provider comment-import mappers (backend only, no
-network):** pure functions that normalize recorded GitHub/GitLab comment JSON into the
-existing `commentThreads` contract. Implemented so far: import contracts; GitHub PR
-review-comment and issue-comment mappers; GitLab MR discussions mapper; a pure
-`import_comments` orchestrator with invariance tests proving imported threads drive the
-review/reply pipeline identically to locally-entered threads; a **local-only**
-`POST /api/import-comments` endpoint that normalizes a caller-supplied payload; and a
-frontend **"Import comments (local demo)"** panel.
+### v0.3 — Local comment import (implemented)
 
-The panel is a **local fixture-based comment import demo**: it **normalizes pasted
-provider-shaped JSON** into comment threads, **does not fetch from GitHub/GitLab**,
-**does not require tokens**, and **does not post comments** — it is **not** live
-GitHub/GitLab integration. It ships **bundled synthetic sample payloads** (one button
-each for GitHub review comments, GitHub issue comments, and GitLab discussions) so the
-demo works without pasting JSON; loading a sample only fills the form, and you still
-click **Normalize comments**. **No** live API calls, OAuth, token input, or URL
-fetching exist yet. See
-[`docs/v0.3-plan-git-comment-import-mappers.md`](docs/v0.3-plan-git-comment-import-mappers.md)
-and [`docs/v0.3-plan-frontend-local-comment-import.md`](docs/v0.3-plan-frontend-local-comment-import.md).
+v0.3 adds a **local, fixture-based comment-import path** that normalizes
+provider-shaped GitHub/GitLab comment JSON into the existing `commentThreads`
+contract, so suggested replies can run against imported discussions. It is a
+**demo of the normalization boundary**, deliberately stopping short of live provider
+integration.
+
+**Implemented:**
+
+- **Git import contracts** shared across backend (`backend/app/models/git_import.py`)
+  and frontend (`frontend/src/types/gitImport.ts`).
+- **Pure mappers** that normalize recorded provider JSON: GitHub PR review comments,
+  GitHub PR issue comments, and GitLab MR discussions
+  (`backend/app/services/git_import/`).
+- **Pure `import_comments` orchestrator** with invariance tests proving imported
+  threads drive the review/reply pipeline **identically** to locally-entered threads.
+- **Local-only `POST /api/import-comments`** endpoint that normalizes a
+  caller-supplied payload (no network, no tokens, no posting).
+- **Frontend "Import comments (local demo)" panel** with **bundled synthetic sample
+  payloads** (one button each for GitHub review comments, GitHub issue comments, and
+  GitLab discussions), a JSON preview, normalized-thread preview, and a "Load imported
+  threads" action that feeds the normal review flow.
+
+**Honest description of the import:** it **normalizes pasted / bundled
+provider-shaped JSON**, ships **bundled synthetic sample payloads** for repeatable
+demos, **does not fetch from GitHub/GitLab**, **does not require tokens or OAuth**,
+and **does not post comments**. It is **not** live GitHub/GitLab integration.
+
+**Deferred (not implemented):** live GitHub/GitLab fetching, PR/MR **URL input**,
+OAuth, **token input**, comment **posting / auto-reply**, and real AI/LLM calls.
+Design sketches for an eventual live path live in
+[`docs/future-git-provider-import.md`](docs/future-git-provider-import.md) and
+[`docs/future-git-provider-comment-import.md`](docs/future-git-provider-comment-import.md).
+
+See [`docs/v0.3-plan-git-comment-import-mappers.md`](docs/v0.3-plan-git-comment-import-mappers.md)
+and [`docs/v0.3-plan-frontend-local-comment-import.md`](docs/v0.3-plan-frontend-local-comment-import.md)
+for the full plans, and [`docs/release-checklist-v0.3.md`](docs/release-checklist-v0.3.md)
+for release readiness.
+
+### v0.3 demo flow
+
+A repeatable, fully local walkthrough (no credentials, no network beyond the local
+dev servers):
+
+1. **Load a risky diff** — *Load a demo diff → Risky backend auth change*.
+2. **Load a sample comment payload** — open **Import comments (local demo)**, then
+   under **Load sample payload** click **GitHub review comments** (or **GitHub issue
+   comments** / **GitLab discussions**). This fills the provider, source, and JSON.
+3. **Normalize comments** — click **Normalize comments** to call the local-only
+   `POST /api/import-comments`; review the thread count, warnings, and preview.
+4. **Load imported threads** — click **Load imported threads** to add them to the
+   review input (alongside any manual threads).
+5. **Run review** — click **Run Review**.
+6. **Copy suggested replies / export** — copy the deterministic suggested replies for
+   the imported threads, and/or **Export Markdown** for the full report.
 
 ## Known limitations
 

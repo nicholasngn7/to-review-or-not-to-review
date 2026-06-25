@@ -387,3 +387,16 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   the app normalizes supplied JSON rather than fetching anything. All sample data is
   synthetic (no real repos/people/tokens, `example.test` URLs); nothing is fetched,
   posted, and there is still no URL/token/OAuth input.
+- **v0.3 stops at a local fixture-based import demo before live provider integration.**
+  The whole v0.3 path — contracts, mappers, orchestrator, local endpoint, frontend
+  panel, and bundled samples — is intentionally a demo of the *normalization
+  boundary*. It proves imported threads behave identically to locally-entered ones,
+  without taking on the cost/risk of live GitHub/GitLab fetching, OAuth, token
+  storage, rate limits, or auto-posting. Those remain **deferred** with design-only
+  sketches in `docs/future-git-provider-import.md` and
+  `docs/future-git-provider-comment-import.md`. Release readiness is tracked in
+  `docs/release-checklist-v0.3.md`.
+- **The bundled sample payloads exist only for demo repeatability.** They are
+  synthetic, version-controlled JSON so the demo and tests can run the import flow
+  deterministically without a real provider; they are not, and should not be
+  presented as, captured production data.

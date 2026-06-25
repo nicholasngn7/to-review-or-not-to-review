@@ -1,0 +1,79 @@
+# Release checklist — v0.3 (local comment import)
+
+Use this before tagging **v0.3.0**. v0.3 is a **local, fixture-based comment-import
+demo**: it normalizes pasted / bundled provider-shaped JSON into the existing
+`commentThreads` contract. It does **not** fetch from GitHub/GitLab, use tokens/OAuth,
+or post comments, and adds **no** real AI/LLM calls.
+
+## Automated checks
+
+- [ ] **Backend tests** pass:
+  ```bash
+  cd backend && source .venv/bin/activate
+  python -m pytest -q
+  ```
+- [ ] **Frontend build** (type-check + production build) passes:
+  ```bash
+  cd frontend && npm run build
+  ```
+- [ ] **Frontend tests** pass:
+  ```bash
+  cd frontend && npm test
+  ```
+
+## Manual demo flow
+
+Run the backend (`uvicorn app.main:app --port 8000`) and frontend (`npm run dev`),
+then walk the [v0.3 demo flow](../README.md#v03-demo-flow):
+
+- [ ] Load **Risky backend auth change** demo diff.
+- [ ] Expand **Import comments (local demo)**.
+- [ ] Click a **Load sample payload** button (GitHub review / GitHub issue / GitLab).
+- [ ] Confirm it fills provider + source + JSON, and does **not** auto-call the API.
+- [ ] Click **Normalize comments**; confirm thread count, warnings, and preview render.
+- [ ] Click **Load imported threads**; confirm the "Imported comments" group appears.
+- [ ] (Optional) Add a manual comment thread too; confirm both are included.
+- [ ] Click **Run Review**; confirm the review runs and reflects the imported threads.
+- [ ] Confirm **suggested replies** are generated for the imported threads (with
+      file/line), and that **copy** buttons work.
+- [ ] Click **Export Markdown**; confirm the report downloads and reads correctly.
+
+## Accuracy / honesty review
+
+- [ ] **README accuracy:** the v0.3 section distinguishes **implemented** vs.
+      **deferred**, and describes import honestly (bundled synthetic samples;
+      normalizes pasted/provider-shaped JSON; no fetch; no tokens/OAuth; no posting;
+      not live integration).
+- [ ] **demo-script.md** narration avoids overclaiming and includes the line
+      *"This is a local fixture-based import demo, not live GitHub/GitLab integration."*
+- [ ] **No-token / no-URL / no-posting check:** confirm the UI exposes no token field,
+      no PR/MR URL input, and no posting/auto-reply action.
+  ```bash
+  # Expect no matches (sanity scan of frontend source):
+  cd frontend
+  rg -n -i "oauth|access[_-]?token|bearer " src || echo "OK: no token/oauth surface"
+  rg -n -i "fetch.*github\.com|api\.github\.com|gitlab\.com/api" src || echo "OK: no live provider calls"
+  ```
+- [ ] **Sample data is synthetic:** `frontend/src/fixtures/importSamples.ts` uses
+      fabricated repos/projects/usernames and `example.test` URLs only.
+
+## Screenshots
+
+Capture per [`docs/assets/README.md`](assets/README.md) (placeholders until captured):
+
+- [ ] `v0.3-import-sample-panel.png`
+- [ ] `v0.3-normalized-import-preview.png`
+- [ ] `v0.3-imported-threads-review-results.png`
+- [ ] `v0.3-suggested-replies-from-imported-comments.png`
+
+## Tag the release
+
+After all boxes are checked and changes are committed:
+
+```bash
+git tag -a v0.3.0 -m "v0.3.0 — local fixture-based comment import demo"
+git push origin v0.3.0
+```
+
+> Previous tags: `v0.1.0`, `v0.2.0`. v0.3.0 stays a local demo — live GitHub/GitLab
+> integration, URL input, OAuth, token input, posting, and real AI remain deferred.

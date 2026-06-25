@@ -141,7 +141,54 @@ Be explicit that this is an architecture/MVP demo, not a finished AI product:
 - **No persistence yet** — reviews aren't stored; Markdown export is the way to
   keep a result.
 
-## 8. README blurb (for reference)
+## 8. v0.3 demo script — local comment import (60–90s)
+
+A focused, standalone walkthrough of the **local, fixture-based** comment-import
+path. It can follow the main demo or stand alone. Everything runs locally — there is
+no GitHub/GitLab fetch, no tokens, and nothing is posted.
+
+### Narration (~110 words)
+
+- **Intro:** "MR Review Council can also work from *existing* review comments. To
+  show the shape of that, v0.3 adds a local import demo."
+- **Honesty line (say this clearly):** "This is a **local fixture-based import demo,
+  not live GitHub/GitLab integration** — I'm loading bundled synthetic JSON. Nothing
+  is fetched from a provider, no tokens or OAuth are involved, and nothing is posted."
+- **Normalize:** "I pick a bundled sample — GitHub review comments — and normalize it.
+  The backend maps that provider-shaped JSON into our comment-thread contract; I can
+  see the thread count, any warnings, and a preview."
+- **Run:** "I load those threads, run the review, and the council generates
+  deterministic, copy-only suggested replies for each imported thread — with file and
+  line context — which I can copy or export to Markdown."
+
+### What to click, in order
+
+1. **Load a demo diff → Risky backend auth change.**
+2. Expand **Import comments (local demo)**. Point out: no URL field, no token field.
+3. Under **Load sample payload**, click **GitHub review comments** (mention the
+   **GitHub issue comments** / **GitLab discussions** buttons exist too). Note the
+   provider, source, and JSON textarea auto-fill.
+4. Click **Normalize comments** → show thread count, warnings, and the read-only
+   preview.
+5. Click **Load imported threads** → the **Imported comments** group appears.
+6. Click **Run Review.**
+7. Scroll to **Suggested replies** → show replies tied to the imported threads
+   (file/line), use a **Copy** button, and/or **Export Markdown.**
+
+### Timing guide (target ~75s)
+
+| Section                                   | Target time |
+| ----------------------------------------- | ----------- |
+| Intro + honesty line                      | 0:00–0:12   |
+| Load risky diff + open import panel       | 0:12–0:25   |
+| Load sample + Normalize + preview         | 0:25–0:45   |
+| Load imported threads + Run Review        | 0:45–0:58   |
+| Suggested replies + copy/export + wrap    | 0:58–1:15   |
+
+> Do not say "connected to GitHub/GitLab", "fetched the PR", or "posted a reply."
+> The truthful framing is: *normalizes supplied provider-shaped JSON, locally.*
+
+## 9. README blurb (for reference)
 
 A short blurb linking here lives in the root README's **Demo video** section; the
 recorded video can be added later (e.g. linked from the README or embedded as a
