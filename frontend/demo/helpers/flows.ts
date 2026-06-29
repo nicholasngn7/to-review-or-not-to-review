@@ -18,6 +18,7 @@
 import type { Locator, Page } from "@playwright/test";
 
 import {
+  DEFAULT_CONTEXT_SOURCES,
   DEFAULT_IMPORT_SAMPLE_LABEL,
   FEATURE_PROBE_TIMEOUT_MS,
   TEXT,
@@ -219,4 +220,102 @@ export async function waitForSuggestedRepliesIfAvailable(
   }
   await target.first().waitFor({ state: "visible", timeout: 8_000 });
   return true;
+}
+
+/**
+ * (11) Open the optional local context sources panel if present (v0.4+); no-op otherwise.
+ */
+export async function openContextSourcesPanelIfAvailable(
+  page: Page,
+): Promise<boolean> {
+  return openDetailsByText(page, TEXT.contextSourcesTitle);
+}
+
+/**
+ * (12) Enter local, allow-listed context source paths (one per line) and an optional
+ * local/lexical context query, opting into retrieval grounding (v0.4+). No-op if the
+ * input is absent. Sources are local repo docs only — no URLs, tokens, or fetching.
+ */
+export async function enterLocalContextSourcesIfAvailable(
+  page: Page,
+  sources: string[] = DEFAULT_CONTEXT_SOURCES,
+  query?: string,
+): Promise<boolean> {
+  if (!(await openContextSourcesPanelIfAvailable(page))) {
+    return false;
+  }
+  const sourcesField = page.getByLabel(TEXT.sourcePathsLabel);
+  if (!(await isPresent(sourcesField))) {
+    return false;
+  }
+  await sourcesField.first().fill(sources.join("\n"));
+  if (query) {
+    const queryField = page.getByLabel(TEXT.contextQueryLabel);
+    if (await isPresent(queryField)) {
+      await queryField.first().fill(query);
+    }
+  }
+  return true;
+}
+
+/**
+ * (13) Open and wait for the "Retrieved local context" results panel if it appears
+ * (v0.4+). Returns false when the panel is absent (no context retrieved / older tree).
+ */
+export async function openRetrievedContextPanelIfAvailable(
+  page: Page,
+): Promise<boolean> {
+  const details = page
+    .locator("details.context-used")
+    .filter({ hasText: TEXT.retrievedContextTitle })
+    .first();
+  if (!(await isPresent(details, 8_000))) {
+    return false;
+  }
+  await details.evaluate((el) => {
+    (el as HTMLDetailsElement).open = true;
+  });
+  return true;
+}
+
+/**
+ * (14) Expand the first finding card's "Cited context" detail if any finding carries
+ * citations (v0.4+). Returns false when no finding has citations in this state.
+ */
+export async function expandFirstCitedContextIfAvailable(
+  page: Page,
+): Promise<Locator | null> {
+  const details = page.locator("details.finding-citations").first();
+  if (!(await isPresent(details, 8_000))) {
+    return null;
+  }
+  await details.scrollIntoViewIfNeeded();
+  await details.evaluate((el) => {
+    (el as HTMLDetailsElement).open = true;
+  });
+  // Return the enclosing finding card for a focused screenshot.
+  return details.locator("xpath=ancestor::li[contains(@class,'finding')][1]");
+}
+
+/**
+ * (15) Export the review as Markdown and return the file's text content (v0.4+/v0.1+).
+ * Intercepts the real in-app download (a Blob anchor click) — nothing is fetched or
+ * posted. Returns null if the export control is absent.
+ */
+export async function readMarkdownExportIfAvailable(
+  page: Page,
+): Promise<string | null> {
+  const button = page.getByRole("button", { name: TEXT.exportMarkdown });
+  if (!(await isPresent(button))) {
+    return null;
+  }
+  const downloadPromise = page.waitForEvent("download");
+  await button.first().click();
+  const download = await downloadPromise;
+  const stream = await download.createReadStream();
+  const chunks: Buffer[] = [];
+  for await (const chunk of stream) {
+    chunks.push(Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks).toString("utf-8");
 }

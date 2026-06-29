@@ -13,7 +13,9 @@ docs/assets/screenshots/v0.1/   v0.1-core-review-input.png, v0.1-review-results.
 docs/assets/screenshots/v0.2/   v0.2-reviewer-tone-panel.png, v0.2-comment-threads-input.png, v0.2-suggested-replies.png
 docs/assets/screenshots/v0.3/   v0.3-import-sample-panel.png, v0.3-normalized-import-preview.png,
                                 v0.3-imported-threads-review-results.png, v0.3-suggested-replies-from-imported-comments.png
-docs/assets/videos/             mr-review-council-v0.{1,2,3}-*.webm (recorded from real app interactions)
+docs/assets/screenshots/v0.4/   v0.4-context-sources-input.png, v0.4-retrieved-local-context.png,
+                                v0.4-finding-cited-context.png, v0.4-markdown-context-used.png
+docs/assets/videos/             mr-review-council-v0.{1,2,3,4}-*.webm (recorded from real app interactions)
 ```
 
 **Generation status:** **all three sets are generated from their exact release tags.**
@@ -63,6 +65,20 @@ DEMO_BASE_URL=http://localhost:5173 npm run demo:video:v0.1
 | `v0.3-imported-threads-review-results.png`        | Review results from imported threads   | After **Load imported threads** and **Run Review**. Show the verdict badges/stats with the imported threads having driven the run.                |
 | `v0.3-suggested-replies-from-imported-comments.png`| Suggested replies from imported comments | Same review, scrolled to the **Suggested replies** section, showing deterministic copy-only replies with file/line context for the imported threads. |
 
+### v0.4 — Opt-in local retrieval grounding
+
+> All four ground on **local, allow-listed** repo docs (`README.md`, `docs/*`) via a
+> **deterministic, lexical, provenance-only** retriever. Nothing is fetched from any
+> provider, no tokens/OAuth, no semantic search, no Bedrock/OpenAI. Retrieved context is
+> provenance only — it does **not** change findings, severity, or the merge recommendation.
+
+| Filename                              | What it shows                          | App state to set up                                                                                                                          |
+| ------------------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `v0.4-context-sources-input.png`      | Optional local context sources input   | Risky backend demo loaded. Expand **Optional local context sources**, enter local paths (`README.md`, `docs/project-case-study.md`, `docs/decisions.md`) and an optional lexical context query — **before** running. Make clear there is no URL/token field. |
+| `v0.4-retrieved-local-context.png`    | Retrieved local context panel          | After **Run Review** with sources entered. The collapsible **Retrieved local context** panel expanded, showing source path · heading · line range, rounded score, and snippet, with the local/lexical/provenance-only caption. |
+| `v0.4-finding-cited-context.png`      | Finding card with Cited context        | Same review; a finding card with its secondary **Cited context** detail expanded (source path, line range, score, snippet) — labelled as not changing severity. |
+| `v0.4-markdown-context-used.png`      | Markdown export — Context used + Cited  | The **verbatim** exported `.md` (read from the in-app download) showing the **## Context used** section and per-finding **Cited context** lines. |
+
 ## How to capture
 
 1. Start the backend on port 8000 and the frontend dev server (see the root
@@ -101,6 +117,7 @@ Video files:
 - `videos/mr-review-council-v0.1-core-review-demo.webm` — **recorded from the `v0.1.0` tag** (~0.5 MB)
 - `videos/mr-review-council-v0.2-suggested-replies-demo.webm` — **recorded from the `v0.2.0` tag** (~0.7 MB)
 - `videos/mr-review-council-v0.3-local-import-demo.webm` — **recorded from the `v0.3.0` tag** (~0.8 MB)
+- `videos/mr-review-council-v0.4-retrieval-grounding-demo.webm` — **recorded from the current v0.4 app**
 
 `ffmpeg` conversion to `.mp4`/`.gif` is **optional**, e.g.:
 

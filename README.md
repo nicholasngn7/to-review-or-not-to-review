@@ -68,6 +68,7 @@ Screenshots and videos are **real captures from the matching tagged build** (see
 | **v0.1.0** | Core multi-persona review + Markdown export | [v0.1 gallery](#v01--core-review-mvp-from-the-v010-tag) | [core-review demo](docs/assets/videos/mr-review-council-v0.1-core-review-demo.webm) |
 | **v0.2.0** | Reviewer tone, comment threads, suggested replies | [v0.2 gallery](#v02--reviewer-tone-comment-threads-suggested-replies-from-the-v020-tag) | [suggested-replies demo](docs/assets/videos/mr-review-council-v0.2-suggested-replies-demo.webm) |
 | **v0.3.0** | Local fixture-based comment import | [v0.3 gallery](#v03--local-fixture-based-comment-import-demo-generated-from-v030) | [local-import demo](docs/assets/videos/mr-review-council-v0.3-local-import-demo.webm) |
+| **v0.4** (in progress) | Opt-in local retrieval grounding (lexical, provenance-only) | [v0.4 gallery](#v04--opt-in-local-retrieval-grounding-from-the-current-v04-app) | [retrieval-grounding demo](docs/assets/videos/mr-review-council-v0.4-retrieval-grounding-demo.webm) |
 
 ## Why this project exists
 
@@ -226,6 +227,7 @@ video specs (`frontend/demo/videos/`) and saved under
 | v0.1 core review | [`mr-review-council-v0.1-core-review-demo.webm`](docs/assets/videos/mr-review-council-v0.1-core-review-demo.webm) *(recorded from the `v0.1.0` tag)* |
 | v0.2 suggested replies | [`mr-review-council-v0.2-suggested-replies-demo.webm`](docs/assets/videos/mr-review-council-v0.2-suggested-replies-demo.webm) *(recorded from the `v0.2.0` tag)* |
 | v0.3 local import | [`mr-review-council-v0.3-local-import-demo.webm`](docs/assets/videos/mr-review-council-v0.3-local-import-demo.webm) *(recorded from the `v0.3.0` tag)* |
+| v0.4 retrieval grounding | [`mr-review-council-v0.4-retrieval-grounding-demo.webm`](docs/assets/videos/mr-review-council-v0.4-retrieval-grounding-demo.webm) *(recorded from the current v0.4 app)* |
 
 The v0.1/v0.2 videos were recorded by running the **current** Playwright harness against
 the **historical** app started from the matching `v0.1.0` / `v0.2.0` worktree, via
@@ -373,6 +375,32 @@ preview of the imported threads.*
 *Deterministic, copy-only suggested replies generated for the imported comment
 threads, with file/line context.*
 
+### v0.4 — opt-in local retrieval grounding (from the current v0.4 app)
+
+> Local, **deterministic, lexical, provenance-only** retrieval over allow-listed repo
+> docs. No provider fetch, no tokens/OAuth, no semantic search, no Bedrock/OpenAI; the
+> retrieved context does **not** change findings, severity, or the recommendation.
+
+![Optional local context sources input](docs/assets/screenshots/v0.4/v0.4-context-sources-input.png)
+
+*The "Optional local context sources" input: local source paths (one per line) and an
+optional local/lexical context query — no URL or token field.*
+
+![Review results with the Retrieved local context panel](docs/assets/screenshots/v0.4/v0.4-retrieved-local-context.png)
+
+*The read-only "Retrieved local context" panel: source path, heading, line range, a
+rounded lexical score, and a snippet, with the provenance-only caption.*
+
+![Finding card with Cited context expanded](docs/assets/screenshots/v0.4/v0.4-finding-cited-context.png)
+
+*A finding card's secondary "Cited context" detail — provenance only, explicitly noting
+it did not change the finding's severity or recommendation.*
+
+![Markdown export showing the Context used section and per-finding citations](docs/assets/screenshots/v0.4/v0.4-markdown-context-used.png)
+
+*The verbatim exported Markdown report, including the "Context used" section and the
+per-finding "Cited context" lines.*
+
 > The older flat `docs/assets/*.png` placeholders are superseded by the structured
 > `docs/assets/screenshots/vX/` paths above.
 
@@ -495,8 +523,11 @@ dev servers):
 > harness** (fixed synthetic corpus + hit@k/precision@k/recall@k regression metrics) guards
 > the lexical retriever. It is a local **RAG architecture demo** —
 > lexical/deterministic retrieval, **not** semantic search, production-grade RAG, or any
-> live/Bedrock embedding calls (those remain optional future work). Full plan:
-> [`docs/v0.4-plan-rag-grounded-review.md`](docs/v0.4-plan-rag-grounded-review.md).
+> live/Bedrock embedding calls (those remain optional future work). The only embedding
+> provider shipped is the **deterministic local lexical provider**; a real provider path
+> (e.g. Bedrock) is a **disabled-by-default future seam, not implemented in v0.4** — see
+> [`docs/future-embedding-provider-path.md`](docs/future-embedding-provider-path.md). Full
+> plan: [`docs/v0.4-plan-rag-grounded-review.md`](docs/v0.4-plan-rag-grounded-review.md).
 
 ## v0.2 — reviewer tone & suggested replies (implemented)
 

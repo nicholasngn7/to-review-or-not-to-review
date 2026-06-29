@@ -11,10 +11,17 @@ live GitHub/GitLab integration**.
 ```
 demo/
   helpers/      flows.ts, selectors.ts, waitForReview.ts, screenshot.ts, video.ts
-  screenshots/  v0.1|v0.2|v0.3.screenshots.spec.ts  -> docs/assets/screenshots/vX/*.png
-  videos/       v0.1|v0.2|v0.3.video.spec.ts          -> docs/assets/videos/*.webm
+  screenshots/  v0.1|v0.2|v0.3|v0.4.screenshots.spec.ts  -> docs/assets/screenshots/vX/*.png
+  videos/       v0.1|v0.2|v0.3|v0.4.video.spec.ts          -> docs/assets/videos/*.webm
   demo-harness.smoke.spec.ts
 ```
+
+> **v0.4 (retrieval grounding).** `v0.4.*.spec.ts` ground a review on **local, allow-listed**
+> repo docs (`README.md`, `docs/*`) via the **deterministic, lexical, provenance-only**
+> retriever and capture the context-sources input, the "Retrieved local context" panel, a
+> finding's "Cited context", and the Markdown export's "Context used" section. Nothing is
+> fetched from any provider, no tokens/OAuth, no semantic search, no Bedrock/OpenAI. Specs
+> `test.skip` if the v0.4 UI / context is absent.
 
 ## Backend requirement
 
@@ -34,15 +41,17 @@ npm run demo:smoke              # harness sanity check (no backend, no assets)
 
 npm run demo:screenshots        # all screenshot specs (current checkout)
 npm run demo:screenshots:v0.1   # one milestone
+npm run demo:screenshots:v0.4   # v0.4 retrieval-grounding screenshots (needs backend)
 npm run demo:video              # all video specs (current checkout)
 npm run demo:video:v0.3         # one milestone
+npm run demo:video:v0.4         # v0.4 retrieval-grounding video (needs backend)
 npm run demo:all                # smoke + screenshots + videos (current checkout)
 ```
 
 ## Current-harness capture (simplest)
 
 The current checkout is the latest version, so running a spec here captures the
-**current app**. For the matching latest milestone (today: v0.3) this is exact; for
+**current app**. For the matching latest milestone (today: v0.4) this is exact; for
 older milestone names it is a truthful **milestone-style fallback**, not an exact
 historical build. The specs `test.skip` (and discard any throwaway recording) when a
 version's defining feature is absent, so they never write a misleading file.

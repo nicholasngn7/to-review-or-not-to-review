@@ -117,9 +117,13 @@ and deployment are future work behind the existing seams — see
   recall@k over a fixed synthetic corpus), and **frontend visibility for opt-in grounding**
   (Phase 7 — an optional local context-sources input, a read-only “Retrieved local context”
   panel, secondary per-finding “Cited context”, and an optional Markdown “Context used”
-  block, all hidden when absent and worded as local/lexical/provenance-only) are implemented
-  and tested. It is scoped as a local **RAG architecture
+  block, all hidden when absent and worded as local/lexical/provenance-only), and
+  **provider-seam documentation + exact-version demo assets** (Phase 8 — the future
+  embedding-provider seam documented design-only, plus captured v0.4 retrieval-grounding
+  screenshots/video) are implemented and tested. It is scoped as a local **RAG architecture
   demo** with lexical/deterministic retrieval — not semantic search, not production-grade
   RAG, and with no live/Bedrock embedding calls unless a real provider is later
-  implemented and tested. Full plan:
+  implemented and tested. The only embedding provider shipped is `deterministic_local`; the
+  Bedrock/real-provider path is **disabled-by-default future work, not implemented in v0.4**
+  (see [`future-embedding-provider-path.md`](future-embedding-provider-path.md)). Full plan:
   [`v0.4-plan-rag-grounded-review.md`](v0.4-plan-rag-grounded-review.md).

@@ -197,7 +197,58 @@ no GitHub/GitLab fetch, no tokens, and nothing is posted.
 > Do not say "connected to GitHub/GitLab", "fetched the PR", or "posted a reply."
 > The truthful framing is: *normalizes supplied provider-shaped JSON, locally.*
 
-## 9. README blurb (for reference)
+## 9. v0.4 demo script — opt-in local retrieval grounding (45–75s)
+
+A focused walkthrough of grounding a review on **local** project docs. Everything is
+local, **deterministic, lexical, and provenance-only** — there is no provider fetch, no
+tokens/OAuth, no semantic search, and no Bedrock/OpenAI. Retrieved context **does not**
+change findings, severity, risk, or the recommendation.
+
+### Narration (~100 words)
+
+- **Intro:** "v0.4 can *ground* a review in the project's own local docs and show where
+  context came from."
+- **Honesty line (say this clearly):** "This is **local, deterministic, lexical retrieval —
+  not semantic search and not a live AI provider.** It reads only allow-listed local files,
+  fetches nothing, and uses no tokens. The retrieved context is **provenance only** — it does
+  not change the findings or the verdict."
+- **Run:** "I add a couple of local docs — the README and a docs file — optionally type a
+  lexical query, and run the review as usual."
+- **Show:** "The results add a read-only *Retrieved local context* panel, and individual
+  findings can expand a secondary *Cited context* detail. The Markdown export gains a
+  *Context used* section too."
+
+### What to click, in order
+
+1. **Load a demo diff → Risky backend auth change.**
+2. Expand **Optional local context sources**. Point out: no URL field, no token field.
+3. Enter local, allow-listed paths, one per line: `README.md`,
+   `docs/project-case-study.md`, `docs/decisions.md`. Optionally type a **context query**
+   (e.g. "authentication and security review") — note it is labelled optional and
+   local/lexical.
+4. Click **Run Review.**
+5. In the results, expand **Retrieved local context** → show source path, heading, line
+   range, rounded score, and snippet, with the local/lexical/provenance-only caption.
+6. On a finding card, expand **Cited context** → show the same provenance, noting it did
+   **not** change the finding's severity.
+7. Click **Export Markdown** → open the file and show the **## Context used** section and
+   the per-finding **Cited context** lines.
+
+> Do not say "semantic search", "Bedrock-powered", "AI-generated", or "fetched from
+> GitHub/GitLab". The truthful framing is: *deterministic, lexical, local retrieval that
+> annotates the review with provenance.*
+
+### Assets
+
+Captured by the Playwright harness (current v0.4 app, backend on :8000):
+
+```bash
+cd frontend
+npm run demo:screenshots:v0.4   # docs/assets/screenshots/v0.4/*.png
+npm run demo:video:v0.4         # docs/assets/videos/mr-review-council-v0.4-retrieval-grounding-demo.webm
+```
+
+## 10. README blurb (for reference)
 
 A short blurb linking here lives in the root README's **Demo video** section; the
 recorded video can be added later (e.g. linked from the README or embedded as a

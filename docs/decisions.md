@@ -567,3 +567,26 @@ Makes replies self-contained and easier to use in a demo; no behavior changes.
   is a pure presentation/adapter layer: **no backend behavior changed**, no new dependencies,
   no network behavior beyond the existing `/api/reviews` call, and still **not** production
   RAG, semantic search, Bedrock/live provider, or LLM-generated review output.
+- **Phase 8 finalizes v0.4 with provider-seam docs + exact-version demo assets (no behavior
+  change).** The future embedding-provider seam is documented design-only in
+  [`future-embedding-provider-path.md`](future-embedding-provider-path.md): v0.4 ships **only**
+  the `deterministic_local` lexical provider (`DeterministicLocalEmbeddingProvider` behind the
+  `EmbeddingProvider` protocol, with the `provider=` argument to
+  `build_index`/`retrieve_context` being the entire swap point), and
+  `EmbeddingProviderType.BEDROCK_OPTIONAL_FUTURE` remains a **reserved name with no
+  implementation**. The doc records the hard rules for any future real provider — explicitly
+  configured, tested, disabled by default, fails clearly when unconfigured, **never** silently
+  falls back to fabricated vectors, keeps vectors provider-tagged, and confines any
+  network/credential handling to that opt-in provider. We deliberately **did not** add a
+  Bedrock/OpenAI client, credentials, token/OAuth handling, network fetching, or heavy
+  dependencies. Exact-version **demo assets** were captured from the current v0.4 app using the
+  existing Playwright harness: `frontend/demo/screenshots/v0.4.screenshots.spec.ts` writes
+  `docs/assets/screenshots/v0.4/` (`v0.4-context-sources-input`, `v0.4-retrieved-local-context`,
+  `v0.4-finding-cited-context`, `v0.4-markdown-context-used`), and
+  `frontend/demo/videos/v0.4.video.spec.ts` records
+  `docs/assets/videos/mr-review-council-v0.4-retrieval-grounding-demo.webm`. The flow uses only
+  built-in sample diffs and **local allow-listed** context sources (`README.md`,
+  `docs/project-case-study.md`, `docs/decisions.md`); each spec `test.skip`s if the v0.4 UI is
+  absent so it never writes a misleading file. Honest labels throughout (local, deterministic,
+  lexical, provenance-only); nothing implies live providers, tokens, OAuth, GitHub/GitLab
+  fetching, Bedrock/OpenAI, or semantic search.

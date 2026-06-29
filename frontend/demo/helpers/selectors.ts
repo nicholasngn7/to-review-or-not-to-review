@@ -34,7 +34,21 @@ export const TEXT = {
 
   /** Suggested replies (v0.2+, populated when threads are submitted). */
   suggestedReplies: /suggested replies/i,
+
+  /** Opt-in local retrieval grounding (v0.4+). */
+  contextSourcesTitle: /optional local context sources/i,
+  sourcePathsLabel: /source paths/i,
+  contextQueryLabel: /context query/i,
+  retrievedContextTitle: /retrieved local context/i,
+  citedContext: /cited context/i,
 } as const;
+
+/** Default local, allow-listed context sources used by the v0.4 demo flow. */
+export const DEFAULT_CONTEXT_SOURCES = [
+  "README.md",
+  "docs/project-case-study.md",
+  "docs/decisions.md",
+];
 
 /** Default bundled import sample label used by demo flows (v0.3+). */
 export const DEFAULT_IMPORT_SAMPLE_LABEL = "GitHub review comments";
