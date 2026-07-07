@@ -5,10 +5,8 @@ FastAPI service for MR Review Council.
 ## Setup
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+uv sync --group dev
+uv run uvicorn app.main:app --reload --port 8000
 ```
 
 ## Endpoints
@@ -85,13 +83,13 @@ Provider selection is controlled by the `REVIEW_PROVIDER` environment variable:
 
 ```bash
 # Default (mock) — fully local:
-uvicorn app.main:app --reload --port 8000
+uv run uvicorn app.main:app --reload --port 8000
 
 # Explicitly select a provider:
-REVIEW_PROVIDER=mock uvicorn app.main:app --reload --port 8000
+REVIEW_PROVIDER=mock uv run uvicorn app.main:app --reload --port 8000
 
 # Bedrock placeholder: /api/reviews returns 501 with an explanatory message.
-REVIEW_PROVIDER=bedrock uvicorn app.main:app --reload --port 8000
+REVIEW_PROVIDER=bedrock uv run uvicorn app.main:app --reload --port 8000
 ```
 
 An unknown value (e.g. `REVIEW_PROVIDER=foo`) fails fast with a `ValueError`
@@ -103,8 +101,7 @@ provider and any future LLM provider. Real AI calls are intentionally deferred
 ## Tests
 
 ```bash
-source .venv/bin/activate
-python -m pytest          # or: python -m pytest -q
+uv run pytest          # or: uv run pytest -q
 ```
 
 Test files:

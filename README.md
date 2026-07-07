@@ -154,16 +154,14 @@ log.
 
 ## Local setup
 
-You need **Node.js 18+** and **Python 3.11+** installed.
+You need **Node.js 18+**, **Python 3.11+**, and [**uv**](https://docs.astral.sh/uv/) installed.
 
 ### Backend
 
 ```bash
 cd backend
-python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+uv sync --group dev
+uv run uvicorn app.main:app --reload --port 8000
 ```
 
 The API is then available at `http://localhost:8000` (health check:
