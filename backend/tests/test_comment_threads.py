@@ -61,9 +61,7 @@ def test_request_with_one_comment_thread_validates():
         status=CommentThreadStatus.OPEN,
         comments=[ThreadComment(id="c1", author="Reviewer", body="Please fix.")],
     )
-    req = ReviewRequest(
-        diff_text=DIFF, selected_personas=["security"], comment_threads=[thread]
-    )
+    req = ReviewRequest(diff_text=DIFF, selected_personas=["security"], comment_threads=[thread])
     assert req.comment_threads is not None
     assert req.comment_threads[0].comments[0].body == "Please fix."
 

@@ -85,4 +85,3 @@ def test_reviews_bedrock_provider_returns_clear_501(monkeypatch):
     )
     assert resp.status_code == 501
     assert "not implemented" in resp.json()["detail"].lower()
-

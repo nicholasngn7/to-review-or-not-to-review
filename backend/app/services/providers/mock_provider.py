@@ -86,9 +86,7 @@ class LineRef:
     content: str
 
     def hunk_reference(self) -> HunkReference:
-        return HunkReference(
-            hunk_index=self.hunk_index, header=self.header, line=self.line_no
-        )
+        return HunkReference(hunk_index=self.hunk_index, header=self.header, line=self.line_no)
 
 
 def _collect_lines(parsed: ParsedDiff, kind: str) -> list[LineRef]:
@@ -149,9 +147,7 @@ def _persona_risk(findings: list[ReviewFinding]) -> RiskLevel:
     return RiskLevel.LOW
 
 
-def _persona_summary(
-    persona: ReviewerPersona, findings: list[ReviewFinding]
-) -> str:
+def _persona_summary(persona: ReviewerPersona, findings: list[ReviewFinding]) -> str:
     label = get_persona_spec(persona).display_name
     if not findings:
         return f"No concerns from the {label} reviewer."
@@ -293,9 +289,7 @@ class _MockDiffSession:
         p = ReviewerPersona.QA
         out: list[ReviewFinding] = []
 
-        test_files_changed = any(
-            is_test_file(file_path_of(f)) for f in self.parsed.files
-        )
+        test_files_changed = any(is_test_file(file_path_of(f)) for f in self.parsed.files)
 
         # Deleted tests are a clear regression-risk signal.
         for file in self.parsed.files:
@@ -306,8 +300,7 @@ class _MockDiffSession:
                         p,
                         FindingSeverity.HIGH,
                         "Test file deleted",
-                        f"The test file '{path}' was deleted, reducing regression "
-                        "coverage.",
+                        f"The test file '{path}' was deleted, reducing regression coverage.",
                         "Confirm the tests are obsolete or migrate them before merging.",
                         file_path=path,
                         confidence=0.8,
@@ -319,9 +312,7 @@ class _MockDiffSession:
             for f in self.parsed.files
             if f.hunks
             and not is_test_file(file_path_of(f))
-            and (
-                is_backend_file(file_path_of(f)) or is_frontend_file(file_path_of(f))
-            )
+            and (is_backend_file(file_path_of(f)) or is_frontend_file(file_path_of(f)))
         ]
 
         if prod_code_files and not test_files_changed:
@@ -329,13 +320,9 @@ class _MockDiffSession:
                 1
                 for ln in self.added
                 if not is_test_file(ln.file_path)
-                and (
-                    is_backend_file(ln.file_path) or is_frontend_file(ln.file_path)
-                )
+                and (is_backend_file(ln.file_path) or is_frontend_file(ln.file_path))
             )
-            severity = (
-                FindingSeverity.HIGH if prod_added > 120 else FindingSeverity.MEDIUM
-            )
+            severity = FindingSeverity.HIGH if prod_added > 120 else FindingSeverity.MEDIUM
             out.append(
                 self._finding(
                     p,
@@ -395,10 +382,8 @@ class _MockDiffSession:
                         p,
                         FindingSeverity.MEDIUM,
                         "Direct innerHTML usage",
-                        "Setting innerHTML can introduce XSS and bypasses React's "
-                        "rendering model.",
-                        "Render via JSX/state, or sanitize input if raw HTML is "
-                        "truly required.",
+                        "Setting innerHTML can introduce XSS and bypasses React's rendering model.",
+                        "Render via JSX/state, or sanitize input if raw HTML is truly required.",
                         file_path=ref.file_path,
                         hunk_reference=ref.hunk_reference(),
                         confidence=0.6,
@@ -414,8 +399,7 @@ class _MockDiffSession:
                         p,
                         FindingSeverity.LOW,
                         "Direct DOM manipulation",
-                        "Direct DOM access can fight React's virtual DOM and hurt "
-                        "maintainability.",
+                        "Direct DOM access can fight React's virtual DOM and hurt maintainability.",
                         "Prefer refs and declarative state over imperative DOM calls.",
                         file_path=ref.file_path,
                         hunk_reference=ref.hunk_reference(),
@@ -442,9 +426,8 @@ class _MockDiffSession:
                         p,
                         FindingSeverity.LOW,
                         "Image without alt text",
-                        "An <img> was added without an alt attribute, which hurts "
-                        "accessibility.",
-                        "Add a descriptive alt attribute (or alt=\"\" if decorative).",
+                        "An <img> was added without an alt attribute, which hurts accessibility.",
+                        'Add a descriptive alt attribute (or alt="" if decorative).',
                         file_path=ref.file_path,
                         hunk_reference=ref.hunk_reference(),
                         confidence=0.55,
@@ -464,8 +447,7 @@ class _MockDiffSession:
                         "Large component change",
                         f"'{path}' adds {count} lines; large components are harder to "
                         "review and maintain.",
-                        "Consider extracting subcomponents or hooks to clarify "
-                        "responsibilities.",
+                        "Consider extracting subcomponents or hooks to clarify responsibilities.",
                         file_path=path,
                         confidence=0.45,
                     )
@@ -490,8 +472,7 @@ class _MockDiffSession:
                         p,
                         FindingSeverity.MEDIUM,
                         "Broad exception handler",
-                        "Catching the base Exception (or a bare except) can hide "
-                        "real errors.",
+                        "Catching the base Exception (or a bare except) can hide real errors.",
                         "Catch specific exceptions and re-raise or log unexpected ones.",
                         file_path=ref.file_path,
                         hunk_reference=ref.hunk_reference(),
@@ -511,9 +492,9 @@ class _MockDiffSession:
                         confidence=0.5,
                     )
                 )
-            if any(
-                kw in content for kw in ("SELECT ", "INSERT ", "UPDATE ", "DELETE ")
-            ) and any(tok in content for tok in ("+", "%", 'f"', "f'", ".format(")):
+            if any(kw in content for kw in ("SELECT ", "INSERT ", "UPDATE ", "DELETE ")) and any(
+                tok in content for tok in ("+", "%", 'f"', "f'", ".format(")
+            ):
                 out.append(
                     self._finding(
                         p,
@@ -551,17 +532,13 @@ class _MockDiffSession:
         # Removed logging anywhere.
         for ref in self.removed:
             lowered = ref.content.lower()
-            if any(
-                marker in lowered
-                for marker in ("logger.", "logging.", "log.", "console.log")
-            ):
+            if any(marker in lowered for marker in ("logger.", "logging.", "log.", "console.log")):
                 out.append(
                     self._finding(
                         p,
                         FindingSeverity.MEDIUM,
                         "Logging removed",
-                        "A log statement was removed, which can reduce on-call "
-                        "visibility.",
+                        "A log statement was removed, which can reduce on-call visibility.",
                         "Keep observability for important paths, or replace with "
                         "structured logging.",
                         file_path=ref.file_path,
@@ -574,17 +551,20 @@ class _MockDiffSession:
         for ref in self.added:
             content = ref.content
             lowered = content.lower()
-            if any(
-                call in lowered
-                for call in (
-                    "requests.get(",
-                    "requests.post(",
-                    "urlopen(",
-                    "httpx.get(",
-                    "httpx.post(",
-                    "fetch(",
+            if (
+                any(
+                    call in lowered
+                    for call in (
+                        "requests.get(",
+                        "requests.post(",
+                        "urlopen(",
+                        "httpx.get(",
+                        "httpx.post(",
+                        "fetch(",
+                    )
                 )
-            ) and "timeout" not in lowered:
+                and "timeout" not in lowered
+            ):
                 out.append(
                     self._finding(
                         p,
@@ -605,9 +585,10 @@ class _MockDiffSession:
             for hunk_index, hunk in enumerate(file.hunks):
                 added_seq = [ln for ln in hunk.lines if ln.kind == "added"]
                 for idx, line in enumerate(added_seq[:-1]):
-                    if line.content.strip().startswith("except") and added_seq[
-                        idx + 1
-                    ].content.strip() == "pass":
+                    if (
+                        line.content.strip().startswith("except")
+                        and added_seq[idx + 1].content.strip() == "pass"
+                    ):
                         out.append(
                             self._finding(
                                 p,
@@ -642,8 +623,7 @@ class _MockDiffSession:
                         p,
                         FindingSeverity.LOW,
                         "Unfinished work marker",
-                        "A TODO/FIXME may indicate incomplete behavior or future "
-                        "support burden.",
+                        "A TODO/FIXME may indicate incomplete behavior or future support burden.",
                         "Capture the intent in docs or a tracked issue with clear "
                         "acceptance criteria.",
                         file_path=ref.file_path,
@@ -653,16 +633,14 @@ class _MockDiffSession:
                 )
 
             if is_frontend_file(ref.file_path) and any(
-                marker in lowered
-                for marker in ("placeholder=", "aria-label", "label", "title=")
+                marker in lowered for marker in ("placeholder=", "aria-label", "label", "title=")
             ):
                 out.append(
                     self._finding(
                         p,
                         FindingSeverity.INFO,
                         "User-facing text changed",
-                        "User-facing copy/labels appear to change; wording affects UX "
-                        "and support.",
+                        "User-facing copy/labels appear to change; wording affects UX and support.",
                         "Confirm wording with product and update docs/tests if needed.",
                         file_path=ref.file_path,
                         hunk_reference=ref.hunk_reference(),

@@ -7,8 +7,8 @@ tokens, and is not connected to review generation.
 
 from fastapi.testclient import TestClient
 
-from app.main import app
 from app.api.routes.retrieve_context import RetrieveContextResponse
+from app.main import app
 
 client = TestClient(app)
 

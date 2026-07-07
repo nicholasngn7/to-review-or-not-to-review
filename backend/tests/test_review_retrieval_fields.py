@@ -11,13 +11,13 @@ backward compatibility.
 from app.models import (
     DiffStats,
     MergeRecommendation,
+    RetrievalQuery,
+    RetrievalResult,
+    RetrievedCitation,
     ReviewFinding,
     ReviewRequest,
     ReviewResponse,
     ReviewSummary,
-    RetrievalQuery,
-    RetrievalResult,
-    RetrievedCitation,
     RiskLevel,
 )
 from app.models.enums import FindingSeverity, ReviewerPersona
@@ -180,16 +180,12 @@ def test_backward_compatibility_defaults_present_and_inert():
 # 9. No shared mutable defaults for citations / context_used.
 def test_no_shared_mutable_defaults():
     f1, f2 = _finding("a"), _finding("b")
-    f1.citations.append(
-        RetrievedCitation(snippet="s", score=0.1, chunk_id="c1")
-    )
+    f1.citations.append(RetrievedCitation(snippet="s", score=0.1, chunk_id="c1"))
     assert f2.citations == []
     assert f1.citations is not f2.citations
 
     r1, r2 = _response(), _response()
-    r1.context_used.append(
-        RetrievalResult(chunk_id="c1", document_id="d1", snippet="s", score=0.1)
-    )
+    r1.context_used.append(RetrievalResult(chunk_id="c1", document_id="d1", snippet="s", score=0.1))
     assert r2.context_used == []
     assert r1.context_used is not r2.context_used
 

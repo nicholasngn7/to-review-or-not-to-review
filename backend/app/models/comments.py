@@ -72,9 +72,7 @@ class CommentThread(CamelModel):
 
     @field_validator("comments")
     @classmethod
-    def _at_least_one_comment(
-        cls, value: list[ThreadComment]
-    ) -> list[ThreadComment]:
+    def _at_least_one_comment(cls, value: list[ThreadComment]) -> list[ThreadComment]:
         if not value:
             raise ValueError("a comment thread must contain at least one comment")
         return value

@@ -54,9 +54,7 @@ class ExternalCommentReference(CamelModel):
     pull_request_number: Optional[int] = Field(
         default=None, description="GitHub pull request number."
     )
-    merge_request_iid: Optional[int] = Field(
-        default=None, description="GitLab merge request iid."
-    )
+    merge_request_iid: Optional[int] = Field(default=None, description="GitLab merge request iid.")
     discussion_id: Optional[str] = Field(
         default=None, description="GitLab discussion id (thread root)."
     )
@@ -66,9 +64,7 @@ class ExternalCommentReference(CamelModel):
     comment_id: Optional[str] = Field(
         default=None, description="Provider comment id (thread root) when applicable."
     )
-    note_id: Optional[str] = Field(
-        default=None, description="GitLab note id when applicable."
-    )
+    note_id: Optional[str] = Field(default=None, description="GitLab note id when applicable.")
     web_url: Optional[str] = Field(
         default=None, description="Human-openable link to the comment/thread."
     )

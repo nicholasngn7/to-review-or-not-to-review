@@ -62,9 +62,7 @@ class KnowledgeDocument(CamelModel):
         default=None, description="Repo-relative path, when the source is a file."
     )
     content: str = Field(description="Raw text content of the document.")
-    metadata: dict[str, str] = Field(
-        default_factory=dict, description="Free-form string metadata."
-    )
+    metadata: dict[str, str] = Field(default_factory=dict, description="Free-form string metadata.")
 
 
 class KnowledgeChunk(CamelModel):
@@ -82,15 +80,11 @@ class KnowledgeChunk(CamelModel):
     start_line: Optional[int] = Field(
         default=None, description="Start line in the source, when known."
     )
-    end_line: Optional[int] = Field(
-        default=None, description="End line in the source, when known."
-    )
+    end_line: Optional[int] = Field(default=None, description="End line in the source, when known.")
     token_estimate: Optional[int] = Field(
         default=None, description="Rough token count estimate, when computed."
     )
-    metadata: dict[str, str] = Field(
-        default_factory=dict, description="Free-form string metadata."
-    )
+    metadata: dict[str, str] = Field(default_factory=dict, description="Free-form string metadata.")
 
 
 class EmbeddingVector(CamelModel):
@@ -105,16 +99,13 @@ class EmbeddingVector(CamelModel):
     )
     dimensions: int = Field(ge=0, description="Number of dimensions; must equal len(values).")
     values: list[float] = Field(description="The embedding values.")
-    metadata: dict[str, str] = Field(
-        default_factory=dict, description="Free-form string metadata."
-    )
+    metadata: dict[str, str] = Field(default_factory=dict, description="Free-form string metadata.")
 
     @model_validator(mode="after")
-    def _check_dimensions_match_values(self) -> "EmbeddingVector":
+    def _check_dimensions_match_values(self) -> EmbeddingVector:
         if self.dimensions != len(self.values):
             raise ValueError(
-                f"dimensions ({self.dimensions}) must equal len(values) "
-                f"({len(self.values)})."
+                f"dimensions ({self.dimensions}) must equal len(values) ({len(self.values)})."
             )
         return self
 
@@ -124,9 +115,7 @@ class RetrievalQuery(CamelModel):
 
     query: str = Field(description="Query text to retrieve context for.")
     top_k: int = Field(default=5, ge=1, description="Max number of results to return.")
-    persona: Optional[str] = Field(
-        default=None, description="Optional persona hint for the query."
-    )
+    persona: Optional[str] = Field(default=None, description="Optional persona hint for the query.")
     file_path: Optional[str] = Field(
         default=None, description="Optional file the query relates to."
     )
@@ -154,12 +143,8 @@ class RetrievalResult(CamelModel):
     start_line: Optional[int] = Field(
         default=None, description="Start line in the source, when known."
     )
-    end_line: Optional[int] = Field(
-        default=None, description="End line in the source, when known."
-    )
-    metadata: dict[str, str] = Field(
-        default_factory=dict, description="Free-form string metadata."
-    )
+    end_line: Optional[int] = Field(default=None, description="End line in the source, when known.")
+    metadata: dict[str, str] = Field(default_factory=dict, description="Free-form string metadata.")
 
 
 class RetrievedCitation(CamelModel):
@@ -179,9 +164,7 @@ class RetrievedCitation(CamelModel):
     start_line: Optional[int] = Field(
         default=None, description="Start line in the source, when known."
     )
-    end_line: Optional[int] = Field(
-        default=None, description="End line in the source, when known."
-    )
+    end_line: Optional[int] = Field(default=None, description="End line in the source, when known.")
     chunk_id: str = Field(description="Id of the cited chunk.")
 
 

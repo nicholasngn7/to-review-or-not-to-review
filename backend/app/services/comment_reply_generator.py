@@ -34,18 +34,36 @@ _PERSONA_KEYWORDS: list[tuple[ReviewerPersona, tuple[str, ...]]] = [
     ),
     (
         ReviewerPersona.SECURITY,
-        ("auth", "token", "secret", "security", "permission", "password",
-         "injection", "vulnerab"),
+        ("auth", "token", "secret", "security", "permission", "password", "injection", "vulnerab"),
     ),
     (
         ReviewerPersona.BACKEND,
-        ("exception", "validation", "validate", "api", "endpoint", "python",
-         "service", "backend", "query", "database"),
+        (
+            "exception",
+            "validation",
+            "validate",
+            "api",
+            "endpoint",
+            "python",
+            "service",
+            "backend",
+            "query",
+            "database",
+        ),
     ),
     (
         ReviewerPersona.SRE,
-        ("logging", "log", "timeout", "retry", "on-call", "oncall", "failure",
-         "observability", "metric"),
+        (
+            "logging",
+            "log",
+            "timeout",
+            "retry",
+            "on-call",
+            "oncall",
+            "failure",
+            "observability",
+            "metric",
+        ),
     ),
     (
         ReviewerPersona.FRONTEND,
@@ -53,13 +71,11 @@ _PERSONA_KEYWORDS: list[tuple[ReviewerPersona, tuple[str, ...]]] = [
     ),
     (
         ReviewerPersona.ARCHITECT,
-        ("scope", "boundary", "architecture", "coupling", "design",
-         "abstraction"),
+        ("scope", "boundary", "architecture", "coupling", "design", "abstraction"),
     ),
     (
         ReviewerPersona.PRODUCT,
-        ("wording", "ux", "acceptance criteria", "customer", "user impact",
-         "copy", "docs"),
+        ("wording", "ux", "acceptance criteria", "customer", "user impact", "copy", "docs"),
     ),
 ]
 
@@ -71,8 +87,7 @@ _PERSONA_REPLY: dict[ReviewerPersona, tuple[str, str]] = {
     ),
     ReviewerPersona.SECURITY: (
         "this looks security-sensitive",
-        "can we confirm secrets/permissions are handled safely and nothing is "
-        "exposed?",
+        "can we confirm secrets/permissions are handled safely and nothing is exposed?",
     ),
     ReviewerPersona.BACKEND: (
         "the service-side handling is worth tightening",
@@ -163,10 +178,7 @@ def _make_reply(
     rendered = ToneRenderer(tone, persona).render_reply(body)
 
     if matched_keyword:
-        rationale = (
-            f"The comment mentions \"{matched_keyword}\", which maps to the "
-            f"{label} reviewer."
-        )
+        rationale = f'The comment mentions "{matched_keyword}", which maps to the {label} reviewer.'
         confidence = _MATCH_CONFIDENCE
     else:
         rationale = (
@@ -214,18 +226,12 @@ def generate_suggested_replies(
         if matches:
             for persona, keyword in matches:
                 tone = tone_profiles.get(persona) or DEFAULT_TONE_PROFILE
-                replies.append(
-                    _make_reply(
-                        thread, persona, matched_keyword=keyword, tone=tone
-                    )
-                )
+                replies.append(_make_reply(thread, persona, matched_keyword=keyword, tone=tone))
         else:
-            persona = _fallback_persona(selected_personas)
-            if persona is None:
+            fallback_persona = _fallback_persona(selected_personas)
+            if fallback_persona is None:
                 continue
-            tone = tone_profiles.get(persona) or DEFAULT_TONE_PROFILE
-            replies.append(
-                _make_reply(thread, persona, matched_keyword=None, tone=tone)
-            )
+            tone = tone_profiles.get(fallback_persona) or DEFAULT_TONE_PROFILE
+            replies.append(_make_reply(thread, fallback_persona, matched_keyword=None, tone=tone))
 
     return replies

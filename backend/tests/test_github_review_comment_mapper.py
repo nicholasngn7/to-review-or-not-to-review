@@ -11,12 +11,12 @@ import inspect
 import json
 from pathlib import Path
 
+from app.models.comments import CommentThread, CommentThreadStatus
 from app.models.git_import import (
     ExternalCommentReference,
     GitProviderType,
     ImportedCommentThread,
 )
-from app.models.comments import CommentThread, CommentThreadStatus
 from app.services.git_import import map_github_review_comments_to_threads
 
 FIXTURE = Path(__file__).parent / "fixtures" / "github_pr_review_comments.json"

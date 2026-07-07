@@ -72,8 +72,7 @@ def test_search_returns_retrieval_results():
 # 3. topK limits result count.
 def test_top_k_limits_results():
     chunks = [
-        _chunk(f"c-{i}", f"database connection pooling variant {i} timeout")
-        for i in range(5)
+        _chunk(f"c-{i}", f"database connection pooling variant {i} timeout") for i in range(5)
     ]
     index = build_index(chunks)
     results = index.search(RetrievalQuery(query="database connection timeout", top_k=2))
@@ -105,10 +104,18 @@ def test_deterministic_tie_breaking():
 # 6. filters work (source_path and metadata).
 def test_filters_restrict_candidates():
     chunks = [
-        _chunk("c-a", "shared timeout content", source_path="docs/a.md",
-               metadata={"category": "backend"}),
-        _chunk("c-b", "shared timeout content", source_path="docs/b.md",
-               metadata={"category": "frontend"}),
+        _chunk(
+            "c-a",
+            "shared timeout content",
+            source_path="docs/a.md",
+            metadata={"category": "backend"},
+        ),
+        _chunk(
+            "c-b",
+            "shared timeout content",
+            source_path="docs/b.md",
+            metadata={"category": "frontend"},
+        ),
     ]
     index = build_index(chunks)
 
@@ -117,9 +124,7 @@ def test_filters_restrict_candidates():
     )
     assert [r.chunk_id for r in by_path] == ["c-a"]
 
-    by_meta = index.search(
-        RetrievalQuery(query="shared timeout", filters={"category": "frontend"})
-    )
+    by_meta = index.search(RetrievalQuery(query="shared timeout", filters={"category": "frontend"}))
     assert [r.chunk_id for r in by_meta] == ["c-b"]
 
     none_match = index.search(

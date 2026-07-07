@@ -36,9 +36,7 @@ def _request(diff: str, personas: list[ReviewerPersona]) -> ReviewRequest:
 
 
 def test_empty_diff_text_is_ok():
-    resp = client.post(
-        "/api/reviews", json={"diffText": "", "selectedPersonas": ["security"]}
-    )
+    resp = client.post("/api/reviews", json={"diffText": "", "selectedPersonas": ["security"]})
     assert resp.status_code == 200
     body = resp.json()
     assert body["findings"] == []

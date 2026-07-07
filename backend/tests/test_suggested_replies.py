@@ -118,9 +118,7 @@ def test_fallback_when_no_keyword_matches():
 
 
 def test_fallback_uses_first_selected_when_no_product_or_architect():
-    resp = run_review(
-        _request("Looks fine.", [ReviewerPersona.BACKEND, ReviewerPersona.SRE])
-    )
+    resp = run_review(_request("Looks fine.", [ReviewerPersona.BACKEND, ReviewerPersona.SRE]))
     assert len(resp.suggested_replies) == 1
     assert resp.suggested_replies[0].reviewer == ReviewerPersona.BACKEND
 
@@ -134,9 +132,7 @@ def test_tone_changes_wording_not_selection_or_confidence():
         _request(
             body,
             personas,
-            tone_profile=ToneProfile(
-                style=ToneStyle.SUPPORTIVE, strictness=ToneStrictness.HIGH
-            ),
+            tone_profile=ToneProfile(style=ToneStyle.SUPPORTIVE, strictness=ToneStrictness.HIGH),
         )
     )
 
@@ -164,9 +160,7 @@ def test_replies_do_not_change_detection():
 
     assert without.overall_risk == with_threads.overall_risk
     assert without.merge_recommendation == with_threads.merge_recommendation
-    assert [f.id for f in without.findings] == [
-        f.id for f in with_threads.findings
-    ]
+    assert [f.id for f in without.findings] == [f.id for f in with_threads.findings]
     assert without.diff_stats == with_threads.diff_stats
     # The only difference is the presence of suggested replies.
     assert without.suggested_replies == []
@@ -248,9 +242,7 @@ def test_reply_omits_file_and_line_when_thread_lacks_them():
     req = ReviewRequest(
         diff_text=DIFF,
         selected_personas=[ReviewerPersona.BACKEND],
-        comment_threads=[
-            _thread("Avoid swallowing this exception.", file_path=None, line=None)
-        ],
+        comment_threads=[_thread("Avoid swallowing this exception.", file_path=None, line=None)],
     )
     resp = run_review(req)
     assert resp.suggested_replies
@@ -262,24 +254,17 @@ def test_file_line_context_does_not_change_routing_or_detection():
     personas = [ReviewerPersona.BACKEND, ReviewerPersona.SRE]
     body = "Can we avoid swallowing this exception and add logging?"
     with_ctx = run_review(_request(body, personas))
-    without_ctx = run_review(
-        _request(body, personas, file_path=None, line=None)
-    )
+    without_ctx = run_review(_request(body, personas, file_path=None, line=None))
 
     def routing(resp):
-        return [
-            (r.reviewer, r.confidence, r.needs_human_review)
-            for r in resp.suggested_replies
-        ]
+        return [(r.reviewer, r.confidence, r.needs_human_review) for r in resp.suggested_replies]
 
     # Routing/selection/confidence identical regardless of file/line context.
     assert routing(with_ctx) == routing(without_ctx)
     # Detection unaffected.
     assert with_ctx.overall_risk == without_ctx.overall_risk
     assert with_ctx.merge_recommendation == without_ctx.merge_recommendation
-    assert [f.id for f in with_ctx.findings] == [
-        f.id for f in without_ctx.findings
-    ]
+    assert [f.id for f in with_ctx.findings] == [f.id for f in without_ctx.findings]
 
 
 def test_route_returns_file_and_line_in_replies():
@@ -294,9 +279,7 @@ def test_route_returns_file_and_line_in_replies():
                     "filePath": "app/auth.py",
                     "line": 5,
                     "status": "open",
-                    "comments": [
-                        {"id": "c1", "body": "Handle this exception explicitly."}
-                    ],
+                    "comments": [{"id": "c1", "body": "Handle this exception explicitly."}],
                 }
             ],
         },

@@ -55,9 +55,7 @@ def _request(diff: str, personas: list[ReviewerPersona]) -> ReviewRequest:
 
 
 def test_only_selected_personas_run():
-    resp = run_review(
-        _request(SECURITY_DIFF, [ReviewerPersona.SECURITY, ReviewerPersona.QA])
-    )
+    resp = run_review(_request(SECURITY_DIFF, [ReviewerPersona.SECURITY, ReviewerPersona.QA]))
     personas = [pr.persona for pr in resp.persona_reviews]
     assert personas == [ReviewerPersona.SECURITY, ReviewerPersona.QA]
     # No other personas leak into the output.

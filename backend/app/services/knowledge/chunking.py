@@ -57,11 +57,7 @@ def _fence_closes(line: str, marker: str) -> bool:
         return False
     fence = match.group(2)
     # Same fence char, at least as long, and nothing but whitespace after it.
-    return (
-        fence[0] == marker[0]
-        and len(fence) >= len(marker)
-        and match.group(3).strip() == ""
-    )
+    return fence[0] == marker[0] and len(fence) >= len(marker) and match.group(3).strip() == ""
 
 
 def _split_blocks(content: str) -> list[_Block]:
@@ -229,9 +225,7 @@ def _estimate_tokens(text: str) -> int:
     return max(1, len(text.split()))
 
 
-def chunk_document(
-    document: KnowledgeDocument, *, max_chars: int = 1200
-) -> list[KnowledgeChunk]:
+def chunk_document(document: KnowledgeDocument, *, max_chars: int = 1200) -> list[KnowledgeChunk]:
     """Split a `KnowledgeDocument` into stable, deterministic `KnowledgeChunk`s.
 
     Chunk ids are `f"{document.id}#chunk-{ordinal}"`. Empty/whitespace-only groups are

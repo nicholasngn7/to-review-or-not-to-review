@@ -57,9 +57,7 @@ def test_global_tone_profile_validates():
     req = ReviewRequest(
         diff_text=DIFF,
         selected_personas=PERSONAS,
-        tone_profile=ToneProfile(
-            style=ToneStyle.SUPPORTIVE, verbosity=ToneVerbosity.BRIEF
-        ),
+        tone_profile=ToneProfile(style=ToneStyle.SUPPORTIVE, verbosity=ToneVerbosity.BRIEF),
     )
     assert req.tone_profile is not None
     assert req.tone_profile.style == ToneStyle.SUPPORTIVE
@@ -148,9 +146,7 @@ def _detection_fingerprint(resp):
         "overall_risk": resp.overall_risk,
         "merge_recommendation": resp.merge_recommendation,
         "findings_by_severity": resp.summary.findings_by_severity,
-        "findings": sorted(
-            (f.id, f.reviewer, f.severity, f.title) for f in resp.findings
-        ),
+        "findings": sorted((f.id, f.reviewer, f.severity, f.title) for f in resp.findings),
     }
 
 
@@ -167,9 +163,7 @@ def test_tone_does_not_change_detection_results():
                 verbosity=ToneVerbosity.DETAILED,
                 custom_instructions="Be very thorough.",
             ),
-            persona_tone_profiles={
-                ReviewerPersona.QA: ToneProfile(style=ToneStyle.SUPPORTIVE)
-            },
+            persona_tone_profiles={ReviewerPersona.QA: ToneProfile(style=ToneStyle.SUPPORTIVE)},
         )
     )
 

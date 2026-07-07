@@ -107,9 +107,7 @@ def test_precision_at_k():
         id="c", query="q", expected_source_paths=["docs/a.md"], minimum_top_k_hit_count=1
     )
     # 1 of 2 returned results is relevant -> precision 0.5.
-    res = evaluate_case(
-        case, [_result("a#0", "docs/a.md"), _result("b#0", "docs/b.md")], k=5
-    )
+    res = evaluate_case(case, [_result("a#0", "docs/a.md"), _result("b#0", "docs/b.md")], k=5)
     assert res.relevant_returned == 1
     assert res.returned_count == 2
     assert res.precision_at_k == 0.5
@@ -141,9 +139,7 @@ def test_minimum_hit_count_pass_fail():
     one_hit = evaluate_case(case, [_result("a#0", "docs/a.md")], k=5)
     assert one_hit.passed is False  # only 1 hit, needs 2
 
-    two_hits = evaluate_case(
-        case, [_result("a#0", "docs/a.md"), _result("b#0", "docs/b.md")], k=5
-    )
+    two_hits = evaluate_case(case, [_result("a#0", "docs/a.md"), _result("b#0", "docs/b.md")], k=5)
     assert two_hits.passed is True
 
 

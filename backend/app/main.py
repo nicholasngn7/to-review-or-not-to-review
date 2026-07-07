@@ -43,9 +43,7 @@ app.include_router(retrieve_context_router)
 
 
 @app.exception_handler(NotImplementedError)
-async def not_implemented_handler(
-    request: Request, exc: NotImplementedError
-) -> JSONResponse:
+async def not_implemented_handler(request: Request, exc: NotImplementedError) -> JSONResponse:
     """Surface not-yet-implemented providers (e.g. Bedrock) as a clear 501.
 
     Without this, an unimplemented provider would return an opaque 500. A 501

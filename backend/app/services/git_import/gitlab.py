@@ -169,9 +169,7 @@ def map_gitlab_discussions_to_threads(
                 author=_author(note),
                 created_at=_created_at(note),
                 is_resolved=(
-                    bool(note.get("resolved"))
-                    if note.get("resolved") is not None
-                    else None
+                    bool(note.get("resolved")) if note.get("resolved") is not None else None
                 ),
             )
             if comment_obj is None:
@@ -196,9 +194,7 @@ def map_gitlab_discussions_to_threads(
         file_path, line = _file_and_line(position)
         if outdated and include_outdated:
             line = None
-            warnings.append(
-                "discussion position is outdated; line context was dropped"
-            )
+            warnings.append("discussion position is outdated; line context was dropped")
 
         discussion_id = str(discussion.get("id"))
         thread = CommentThread(

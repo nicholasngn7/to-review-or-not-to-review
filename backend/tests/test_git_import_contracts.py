@@ -96,9 +96,7 @@ def test_import_request_accepts_payload_and_has_no_token():
     assert req.raw_payload == {"comments": [{"id": "1", "body": "hi"}]}
 
     # A list payload is also acceptable.
-    req_list = ImportCommentsRequest(
-        provider=GitProviderType.GITLAB, raw_payload=[{"id": "d1"}]
-    )
+    req_list = ImportCommentsRequest(provider=GitProviderType.GITLAB, raw_payload=[{"id": "d1"}])
     assert req_list.raw_payload == [{"id": "d1"}]
 
     # No token field exists anywhere on the contract.

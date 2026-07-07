@@ -135,9 +135,7 @@ def _build_summary(
 
     headline = _RECOMMENDATION_HEADLINE[recommendation]
     if not findings:
-        details = (
-            f"{persona_count} reviewer(s) ran and found no notable issues in this diff."
-        )
+        details = f"{persona_count} reviewer(s) ran and found no notable issues in this diff."
     else:
         sev_bits = ", ".join(
             f"{by_severity[s]} {s.value}"
@@ -149,10 +147,7 @@ def _build_summary(
             )
             if by_severity.get(s)
         )
-        details = (
-            f"{persona_count} reviewer(s) produced {len(findings)} finding(s) "
-            f"({sev_bits})."
-        )
+        details = f"{persona_count} reviewer(s) produced {len(findings)} finding(s) ({sev_bits})."
 
     return ReviewSummary(
         headline=headline,
@@ -162,9 +157,7 @@ def _build_summary(
     )
 
 
-def run_review(
-    request: ReviewRequest, provider: Optional[ReviewProvider] = None
-) -> ReviewResponse:
+def run_review(request: ReviewRequest, provider: Optional[ReviewProvider] = None) -> ReviewResponse:
     """Run the selected personas over the request's diff and aggregate results.
 
     `provider` can be injected (mainly for tests); otherwise the configured
@@ -209,9 +202,7 @@ def run_review(
     # Opt-in retrieval grounding: attaches provenance-only citations to findings and
     # surfaces the retrieved context. No-op (and no retrieval call) unless the request
     # provides knowledge_sources.
-    persona_reviews, context_used = _ground_with_retrieval(
-        request, parsed, persona_reviews
-    )
+    persona_reviews, context_used = _ground_with_retrieval(request, parsed, persona_reviews)
     all_findings = [finding for pr in persona_reviews for finding in pr.findings]
 
     return ReviewResponse(

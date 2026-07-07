@@ -63,9 +63,7 @@ def test_bedrock_provider_does_not_silently_succeed():
     provider = create_provider("bedrock")
     assert isinstance(provider, BedrockReviewProvider)
     with pytest.raises(NotImplementedError) as exc:
-        provider.review(
-            parse_empty(), [ReviewerPersona.SECURITY], title=None, description=None
-        )
+        provider.review(parse_empty(), [ReviewerPersona.SECURITY], title=None, description=None)
     assert "not implemented" in str(exc.value).lower()
 
 

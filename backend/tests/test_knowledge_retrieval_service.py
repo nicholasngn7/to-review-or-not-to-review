@@ -18,8 +18,7 @@ from app.services.knowledge import RetrievalError, retrieve_context
 def _make_repo(tmp_path: Path) -> Path:
     (tmp_path / "docs").mkdir()
     (tmp_path / "docs" / "database.md").write_text(
-        "# Database\n\n"
-        "Connection pooling and query timeout handling for the database layer.\n",
+        "# Database\n\nConnection pooling and query timeout handling for the database layer.\n",
         encoding="utf-8",
     )
     (tmp_path / "docs" / "frontend.md").write_text(

@@ -48,9 +48,7 @@ class RetrievalEvaluationResult(CamelModel):
     expected_count: int = Field(description="Number of distinct expected items.")
     returned_count: int = Field(description="Number of results considered (≤ k).")
     hit_count: int = Field(description="Distinct expected items found in the top-k.")
-    relevant_returned: int = Field(
-        description="Top-k results that match any expected item."
-    )
+    relevant_returned: int = Field(description="Top-k results that match any expected item.")
     hit_at_k: bool
     precision_at_k: float
     recall_at_k: float
@@ -160,7 +158,4 @@ def run_cases_against_index(
     k: int = 5,
 ) -> dict[str, list[RetrievalResult]]:
     """Run each case's query against a prebuilt `KnowledgeIndex` (top-k), deterministically."""
-    return {
-        case.id: index.search(RetrievalQuery(query=case.query, top_k=k))
-        for case in cases
-    }
+    return {case.id: index.search(RetrievalQuery(query=case.query, top_k=k)) for case in cases}

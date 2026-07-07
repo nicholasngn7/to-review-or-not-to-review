@@ -28,11 +28,57 @@ MAX_CITATIONS_PER_FINDING = 2
 # Short/common tokens that should not, on their own, justify a citation match.
 _STOPWORDS = frozenset(
     {
-        "the", "and", "for", "with", "this", "that", "from", "into", "your", "you",
-        "are", "was", "were", "will", "would", "should", "could", "have", "has",
-        "not", "but", "all", "any", "can", "may", "use", "used", "using", "via",
-        "per", "its", "it", "is", "of", "to", "in", "on", "or", "as", "be", "by",
-        "an", "a", "if", "no", "do", "does", "when", "where", "which", "what",
+        "the",
+        "and",
+        "for",
+        "with",
+        "this",
+        "that",
+        "from",
+        "into",
+        "your",
+        "you",
+        "are",
+        "was",
+        "were",
+        "will",
+        "would",
+        "should",
+        "could",
+        "have",
+        "has",
+        "not",
+        "but",
+        "all",
+        "any",
+        "can",
+        "may",
+        "use",
+        "used",
+        "using",
+        "via",
+        "per",
+        "its",
+        "it",
+        "is",
+        "of",
+        "to",
+        "in",
+        "on",
+        "or",
+        "as",
+        "be",
+        "by",
+        "an",
+        "a",
+        "if",
+        "no",
+        "do",
+        "does",
+        "when",
+        "where",
+        "which",
+        "what",
     }
 )
 _MIN_TOKEN_LEN = 3
@@ -106,9 +152,7 @@ def _finding_tokens(finding: ReviewFinding) -> set[str]:
 
 def _result_tokens(result: RetrievalResult) -> set[str]:
     blob = " ".join(
-        part
-        for part in (result.snippet, result.heading or "", result.source_path or "")
-        if part
+        part for part in (result.snippet, result.heading or "", result.source_path or "") if part
     )
     return _meaningful_tokens(blob)
 

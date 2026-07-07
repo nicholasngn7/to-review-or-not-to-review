@@ -98,8 +98,7 @@ def _resolve_source(request: ImportCommentsRequest) -> str:
             )
         if spec.provider is not request.provider:
             raise ValueError(
-                f"Source '{source}' is not valid for provider "
-                f"'{request.provider.value}'."
+                f"Source '{source}' is not valid for provider '{request.provider.value}'."
             )
         return source
 
@@ -113,9 +112,7 @@ def _resolve_source(request: ImportCommentsRequest) -> str:
     )
 
 
-def _extract_items(
-    payload: object, spec: _SourceSpec
-) -> tuple[Optional[list], list[str]]:
+def _extract_items(payload: object, spec: _SourceSpec) -> tuple[Optional[list], list[str]]:
     """Return (items, warnings). items is None when no list could be located."""
     if isinstance(payload, list):
         return payload, []
@@ -129,8 +126,7 @@ def _extract_items(
             if isinstance(value, list):
                 return value, []
         return None, [
-            "rawPayload was an object with no recognizable list of items; "
-            "nothing imported."
+            "rawPayload was an object with no recognizable list of items; nothing imported."
         ]
     return None, ["rawPayload had an unexpected shape; nothing imported."]
 
@@ -162,9 +158,7 @@ def import_comments(request: ImportCommentsRequest) -> ImportCommentsResponse:
 
     items, warnings = _extract_items(request.raw_payload, spec)
     if items is None:
-        return ImportCommentsResponse(
-            provider=request.provider, threads=[], warnings=warnings
-        )
+        return ImportCommentsResponse(provider=request.provider, threads=[], warnings=warnings)
 
     meta = _extract_meta(request.raw_payload, spec)
     threads = spec.mapper(items, **meta)
@@ -174,6 +168,4 @@ def import_comments(request: ImportCommentsRequest) -> ImportCommentsResponse:
     for thread in threads:
         aggregated.extend(thread.warnings)
 
-    return ImportCommentsResponse(
-        provider=request.provider, threads=threads, warnings=aggregated
-    )
+    return ImportCommentsResponse(provider=request.provider, threads=threads, warnings=aggregated)

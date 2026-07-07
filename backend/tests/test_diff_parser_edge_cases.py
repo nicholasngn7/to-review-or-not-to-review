@@ -50,11 +50,7 @@ def test_binary_diff_is_a_file_with_no_hunks():
 
 
 def test_mode_only_change_has_no_hunks():
-    text = (
-        "diff --git a/scripts/run.sh b/scripts/run.sh\n"
-        "old mode 100644\n"
-        "new mode 100755\n"
-    )
+    text = "diff --git a/scripts/run.sh b/scripts/run.sh\nold mode 100644\nnew mode 100755\n"
     parsed = parse_diff(text)
     assert len(parsed.files) == 1
     f = parsed.files[0]

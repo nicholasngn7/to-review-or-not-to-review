@@ -13,7 +13,25 @@ dependencies = [
 dev = [
     "pytest==8.3.4",
     "httpx==0.28.1",
+    "ruff==0.14.4",
+    "mypy==1.19.1",
 ]
 
 [tool.uv]
 package = false
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+# UP007/UP045 rewrite Optional[X]/Union[X, Y] to `X | None` / `X | Y`, which is
+# a Python 3.10+ runtime feature — this project's venv runs on 3.9, and
+# Pydantic evaluates these annotations at runtime, so the rewrite would break.
+ignore = ["UP007", "UP045"]
+
+[tool.mypy]
+python_version = "3.9"
+files = ["app"]
+ignore_missing_imports = true

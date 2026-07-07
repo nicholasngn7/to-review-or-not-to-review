@@ -66,9 +66,7 @@ def _created_at(comment: dict) -> Optional[str]:
 
 def _line(comment: dict) -> Optional[int]:
     # Prefer the current-diff line; fall back to the original line.
-    value = first_present(
-        comment, "line", "original_line", "originalLine", "position"
-    )
+    value = first_present(comment, "line", "original_line", "originalLine", "position")
     return value if isinstance(value, int) and not isinstance(value, bool) else None
 
 
@@ -143,9 +141,7 @@ def map_github_review_comments_to_threads(
         if outdated and include_outdated:
             # The current-diff line is no longer reliable for outdated anchors.
             line = None
-            warnings.append(
-                f"comment {root_id} is outdated; line context was dropped"
-            )
+            warnings.append(f"comment {root_id} is outdated; line context was dropped")
 
         comment_obj = to_thread_comment(
             comment_id=comment.get("id"),
@@ -209,8 +205,7 @@ def map_github_review_comments_to_threads(
             review_id=_review_id(comment),
             web_url=_web_url(comment),
             warnings=[
-                f"reply {reply_id} references missing root {target_id}; "
-                "created a standalone thread"
+                f"reply {reply_id} references missing root {target_id}; created a standalone thread"
             ],
         )
         roots_order.append(reply_id)
@@ -269,9 +264,7 @@ def map_github_issue_comments_to_threads(
             comment_id=comment_id,
             web_url=_web_url(comment),
         )
-        results.append(
-            ImportedCommentThread(thread=thread, external_reference=external)
-        )
+        results.append(ImportedCommentThread(thread=thread, external_reference=external))
 
     return results
 

@@ -80,9 +80,7 @@ def test_default_tone_is_a_noop():
 # 2. Tone changes wording for at least one finding.
 def test_tone_changes_wording_of_a_finding():
     baseline = run_review(_req())
-    toned = run_review(
-        _req(tone_profile=ToneProfile(style=ToneStyle.EXECUTIVE))
-    )
+    toned = run_review(_req(tone_profile=ToneProfile(style=ToneStyle.EXECUTIVE)))
     base_recs = {f.id: f.recommendation for f in baseline.findings}
     toned_recs = {f.id: f.recommendation for f in toned.findings}
     assert any(base_recs[fid] != toned_recs[fid] for fid in base_recs)
@@ -109,11 +107,7 @@ def test_tone_does_not_change_detection_outputs():
 def test_per_persona_override_affects_only_that_persona():
     baseline = run_review(_req())
     toned = run_review(
-        _req(
-            persona_tone_profiles={
-                ReviewerPersona.SECURITY: ToneProfile(style=ToneStyle.STRICT)
-            }
-        )
+        _req(persona_tone_profiles={ReviewerPersona.SECURITY: ToneProfile(style=ToneStyle.STRICT)})
     )
     base_by_id = {f.id: f for f in baseline.findings}
     for f in toned.findings:
@@ -128,9 +122,7 @@ def test_global_tone_affects_all_unless_overridden():
     toned = run_review(
         _req(
             tone_profile=ToneProfile(style=ToneStyle.SUPPORTIVE),
-            persona_tone_profiles={
-                ReviewerPersona.SECURITY: ToneProfile(style=ToneStyle.STRICT)
-            },
+            persona_tone_profiles={ReviewerPersona.SECURITY: ToneProfile(style=ToneStyle.STRICT)},
         )
     )
     for f in toned.findings:
@@ -149,33 +141,24 @@ def test_strictness_affects_wording_not_severity():
     high_recs = {f.id: f.recommendation for f in high.findings}
     assert low_recs != high_recs
     assert all(r.endswith("(lower priority)") for r in low_recs.values())
-    assert all(
-        r.endswith("This should be resolved before merge.")
-        for r in high_recs.values()
-    )
+    assert all(r.endswith("This should be resolved before merge.") for r in high_recs.values())
 
     # Severity and overall risk are untouched.
-    assert {f.id: f.severity for f in low.findings} == {
-        f.id: f.severity for f in high.findings
-    }
+    assert {f.id: f.severity for f in low.findings} == {f.id: f.severity for f in high.findings}
     assert low.overall_risk == high.overall_risk
 
 
 # 7. Verbosity affects explanation detail/length but not finding count.
 def test_verbosity_affects_detail_not_count():
     brief = run_review(_req(tone_profile=ToneProfile(verbosity=ToneVerbosity.BRIEF)))
-    detailed = run_review(
-        _req(tone_profile=ToneProfile(verbosity=ToneVerbosity.DETAILED))
-    )
+    detailed = run_review(_req(tone_profile=ToneProfile(verbosity=ToneVerbosity.DETAILED)))
 
     assert len(brief.findings) == len(detailed.findings)
 
     brief_exp = {f.id: f.explanation for f in brief.findings}
     detailed_exp = {f.id: f.explanation for f in detailed.findings}
     # At least one explanation is strictly longer under "detailed".
-    assert any(
-        len(detailed_exp[fid]) > len(brief_exp[fid]) for fid in brief_exp
-    )
+    assert any(len(detailed_exp[fid]) > len(brief_exp[fid]) for fid in brief_exp)
     assert all("reviewer; verify against" in e for e in detailed_exp.values())
 
 

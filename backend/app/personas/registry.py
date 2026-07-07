@@ -138,8 +138,7 @@ PERSONA_REGISTRY: dict[ReviewerPersona, PersonaSpec] = {
             "errors that would hurt on-call debugging."
         ),
         severity_guidance=(
-            "medium: removed logging, network calls without timeouts, swallowed "
-            "exceptions."
+            "medium: removed logging, network calls without timeouts, swallowed exceptions."
         ),
     ),
     ReviewerPersona.PRODUCT: PersonaSpec(
@@ -154,9 +153,7 @@ PERSONA_REGISTRY: dict[ReviewerPersona, PersonaSpec] = {
             "Highlight incomplete behavior and user-facing text changes that need "
             "product/docs follow-up."
         ),
-        severity_guidance=(
-            "low: TODO/FIXME markers; info: user-facing copy/label changes."
-        ),
+        severity_guidance=("low: TODO/FIXME markers; info: user-facing copy/label changes."),
     ),
 }
 

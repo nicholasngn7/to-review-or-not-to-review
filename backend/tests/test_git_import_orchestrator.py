@@ -54,9 +54,7 @@ def test_empty_payload_returns_warning():
 # 2. GitHub review-comments source dispatches to the review-comment mapper.
 def test_dispatch_github_review_comments():
     payload = _load("github_pr_review_comments.json")
-    resp = import_comments(
-        _request(GitProviderType.GITHUB, payload, SOURCE_GITHUB_REVIEW_COMMENTS)
-    )
+    resp = import_comments(_request(GitProviderType.GITHUB, payload, SOURCE_GITHUB_REVIEW_COMMENTS))
     expected = map_github_review_comments_to_threads(payload)
     assert [t.thread.id for t in resp.threads] == [t.thread.id for t in expected]
     # Review comments reconstruct a multi-comment root thread (1001 + reply 1002).
@@ -67,9 +65,7 @@ def test_dispatch_github_review_comments():
 # 3. GitHub issue-comments source dispatches to the issue-comment mapper.
 def test_dispatch_github_issue_comments():
     payload = _load("github_pr_issue_comments.json")
-    resp = import_comments(
-        _request(GitProviderType.GITHUB, payload, SOURCE_GITHUB_ISSUE_COMMENTS)
-    )
+    resp = import_comments(_request(GitProviderType.GITHUB, payload, SOURCE_GITHUB_ISSUE_COMMENTS))
     # Issue comments are line-less single-comment threads.
     assert resp.threads
     for imported in resp.threads:
@@ -81,9 +77,7 @@ def test_dispatch_github_issue_comments():
 # 4. GitLab discussions source dispatches to the GitLab mapper.
 def test_dispatch_gitlab_discussions():
     payload = _load("gitlab_mr_discussions.json")
-    resp = import_comments(
-        _request(GitProviderType.GITLAB, payload, SOURCE_GITLAB_DISCUSSIONS)
-    )
+    resp = import_comments(_request(GitProviderType.GITLAB, payload, SOURCE_GITLAB_DISCUSSIONS))
     ids = [t.external_reference.discussion_id for t in resp.threads]
     assert ids == ["disc-1", "disc-2", "disc-4", "disc-5", "disc-6", "disc-8"]
 
@@ -93,9 +87,7 @@ def test_unsupported_combinations_raise():
     payload = _load("github_pr_review_comments.json")
     # Source valid but for the wrong provider.
     with pytest.raises(ValueError):
-        import_comments(
-            _request(GitProviderType.GITLAB, payload, SOURCE_GITHUB_REVIEW_COMMENTS)
-        )
+        import_comments(_request(GitProviderType.GITLAB, payload, SOURCE_GITHUB_REVIEW_COMMENTS))
     # Unknown source string.
     with pytest.raises(ValueError):
         import_comments(_request(GitProviderType.GITHUB, payload, "not_a_source"))
@@ -116,9 +108,7 @@ def test_missing_source_github_is_ambiguous():
 # 7. Thread-level warnings are surfaced at the top level (and kept intact).
 def test_thread_warnings_surfaced():
     payload = _load("github_pr_review_comments.json")
-    resp = import_comments(
-        _request(GitProviderType.GITHUB, payload, SOURCE_GITHUB_REVIEW_COMMENTS)
-    )
+    resp = import_comments(_request(GitProviderType.GITHUB, payload, SOURCE_GITHUB_REVIEW_COMMENTS))
     # Comment 1007 replies to a missing root -> a per-thread warning.
     orphan = next(t for t in resp.threads if t.external_reference.comment_id == "1007")
     assert any("missing root" in w for w in orphan.warnings)
@@ -128,9 +118,7 @@ def test_thread_warnings_surfaced():
 # 8. Output conforms to ImportCommentsResponse.
 def test_output_conforms_to_response_model():
     payload = _load("gitlab_mr_discussions.json")
-    resp = import_comments(
-        _request(GitProviderType.GITLAB, payload, SOURCE_GITLAB_DISCUSSIONS)
-    )
+    resp = import_comments(_request(GitProviderType.GITLAB, payload, SOURCE_GITLAB_DISCUSSIONS))
     assert isinstance(resp, ImportCommentsResponse)
     assert resp.provider is GitProviderType.GITLAB
     ImportCommentsResponse.model_validate(resp.model_dump())
@@ -207,14 +195,10 @@ def test_github_imported_threads_match_local_threads():
 
     personas = [ReviewerPersona.BACKEND, ReviewerPersona.SRE]
     from_import = run_review(
-        ReviewRequest(
-            diff_text=DIFF, selected_personas=personas, comment_threads=imported_threads
-        )
+        ReviewRequest(diff_text=DIFF, selected_personas=personas, comment_threads=imported_threads)
     )
     from_local = run_review(
-        ReviewRequest(
-            diff_text=DIFF, selected_personas=personas, comment_threads=local_threads
-        )
+        ReviewRequest(diff_text=DIFF, selected_personas=personas, comment_threads=local_threads)
     )
 
     assert from_import.model_dump() == from_local.model_dump()
@@ -238,9 +222,7 @@ def test_gitlab_imported_threads_match_local_threads():
             ],
         }
     ]
-    imported = import_comments(
-        _request(GitProviderType.GITLAB, payload, SOURCE_GITLAB_DISCUSSIONS)
-    )
+    imported = import_comments(_request(GitProviderType.GITLAB, payload, SOURCE_GITLAB_DISCUSSIONS))
     imported_threads = [it.thread for it in imported.threads]
 
     local_threads = [
@@ -263,14 +245,10 @@ def test_gitlab_imported_threads_match_local_threads():
 
     personas = [ReviewerPersona.QA, ReviewerPersona.SECURITY]
     from_import = run_review(
-        ReviewRequest(
-            diff_text=DIFF, selected_personas=personas, comment_threads=imported_threads
-        )
+        ReviewRequest(diff_text=DIFF, selected_personas=personas, comment_threads=imported_threads)
     )
     from_local = run_review(
-        ReviewRequest(
-            diff_text=DIFF, selected_personas=personas, comment_threads=local_threads
-        )
+        ReviewRequest(diff_text=DIFF, selected_personas=personas, comment_threads=local_threads)
     )
 
     assert from_import.model_dump() == from_local.model_dump()

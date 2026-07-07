@@ -68,9 +68,7 @@ class ToneProfile(CamelModel):
 DEFAULT_TONE_PROFILE = ToneProfile()
 
 
-def resolve_tone_profile(
-    persona: ReviewerPersona, request: "ReviewRequest"
-) -> ToneProfile:
+def resolve_tone_profile(persona: ReviewerPersona, request: ReviewRequest) -> ToneProfile:
     """Resolve the effective tone for a persona.
 
     Resolution order: per-persona override -> global `tone_profile` -> default.

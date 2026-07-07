@@ -40,21 +40,13 @@ def _resolve_repo_root(repo_root: PathLike | None) -> Path:
     return Path(repo_root).resolve() if repo_root is not None else Path.cwd().resolve()
 
 
-def _resolve_allowed_roots(
-    repo_root: Path, allowed_roots: list[PathLike] | None
-) -> list[Path]:
-    roots = (
-        list(allowed_roots)
-        if allowed_roots is not None
-        else list(DEFAULT_ALLOWED_ROOTS)
-    )
+def _resolve_allowed_roots(repo_root: Path, allowed_roots: list[PathLike] | None) -> list[Path]:
+    roots = list(allowed_roots) if allowed_roots is not None else list(DEFAULT_ALLOWED_ROOTS)
     resolved: list[Path] = []
     for root in roots:
         root_path = Path(root)
         # Relative roots are interpreted against repo_root; absolute roots as-is.
-        resolved.append(
-            (root_path if root_path.is_absolute() else repo_root / root_path).resolve()
-        )
+        resolved.append((root_path if root_path.is_absolute() else repo_root / root_path).resolve())
     return resolved
 
 
@@ -122,16 +114,13 @@ def ingest_local_file(
     roots = _resolve_allowed_roots(repo_root_resolved, allowed_roots)
 
     raw_path = Path(path)
-    candidate = (
-        raw_path if raw_path.is_absolute() else repo_root_resolved / raw_path
-    )
+    candidate = raw_path if raw_path.is_absolute() else repo_root_resolved / raw_path
     # Resolve to collapse `..` and symlinks; this is what defeats path traversal.
     resolved = candidate.resolve()
 
     if not any(_is_within(resolved, root) for root in roots):
         raise IngestionError(
-            f"Path is outside the allowed roots: {raw_path!s}. "
-            f"Allowed: {[str(r) for r in roots]}."
+            f"Path is outside the allowed roots: {raw_path!s}. Allowed: {[str(r) for r in roots]}."
         )
 
     if not resolved.exists():
@@ -143,9 +132,7 @@ def ingest_local_file(
 
     size = resolved.stat().st_size
     if size > _MAX_FILE_BYTES:
-        raise IngestionError(
-            f"File is too large to ingest ({size} bytes > {_MAX_FILE_BYTES})."
-        )
+        raise IngestionError(f"File is too large to ingest ({size} bytes > {_MAX_FILE_BYTES}).")
 
     raw = resolved.read_bytes()
     if _looks_binary(raw):

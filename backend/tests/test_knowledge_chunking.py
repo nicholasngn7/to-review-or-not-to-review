@@ -89,7 +89,7 @@ def test_keeps_code_fence_together():
     code_chunks = [c for c in chunks if "```python" in c.content]
     assert len(code_chunks) == 1
     code = code_chunks[0].content
-    assert 'def hello():' in code
+    assert "def hello():" in code
     assert code.count("```") == 2  # opening and closing fence intact
 
 

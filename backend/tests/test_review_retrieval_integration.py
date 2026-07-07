@@ -182,9 +182,7 @@ def test_citation_serialization_fields():
 
 def test_retrieval_preserves_findings_and_aggregation():
     baseline = run_review(_request())
-    grounded = run_review(
-        _request(knowledge_sources=["README.md"], retrieval=_README_QUERY)
-    )
+    grounded = run_review(_request(knowledge_sources=["README.md"], retrieval=_README_QUERY))
 
     # 7. Finding identity/metadata unchanged (ignoring only the additive citations).
     assert _findings_without_citations(grounded) == _findings_without_citations(baseline)
@@ -222,9 +220,7 @@ def test_tone_behavior_unchanged_with_retrieval():
 # 12. Unsafe/outside knowledge source is rejected clearly (engine raises RetrievalError).
 def test_outside_source_rejected():
     with pytest.raises(RetrievalError):
-        run_review(
-            _request(knowledge_sources=["backend/app/main.py"], retrieval=_README_QUERY)
-        )
+        run_review(_request(knowledge_sources=["backend/app/main.py"], retrieval=_README_QUERY))
 
 
 # 12b. The /api/reviews route surfaces that as a 400.

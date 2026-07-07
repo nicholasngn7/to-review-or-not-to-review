@@ -27,9 +27,7 @@ def _make_repo(tmp_path: Path) -> Path:
 # 1. Reads an allowed Markdown file into a KnowledgeDocument.
 def test_reads_allowed_markdown_file(tmp_path: Path):
     repo = _make_repo(tmp_path)
-    doc = ingest_local_file(
-        "docs/architecture.md", repo_root=repo, allowed_roots=["docs"]
-    )
+    doc = ingest_local_file("docs/architecture.md", repo_root=repo, allowed_roots=["docs"])
 
     assert isinstance(doc, KnowledgeDocument)
     assert doc.source_type is KnowledgeSourceType.REPO_DOC
@@ -49,9 +47,7 @@ def test_infers_title_from_first_heading(tmp_path: Path):
 # 3. Falls back to filename when no heading exists.
 def test_falls_back_to_filename_without_heading(tmp_path: Path):
     repo = _make_repo(tmp_path)
-    (repo / "docs" / "notes.md").write_text(
-        "Just prose, no heading here.\n", encoding="utf-8"
-    )
+    (repo / "docs" / "notes.md").write_text("Just prose, no heading here.\n", encoding="utf-8")
     doc = ingest_local_file("docs/notes.md", repo_root=repo, allowed_roots=["docs"])
     assert doc.title == "notes.md"
 
@@ -70,9 +66,7 @@ def test_rejects_path_traversal(tmp_path: Path):
     outside = tmp_path.parent / "outside.md"
     outside.write_text("# Outside\n", encoding="utf-8")
     with pytest.raises(IngestionError):
-        ingest_local_file(
-            "docs/../../outside.md", repo_root=repo, allowed_roots=["docs"]
-        )
+        ingest_local_file("docs/../../outside.md", repo_root=repo, allowed_roots=["docs"])
 
 
 # 6. Rejects missing files.
@@ -101,12 +95,8 @@ def test_rejects_binary_file(tmp_path: Path):
 # 9. Produces deterministic document ids across repeated calls.
 def test_deterministic_document_ids(tmp_path: Path):
     repo = _make_repo(tmp_path)
-    first = ingest_local_file(
-        "docs/architecture.md", repo_root=repo, allowed_roots=["docs"]
-    )
-    second = ingest_local_file(
-        "docs/architecture.md", repo_root=repo, allowed_roots=["docs"]
-    )
+    first = ingest_local_file("docs/architecture.md", repo_root=repo, allowed_roots=["docs"])
+    second = ingest_local_file("docs/architecture.md", repo_root=repo, allowed_roots=["docs"])
     assert first.id == second.id
     assert first.id.startswith("doc-")
 
@@ -114,9 +104,7 @@ def test_deterministic_document_ids(tmp_path: Path):
 # 10. Produces camelCase-compatible model serialization through KnowledgeDocument.
 def test_camelcase_serialization(tmp_path: Path):
     repo = _make_repo(tmp_path)
-    doc = ingest_local_file(
-        "docs/architecture.md", repo_root=repo, allowed_roots=["docs"]
-    )
+    doc = ingest_local_file("docs/architecture.md", repo_root=repo, allowed_roots=["docs"])
     payload = doc.model_dump(by_alias=True)
     assert payload["sourceType"] == "repo_doc"
     assert payload["sourcePath"] == "docs/architecture.md"

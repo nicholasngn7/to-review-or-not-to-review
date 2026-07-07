@@ -29,9 +29,7 @@ class ReviewRequest(CamelModel):
         default_factory=list,
         description="Personas to run. Empty implies the caller picks none yet.",
     )
-    title: Optional[str] = Field(
-        default=None, description="Optional MR/PR title for context."
-    )
+    title: Optional[str] = Field(default=None, description="Optional MR/PR title for context.")
     description: Optional[str] = Field(
         default=None, description="Optional MR/PR description for context."
     )
@@ -69,12 +67,8 @@ class ReviewRequest(CamelModel):
 class HunkReference(CamelModel):
     """Points a finding at a specific hunk (and optionally a line) in a file."""
 
-    hunk_index: int = Field(
-        description="Index of the hunk within its DiffFile.hunks list."
-    )
-    header: Optional[str] = Field(
-        default=None, description="The hunk's @@ header, for display."
-    )
+    hunk_index: int = Field(description="Index of the hunk within its DiffFile.hunks list.")
+    header: Optional[str] = Field(default=None, description="The hunk's @@ header, for display.")
     line: Optional[int] = Field(
         default=None,
         description="New-file line number the finding refers to, when known.",
