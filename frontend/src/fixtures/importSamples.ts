@@ -40,7 +40,8 @@ const githubReviewComments: ImportSample = {
       path: "service/auth.py",
       line: 42,
       pull_request_review_id: 555,
-      html_url: "https://example.test/demo-org/sample-service/pull/7#discussion_r1001",
+      html_url:
+        "https://example.test/demo-org/sample-service/pull/7#discussion_r1001",
     },
     {
       id: 1002,
@@ -50,7 +51,8 @@ const githubReviewComments: ImportSample = {
       created_at: "2026-01-02T11:00:00Z",
       path: "service/auth.py",
       line: 42,
-      html_url: "https://example.test/demo-org/sample-service/pull/7#discussion_r1002",
+      html_url:
+        "https://example.test/demo-org/sample-service/pull/7#discussion_r1002",
     },
     {
       id: 1003,
@@ -59,7 +61,8 @@ const githubReviewComments: ImportSample = {
       created_at: "2026-01-02T12:00:00Z",
       path: "service/api.py",
       line: 18,
-      html_url: "https://example.test/demo-org/sample-service/pull/7#discussion_r1003",
+      html_url:
+        "https://example.test/demo-org/sample-service/pull/7#discussion_r1003",
     },
     {
       id: 1004,
@@ -69,7 +72,8 @@ const githubReviewComments: ImportSample = {
       path: "service/config.py",
       line: 10,
       resolved: true,
-      html_url: "https://example.test/demo-org/sample-service/pull/7#discussion_r1004",
+      html_url:
+        "https://example.test/demo-org/sample-service/pull/7#discussion_r1004",
     },
   ],
 };
@@ -86,21 +90,24 @@ const githubIssueComments: ImportSample = {
       user: { login: "reviewer-alpha" },
       body: "Overall this looks close. Can we split the migration into its own PR?",
       created_at: "2026-02-01T09:00:00Z",
-      html_url: "https://example.test/demo-org/sample-service/pull/7#issuecomment-2001",
+      html_url:
+        "https://example.test/demo-org/sample-service/pull/7#issuecomment-2001",
     },
     {
       id: 2002,
       user: { login: "reviewer-beta" },
       body: "Please add a changelog entry before merge.",
       created_at: "2026-02-01T10:30:00Z",
-      html_url: "https://example.test/demo-org/sample-service/pull/7#issuecomment-2002",
+      html_url:
+        "https://example.test/demo-org/sample-service/pull/7#issuecomment-2002",
     },
     {
       id: 2003,
       user: { login: "reviewer-gamma" },
       body: "Approving once the changelog is added.",
       created_at: "2026-02-01T11:15:00Z",
-      html_url: "https://example.test/demo-org/sample-service/pull/7#issuecomment-2003",
+      html_url:
+        "https://example.test/demo-org/sample-service/pull/7#issuecomment-2003",
     },
   ],
 };
@@ -130,7 +137,8 @@ const gitlabDiscussions: ImportSample = {
             old_path: "service/api.py",
             old_line: 10,
           },
-          web_url: "https://example.test/demo-group/sample-project/-/merge_requests/3#note_11",
+          web_url:
+            "https://example.test/demo-group/sample-project/-/merge_requests/3#note_11",
         },
         {
           id: 12,

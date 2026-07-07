@@ -7,8 +7,9 @@
   --accent: #6366f1;
   --accent-hover: #818cf8;
 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
   line-height: 1.5;
   color: var(--text);
 }

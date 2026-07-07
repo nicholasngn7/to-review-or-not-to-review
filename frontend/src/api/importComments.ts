@@ -55,7 +55,7 @@ export async function importComments(
       body: JSON.stringify(request),
       signal,
     });
-  } catch (cause) {
+  } catch {
     throw new ImportApiError(
       "Could not reach the import service. Is the backend running on port 8000?",
       0,

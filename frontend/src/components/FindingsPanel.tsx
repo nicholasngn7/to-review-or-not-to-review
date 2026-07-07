@@ -25,12 +25,18 @@ interface FindingsPanelProps {
   findings: ReviewFinding[];
 }
 
-export function FindingsPanel({ personaReviews, findings }: FindingsPanelProps) {
+export function FindingsPanel({
+  personaReviews,
+  findings,
+}: FindingsPanelProps) {
   const [reviewer, setReviewer] = useState<ReviewerFilter>("all");
   const [severity, setSeverity] = useState<SeverityFilter>("all");
 
   const orderedPersonas = useMemo(
-    () => PERSONA_ORDER.filter((p) => personaReviews.some((pr) => pr.persona === p)),
+    () =>
+      PERSONA_ORDER.filter((p) =>
+        personaReviews.some((pr) => pr.persona === p),
+      ),
     [personaReviews],
   );
 

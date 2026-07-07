@@ -30,13 +30,17 @@ describe("FindingsPanel filtering", () => {
     const severityGroup = screen.getByRole("group", {
       name: /filter by severity/i,
     });
-    await user.click(within(severityGroup).getByRole("button", { name: "Medium" }));
+    await user.click(
+      within(severityGroup).getByRole("button", { name: "Medium" }),
+    );
 
     // Only the medium (QA) finding remains; the high (security) one is hidden.
     expect(
       screen.getByText("Production code changed without test updates"),
     ).toBeInTheDocument();
-    expect(screen.queryByText("Possible use of eval()")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Possible use of eval()"),
+    ).not.toBeInTheDocument();
   });
 
   it("filters by reviewer tab", async () => {

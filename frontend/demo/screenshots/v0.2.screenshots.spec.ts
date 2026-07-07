@@ -8,7 +8,7 @@ import {
   runReview,
   waitForSuggestedRepliesIfAvailable,
 } from "../helpers/flows";
-import { capturePage, captureElement } from "../helpers/screenshot";
+import { captureElement } from "../helpers/screenshot";
 
 /**
  * v0.2 — reviewer tone + local comment threads + suggested replies screenshots.

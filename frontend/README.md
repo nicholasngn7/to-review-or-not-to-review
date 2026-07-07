@@ -14,11 +14,11 @@ to the backend at `http://localhost:8000` (see `vite.config.ts`).
 
 ## Scripts
 
-| Command           | Description                       |
-| ----------------- | --------------------------------- |
-| `npm run dev`     | Start the Vite dev server         |
+| Command           | Description                         |
+| ----------------- | ----------------------------------- |
+| `npm run dev`     | Start the Vite dev server           |
 | `npm run build`   | Type-check and build for production |
-| `npm run preview` | Preview the production build      |
+| `npm run preview` | Preview the production build        |
 
 ## Layout
 

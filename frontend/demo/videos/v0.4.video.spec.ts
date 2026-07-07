@@ -27,37 +27,45 @@ import { beat, recordDemo } from "../helpers/video";
 const FILENAME = "mr-review-council-v0.4-retrieval-grounding-demo.webm";
 
 test("v0.4 retrieval grounding demo", async ({ browser, baseURL }) => {
-  const produced = await recordDemo(browser, baseURL, FILENAME, async (page) => {
-    await gotoApp(page);
-    await loadCoreReviewSample(page);
-    await beat(page);
+  const produced = await recordDemo(
+    browser,
+    baseURL,
+    FILENAME,
+    async (page) => {
+      await gotoApp(page);
+      await loadCoreReviewSample(page);
+      await beat(page);
 
-    const entered = await enterLocalContextSourcesIfAvailable(
-      page,
-      undefined,
-      "authentication and security review",
-    );
-    if (!entered) {
-      return false; // retrieval-grounding UI absent in this version
-    }
-    await beat(page, 900);
+      const entered = await enterLocalContextSourcesIfAvailable(
+        page,
+        undefined,
+        "authentication and security review",
+      );
+      if (!entered) {
+        return false; // retrieval-grounding UI absent in this version
+      }
+      await beat(page, 900);
 
-    // Collapse the input panel so the results are the focus, then run.
-    await openContextSourcesPanelIfAvailable(page);
-    await runReview(page);
-    await beat(page, 900);
+      // Collapse the input panel so the results are the focus, then run.
+      await openContextSourcesPanelIfAvailable(page);
+      await runReview(page);
+      await beat(page, 900);
 
-    if (await openRetrievedContextPanelIfAvailable(page)) {
-      await beat(page, 1000);
-    }
+      if (await openRetrievedContextPanelIfAvailable(page)) {
+        await beat(page, 1000);
+      }
 
-    const card = await expandFirstCitedContextIfAvailable(page);
-    if (card) {
-      await card.scrollIntoViewIfNeeded();
-      await beat(page, 1000);
-    }
-    return true;
-  });
+      const card = await expandFirstCitedContextIfAvailable(page);
+      if (card) {
+        await card.scrollIntoViewIfNeeded();
+        await beat(page, 1000);
+      }
+      return true;
+    },
+  );
 
-  test.skip(!produced, "Retrieval-grounding feature not present in this version.");
+  test.skip(
+    !produced,
+    "Retrieval-grounding feature not present in this version.",
+  );
 });

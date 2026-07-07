@@ -40,7 +40,9 @@ describe("DiffInputPanel", () => {
     render(<DiffInputPanel isLoading={false} onRun={vi.fn()} />);
     const runButton = screen.getByRole("button", { name: /run review/i });
     expect(runButton).toBeDisabled();
-    expect(screen.getByText(/paste or upload a diff to begin/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/paste or upload a diff to begin/i),
+    ).toBeInTheDocument();
   });
 
   it("loads a demo diff into the form and enables Run Review", async () => {
@@ -92,9 +94,7 @@ describe("DiffInputPanel", () => {
   it("renders the Reviewer voice controls", () => {
     render(<DiffInputPanel isLoading={false} onRun={vi.fn()} />);
     expect(screen.getByText(/reviewer voice/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/wording and framing/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/wording and framing/i)).toBeInTheDocument();
     // The global voice selects are present.
     expect(screen.getByLabelText("Tone")).toBeInTheDocument();
     expect(screen.getByLabelText("Strictness")).toBeInTheDocument();
@@ -226,9 +226,7 @@ describe("DiffInputPanel", () => {
 
   it("renders the comment threads input", () => {
     render(<DiffInputPanel isLoading={false} onRun={vi.fn()} />);
-    expect(
-      screen.getByText(/existing comment threads/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/existing comment threads/i)).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /add comment thread/i }),
     ).toBeInTheDocument();
@@ -251,7 +249,9 @@ describe("DiffInputPanel", () => {
 
     await loadDemo(user);
     // Add a row but leave the comment body blank.
-    await user.click(screen.getByRole("button", { name: /add comment thread/i }));
+    await user.click(
+      screen.getByRole("button", { name: /add comment thread/i }),
+    );
     await user.click(screen.getByRole("button", { name: /run review/i }));
     expect(onRun.mock.calls[0][0].commentThreads).toBeUndefined();
   });
@@ -262,7 +262,9 @@ describe("DiffInputPanel", () => {
     render(<DiffInputPanel isLoading={false} onRun={onRun} />);
 
     await loadDemo(user);
-    await user.click(screen.getByRole("button", { name: /add comment thread/i }));
+    await user.click(
+      screen.getByRole("button", { name: /add comment thread/i }),
+    );
 
     await user.type(screen.getByLabelText(/file path/i), "app/auth.py");
     await user.type(screen.getByLabelText(/^line/i), "5");
@@ -292,7 +294,9 @@ describe("DiffInputPanel", () => {
     render(<DiffInputPanel isLoading={false} onRun={onRun} />);
 
     await loadDemo(user);
-    await user.click(screen.getByRole("button", { name: /add comment thread/i }));
+    await user.click(
+      screen.getByRole("button", { name: /add comment thread/i }),
+    );
     await user.type(screen.getByLabelText("Comment"), "Please fix this.");
     await user.click(screen.getByRole("button", { name: /run review/i }));
     expect(onRun.mock.calls[0][0].commentThreads).toHaveLength(1);
@@ -326,7 +330,9 @@ describe("DiffInputPanel", () => {
     render(<DiffInputPanel isLoading={false} onRun={onRun} />);
 
     await loadDemo(user);
-    await loadImported(user, [importedThread("imp-1", "Imported comment body.")]);
+    await loadImported(user, [
+      importedThread("imp-1", "Imported comment body."),
+    ]);
 
     // The imported group shows the thread.
     expect(
@@ -348,7 +354,9 @@ describe("DiffInputPanel", () => {
     await loadImported(user, [importedThread("imp-1", "Imported one.")]);
 
     // Add a manual thread too.
-    await user.click(screen.getByRole("button", { name: /add comment thread/i }));
+    await user.click(
+      screen.getByRole("button", { name: /add comment thread/i }),
+    );
     await user.type(screen.getByLabelText("Comment"), "Manual comment.");
 
     await user.click(screen.getByRole("button", { name: /run review/i }));
@@ -367,7 +375,9 @@ describe("DiffInputPanel", () => {
     await loadImported(user, [importedThread("dupe-id", "Imported version.")]);
 
     // Manual thread with the same id should be de-duped (imported wins, first).
-    await user.click(screen.getByRole("button", { name: /add comment thread/i }));
+    await user.click(
+      screen.getByRole("button", { name: /add comment thread/i }),
+    );
     await user.type(screen.getByLabelText(/thread id/i), "dupe-id");
     await user.type(screen.getByLabelText("Comment"), "Manual version.");
 

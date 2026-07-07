@@ -12,9 +12,7 @@ import type { CommentThread } from "./review";
 export type GitProviderType = "github" | "gitlab";
 
 export type ImportSource =
-  | "github_review_comments"
-  | "github_issue_comments"
-  | "gitlab_discussions";
+  "github_review_comments" | "github_issue_comments" | "gitlab_discussions";
 
 export interface ExternalCommentReference {
   provider: GitProviderType;

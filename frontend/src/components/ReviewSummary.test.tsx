@@ -91,9 +91,7 @@ describe("ReviewSummary", () => {
         },
       ],
     };
-    render(
-      <ReviewSummary status="success" result={result} error={null} />,
-    );
+    render(<ReviewSummary status="success" result={result} error={null} />);
 
     expect(screen.getByText("Suggested replies")).toBeInTheDocument();
     expect(

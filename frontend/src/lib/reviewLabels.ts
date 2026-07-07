@@ -144,7 +144,11 @@ export const TONE_STYLE_BLURBS: Record<ToneStyle, string> = {
   executive: "Risk / business impact",
 };
 
-export const TONE_STRICTNESS_ORDER: ToneStrictness[] = ["low", "medium", "high"];
+export const TONE_STRICTNESS_ORDER: ToneStrictness[] = [
+  "low",
+  "medium",
+  "high",
+];
 
 export const TONE_STRICTNESS_LABELS: Record<ToneStrictness, string> = {
   low: "Low",

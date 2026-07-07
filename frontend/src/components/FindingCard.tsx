@@ -24,9 +24,7 @@ function hunkLocation(finding: ReviewFinding): string | null {
 export function FindingCard({ finding }: FindingCardProps) {
   const location = hunkLocation(finding);
   const confidencePct =
-    finding.confidence != null
-      ? Math.round(finding.confidence * 100)
-      : null;
+    finding.confidence != null ? Math.round(finding.confidence * 100) : null;
 
   return (
     <li className={`finding finding--${finding.severity}`}>

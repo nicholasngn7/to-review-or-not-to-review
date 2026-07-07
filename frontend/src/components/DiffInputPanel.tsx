@@ -31,8 +31,7 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [diffText, setDiffText] = useState("");
-  const [personas, setPersonas] =
-    useState<ReviewerPersona[]>(DEFAULT_PERSONAS);
+  const [personas, setPersonas] = useState<ReviewerPersona[]>(DEFAULT_PERSONAS);
   const [fileName, setFileName] = useState<string | null>(null);
   const [globalTone, setGlobalTone] =
     useState<ToneProfile>(DEFAULT_TONE_PROFILE);
@@ -244,7 +243,9 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
         <textarea
           id={diffId}
           className="input textarea textarea--code"
-          placeholder={"Paste a unified diff here, e.g.\ndiff --git a/app.py b/app.py\n@@ -1,3 +1,4 @@"}
+          placeholder={
+            "Paste a unified diff here, e.g.\ndiff --git a/app.py b/app.py\n@@ -1,3 +1,4 @@"
+          }
           value={diffText}
           onChange={(e) => {
             setDiffText(e.target.value);
@@ -255,9 +256,7 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
           disabled={isLoading}
           spellCheck={false}
         />
-        {fileName && (
-          <p className="field__hint">Loaded from {fileName}</p>
-        )}
+        {fileName && <p className="field__hint">Loaded from {fileName}</p>}
       </div>
 
       <PersonaSelector
@@ -314,8 +313,8 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
             </button>
           </div>
           <p className="field__hint">
-            Loaded from the local import demo (read-only). Included alongside any
-            manual threads when you run the review.
+            Loaded from the local import demo (read-only). Included alongside
+            any manual threads when you run the review.
           </p>
           <ul className="imported-list">
             {importedThreads.map((thread) => {
@@ -361,7 +360,9 @@ export function DiffInputPanel({ isLoading, onRun }: DiffInputPanelProps) {
           {isLoading ? "Running review..." : "Run Review"}
         </button>
         {!hasDiff && (
-          <span className="run-row__note">Paste or upload a diff to begin.</span>
+          <span className="run-row__note">
+            Paste or upload a diff to begin.
+          </span>
         )}
         {hasDiff && !hasPersonas && (
           <span className="run-row__note run-row__note--warn">

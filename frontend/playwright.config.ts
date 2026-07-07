@@ -22,7 +22,8 @@ import { defineConfig, devices } from "@playwright/test";
  */
 
 /** Base URL under test; override with DEMO_BASE_URL for exact-version capture. */
-export const DEMO_BASE_URL = process.env.DEMO_BASE_URL ?? "http://localhost:5173";
+export const DEMO_BASE_URL =
+  process.env.DEMO_BASE_URL ?? "http://localhost:5173";
 
 /** True when capturing against an externally-started (e.g. historical) app. */
 const USE_EXTERNAL_SERVER = Boolean(process.env.DEMO_BASE_URL);

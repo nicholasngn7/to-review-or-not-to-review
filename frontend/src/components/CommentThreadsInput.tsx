@@ -109,10 +109,11 @@ export function CommentThreadsInput({
       </summary>
 
       <p className="threads-panel__help">
-        Paste existing MR/PR discussion comments here as structured input. They are
-        captured for <strong>future suggested replies</strong> (a later, copy-only
-        feature) — nothing is posted back to GitHub/GitLab, and no replies are
-        generated yet. Comment threads are optional and not required to run a review.
+        Paste existing MR/PR discussion comments here as structured input. They
+        are captured for <strong>future suggested replies</strong> (a later,
+        copy-only feature) — nothing is posted back to GitHub/GitLab, and no
+        replies are generated yet. Comment threads are optional and not required
+        to run a review.
       </p>
 
       {drafts.length === 0 ? (
@@ -171,7 +172,8 @@ export function CommentThreadsInput({
                     className="tone-field__label"
                     htmlFor={`${draft.key}-file`}
                   >
-                    File path <span className="field__optional">(optional)</span>
+                    File path{" "}
+                    <span className="field__optional">(optional)</span>
                   </label>
                   <input
                     id={`${draft.key}-file`}
@@ -199,7 +201,9 @@ export function CommentThreadsInput({
                     placeholder="e.g. 5"
                     value={draft.line}
                     disabled={disabled}
-                    onChange={(e) => update(draft.key, { line: e.target.value })}
+                    onChange={(e) =>
+                      update(draft.key, { line: e.target.value })
+                    }
                   />
                 </div>
                 <div className="thread-field">

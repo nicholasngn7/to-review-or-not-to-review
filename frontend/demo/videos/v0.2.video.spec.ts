@@ -23,42 +23,53 @@ import { beat, recordDemo } from "../helpers/video";
 const FILENAME = "mr-review-council-v0.2-suggested-replies-demo.webm";
 
 test("v0.2 suggested replies demo", async ({ browser, baseURL }) => {
-  const produced = await recordDemo(browser, baseURL, FILENAME, async (page) => {
-    await gotoApp(page);
-    await loadCoreReviewSample(page);
-    await beat(page);
-
-    // Open the reviewer voice panel and (best-effort) change the global tone.
-    if (await openReviewerTonePanelIfAvailable(page)) {
+  const produced = await recordDemo(
+    browser,
+    baseURL,
+    FILENAME,
+    async (page) => {
+      await gotoApp(page);
+      await loadCoreReviewSample(page);
       await beat(page);
-      const toneSelect = page.getByLabel("Tone", { exact: true }).first();
-      if (await toneSelect.count()) {
-        await toneSelect.selectOption("supportive").catch(() => {});
+
+      // Open the reviewer voice panel and (best-effort) change the global tone.
+      if (await openReviewerTonePanelIfAvailable(page)) {
         await beat(page);
+        const toneSelect = page.getByLabel("Tone", { exact: true }).first();
+        if (await toneSelect.count()) {
+          await toneSelect.selectOption("supportive").catch(() => {});
+          await beat(page);
+        }
       }
-    }
 
-    // Add a synthetic local MR comment thread (defining v0.2 feature).
-    const added = await addManualCommentThreadIfAvailable(page);
-    if (!added) {
-      return false;
-    }
-    await beat(page);
-
-    await runReview(page);
-    await beat(page, 900);
-
-    // Show suggested replies and copy one if present.
-    if (await waitForSuggestedRepliesIfAvailable(page)) {
-      const copy = page.getByRole("button", { name: /^copy reply$/i });
-      if (await copy.count()) {
-        await copy.first().scrollIntoViewIfNeeded();
-        await copy.first().click().catch(() => {});
-        await beat(page, 900);
+      // Add a synthetic local MR comment thread (defining v0.2 feature).
+      const added = await addManualCommentThreadIfAvailable(page);
+      if (!added) {
+        return false;
       }
-    }
-    return true;
-  });
+      await beat(page);
 
-  test.skip(!produced, "Comment threads / suggested replies not present in this version.");
+      await runReview(page);
+      await beat(page, 900);
+
+      // Show suggested replies and copy one if present.
+      if (await waitForSuggestedRepliesIfAvailable(page)) {
+        const copy = page.getByRole("button", { name: /^copy reply$/i });
+        if (await copy.count()) {
+          await copy.first().scrollIntoViewIfNeeded();
+          await copy
+            .first()
+            .click()
+            .catch(() => {});
+          await beat(page, 900);
+        }
+      }
+      return true;
+    },
+  );
+
+  test.skip(
+    !produced,
+    "Comment threads / suggested replies not present in this version.",
+  );
 });

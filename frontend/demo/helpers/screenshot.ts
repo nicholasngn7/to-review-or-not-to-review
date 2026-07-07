@@ -26,7 +26,10 @@ export async function capturePage(
   version: DemoVersion,
   name: string,
 ): Promise<void> {
-  await page.screenshot({ path: screenshotPath(version, name), fullPage: true });
+  await page.screenshot({
+    path: screenshotPath(version, name),
+    fullPage: true,
+  });
 }
 
 /**
@@ -38,7 +41,10 @@ export async function captureViewport(
   version: DemoVersion,
   name: string,
 ): Promise<void> {
-  await page.screenshot({ path: screenshotPath(version, name), fullPage: false });
+  await page.screenshot({
+    path: screenshotPath(version, name),
+    fullPage: false,
+  });
 }
 
 /**

@@ -9,33 +9,19 @@
 // ---- Enums (string unions) ----
 
 export type ReviewerPersona =
-  | "architect"
-  | "qa"
-  | "security"
-  | "frontend"
-  | "backend"
-  | "sre"
-  | "product";
+  "architect" | "qa" | "security" | "frontend" | "backend" | "sre" | "product";
 
 export type RiskLevel = "low" | "medium" | "high";
 
 export type MergeRecommendation =
-  | "ready"
-  | "ready_with_followups"
-  | "needs_changes"
-  | "needs_human_review";
+  "ready" | "ready_with_followups" | "needs_changes" | "needs_human_review";
 
 export type FindingSeverity = "info" | "low" | "medium" | "high";
 
 // ---- Reviewer tone profiles (v0.2 contract; presentation only) ----
 
 export type ToneStyle =
-  | "direct"
-  | "supportive"
-  | "educational"
-  | "strict"
-  | "curious"
-  | "executive";
+  "direct" | "supportive" | "educational" | "strict" | "curious" | "executive";
 
 export type ToneStrictness = "low" | "medium" | "high";
 
@@ -128,11 +114,7 @@ export interface RetrievalResult {
 export type LineKind = "added" | "removed" | "context";
 
 export type FileChangeType =
-  | "added"
-  | "modified"
-  | "deleted"
-  | "renamed"
-  | "unknown";
+  "added" | "modified" | "deleted" | "renamed" | "unknown";
 
 export interface DiffLine {
   kind: LineKind;

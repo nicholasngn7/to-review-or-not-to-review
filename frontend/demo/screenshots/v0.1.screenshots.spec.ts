@@ -22,9 +22,9 @@ test.describe("v0.1 core review screenshots", () => {
     const loaded = await loadCoreReviewSample(page);
     expect(loaded, "a built-in demo diff should be loadable").toBeTruthy();
     // Deterministic wait: the diff textarea is populated from the sample.
-    await expect(
-      page.getByLabel("Diff", { exact: true }),
-    ).toHaveValue(/diff --git/);
+    await expect(page.getByLabel("Diff", { exact: true })).toHaveValue(
+      /diff --git/,
+    );
     await capturePage(page, V, "v0.1-core-review-input.png");
   });
 
@@ -40,7 +40,9 @@ test.describe("v0.1 core review screenshots", () => {
     await loadCoreReviewSample(page);
     await runReview(page);
 
-    const exportButton = page.getByRole("button", { name: TEXT.exportMarkdown });
+    const exportButton = page.getByRole("button", {
+      name: TEXT.exportMarkdown,
+    });
     if ((await exportButton.count()) === 0) {
       test.skip(
         true,

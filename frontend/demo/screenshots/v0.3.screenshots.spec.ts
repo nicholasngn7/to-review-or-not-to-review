@@ -32,7 +32,12 @@ test.describe("v0.3 local import screenshots", () => {
     if (!opened) {
       test.skip(true, "Import comments panel not present in this version.");
     }
-    await captureElement(page, page.locator(IMPORT_PANEL), V, "v0.3-import-sample-panel.png");
+    await captureElement(
+      page,
+      page.locator(IMPORT_PANEL),
+      V,
+      "v0.3-import-sample-panel.png",
+    );
   });
 
   test("normalized import preview", async ({ page }) => {

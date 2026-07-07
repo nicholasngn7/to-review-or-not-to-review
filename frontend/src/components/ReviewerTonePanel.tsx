@@ -47,9 +47,9 @@ export function ReviewerTonePanel({
       </summary>
 
       <p className="tone-panel__help">
-        Tone changes the <strong>wording and framing</strong> of feedback only. It
-        does not change risk scoring, severities, or which issues are detected.
-        Per-reviewer overrides win over the global voice.
+        Tone changes the <strong>wording and framing</strong> of feedback only.
+        It does not change risk scoring, severities, or which issues are
+        detected. Per-reviewer overrides win over the global voice.
       </p>
 
       <fieldset className="tone-panel__group" disabled={disabled}>

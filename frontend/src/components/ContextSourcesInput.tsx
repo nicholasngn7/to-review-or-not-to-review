@@ -57,9 +57,10 @@ export function ContextSourcesInput({
 
       <p className="context-input__help">
         Ground the review on local project docs. Retrieved local context is{" "}
-        <strong>lexical and provenance-only</strong> — it is not semantic search and
-        does not change findings, severity, or the merge recommendation. Files are read
-        locally from an allow-list; no URLs are fetched and no tokens are used.
+        <strong>lexical and provenance-only</strong> — it is not semantic search
+        and does not change findings, severity, or the merge recommendation.
+        Files are read locally from an allow-list; no URLs are fetched and no
+        tokens are used.
       </p>
 
       <div className="field">
@@ -69,14 +70,17 @@ export function ContextSourcesInput({
         <textarea
           id={sourcesId}
           className="input textarea textarea--short"
-          placeholder={"README.md\ndocs/project-case-study.md\ndocs/decisions.md"}
+          placeholder={
+            "README.md\ndocs/project-case-study.md\ndocs/decisions.md"
+          }
           value={sourcesText}
           disabled={disabled}
           spellCheck={false}
           onChange={(e) => setSourcesText(e.target.value)}
         />
         <p className="field__hint">
-          Examples: <code>README.md</code>, <code>docs/project-case-study.md</code>,{" "}
+          Examples: <code>README.md</code>,{" "}
+          <code>docs/project-case-study.md</code>,{" "}
           <code>docs/decisions.md</code>.
         </p>
       </div>

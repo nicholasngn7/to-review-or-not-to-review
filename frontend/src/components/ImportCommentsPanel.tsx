@@ -125,18 +125,22 @@ export function ImportCommentsPanel({
     <details className="threads-panel import-panel">
       <summary className="threads-panel__summary">
         <span className="threads-panel__title">
-          Import comments{" "}
-          <span className="field__optional">(local demo)</span>
+          Import comments <span className="field__optional">(local demo)</span>
         </span>
       </summary>
 
       <p className="threads-panel__help">
-        Paste provider-shaped JSON. <strong>Nothing is fetched or posted.</strong>{" "}
-        No tokens, OAuth, or GitHub/GitLab API calls are used — this is a local
-        normalization demo, not live GitHub/GitLab integration.
+        Paste provider-shaped JSON.{" "}
+        <strong>Nothing is fetched or posted.</strong> No tokens, OAuth, or
+        GitHub/GitLab API calls are used — this is a local normalization demo,
+        not live GitHub/GitLab integration.
       </p>
 
-      <div className="import-samples" role="group" aria-label="Load sample payload">
+      <div
+        className="import-samples"
+        role="group"
+        aria-label="Load sample payload"
+      >
         <span className="import-samples__label">Load sample payload</span>
         <div className="import-samples__buttons">
           {IMPORT_SAMPLES.map((sample) => (
@@ -153,7 +157,8 @@ export function ImportCommentsPanel({
           ))}
         </div>
         <p className="field__hint">
-          Fills the form with synthetic JSON. You still click “Normalize comments”.
+          Fills the form with synthetic JSON. You still click “Normalize
+          comments”.
         </p>
       </div>
 
@@ -205,7 +210,9 @@ export function ImportCommentsPanel({
         <textarea
           id={jsonId}
           className="input textarea textarea--code"
-          placeholder={'Paste a fixture-shaped array, e.g.\n[\n  { "id": 1, "body": "..." }\n]'}
+          placeholder={
+            'Paste a fixture-shaped array, e.g.\n[\n  { "id": 1, "body": "..." }\n]'
+          }
           value={rawText}
           disabled={disabled || isImporting}
           spellCheck={false}

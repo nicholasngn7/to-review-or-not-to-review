@@ -23,9 +23,7 @@ describe("ContextUsedPanel", () => {
     render(<ContextUsedPanel contextUsed={[mockRetrievalResult]} />);
     // Title (exact) plus the provenance note both mention local context.
     expect(screen.getByText("Retrieved local context")).toBeInTheDocument();
-    expect(
-      screen.getByText(/lexical, provenance-only/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/lexical, provenance-only/i)).toBeInTheDocument();
     expect(screen.getByText(/not semantic search/i)).toBeInTheDocument();
   });
 

@@ -27,36 +27,41 @@ import { beat, recordDemo } from "../helpers/video";
 const FILENAME = "mr-review-council-v0.3-local-import-demo.webm";
 
 test("v0.3 local import demo", async ({ browser, baseURL }) => {
-  const produced = await recordDemo(browser, baseURL, FILENAME, async (page) => {
-    await gotoApp(page);
-    await loadCoreReviewSample(page);
-    await beat(page);
+  const produced = await recordDemo(
+    browser,
+    baseURL,
+    FILENAME,
+    async (page) => {
+      await gotoApp(page);
+      await loadCoreReviewSample(page);
+      await beat(page);
 
-    if (!(await openImportCommentsPanelIfAvailable(page))) {
-      return false; // import feature absent in this version
-    }
-    await beat(page);
+      if (!(await openImportCommentsPanelIfAvailable(page))) {
+        return false; // import feature absent in this version
+      }
+      await beat(page);
 
-    // Load a bundled synthetic payload (defaults to "GitHub review comments").
-    await loadSampleImportPayloadIfAvailable(page);
-    await beat(page, 900);
-
-    // Normalize through the local endpoint, then preview.
-    await normalizeImportedCommentsIfAvailable(page);
-    await beat(page, 900);
-
-    // Load the normalized threads into the review input.
-    await loadImportedThreadsIfAvailable(page);
-    await beat(page);
-
-    await runReview(page);
-    await beat(page, 900);
-
-    if (await waitForSuggestedRepliesIfAvailable(page)) {
+      // Load a bundled synthetic payload (defaults to "GitHub review comments").
+      await loadSampleImportPayloadIfAvailable(page);
       await beat(page, 900);
-    }
-    return true;
-  });
+
+      // Normalize through the local endpoint, then preview.
+      await normalizeImportedCommentsIfAvailable(page);
+      await beat(page, 900);
+
+      // Load the normalized threads into the review input.
+      await loadImportedThreadsIfAvailable(page);
+      await beat(page);
+
+      await runReview(page);
+      await beat(page, 900);
+
+      if (await waitForSuggestedRepliesIfAvailable(page)) {
+        await beat(page, 900);
+      }
+      return true;
+    },
+  );
 
   test.skip(!produced, "Local import feature not present in this version.");
 });

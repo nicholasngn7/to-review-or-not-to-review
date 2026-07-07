@@ -74,7 +74,9 @@ describe("ImportCommentsPanel", () => {
     render(<ImportCommentsPanel onLoadThreads={vi.fn()} />);
 
     setJson("not json {");
-    await user.click(screen.getByRole("button", { name: /normalize comments/i }));
+    await user.click(
+      screen.getByRole("button", { name: /normalize comments/i }),
+    );
 
     expect(screen.getByRole("alert")).toHaveTextContent(/valid json/i);
     expect(mockImport).not.toHaveBeenCalled();
@@ -86,7 +88,9 @@ describe("ImportCommentsPanel", () => {
     render(<ImportCommentsPanel onLoadThreads={vi.fn()} />);
 
     setJson('[{"id": 1, "body": "hi"}]');
-    await user.click(screen.getByRole("button", { name: /normalize comments/i }));
+    await user.click(
+      screen.getByRole("button", { name: /normalize comments/i }),
+    );
 
     expect(mockImport).toHaveBeenCalledTimes(1);
     expect(mockImport).toHaveBeenCalledWith({
@@ -113,9 +117,13 @@ describe("ImportCommentsPanel", () => {
     render(<ImportCommentsPanel onLoadThreads={vi.fn()} />);
 
     setJson("[]");
-    await user.click(screen.getByRole("button", { name: /normalize comments/i }));
+    await user.click(
+      screen.getByRole("button", { name: /normalize comments/i }),
+    );
 
-    expect(await screen.findByText(/2 threads normalized/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/2 threads normalized/i),
+    ).toBeInTheDocument();
     expect(
       screen.getByText(/references missing root 9999/i),
     ).toBeInTheDocument();
@@ -134,7 +142,9 @@ describe("ImportCommentsPanel", () => {
     render(<ImportCommentsPanel onLoadThreads={onLoad} />);
 
     setJson("[]");
-    await user.click(screen.getByRole("button", { name: /normalize comments/i }));
+    await user.click(
+      screen.getByRole("button", { name: /normalize comments/i }),
+    );
     await user.click(
       await screen.findByRole("button", { name: /load imported threads/i }),
     );
@@ -154,7 +164,9 @@ describe("ImportCommentsPanel", () => {
     render(<ImportCommentsPanel onLoadThreads={vi.fn()} />);
 
     setJson("[]");
-    await user.click(screen.getByRole("button", { name: /normalize comments/i }));
+    await user.click(
+      screen.getByRole("button", { name: /normalize comments/i }),
+    );
 
     expect(
       await screen.findByText(/no comment threads were produced/i),
@@ -166,11 +178,15 @@ describe("ImportCommentsPanel", () => {
 
   it("renders a friendly message on API error", async () => {
     const user = userEvent.setup();
-    mockImport.mockRejectedValueOnce(new ImportApiError("Unsupported source", 400));
+    mockImport.mockRejectedValueOnce(
+      new ImportApiError("Unsupported source", 400),
+    );
     render(<ImportCommentsPanel onLoadThreads={vi.fn()} />);
 
     setJson("[]");
-    await user.click(screen.getByRole("button", { name: /normalize comments/i }));
+    await user.click(
+      screen.getByRole("button", { name: /normalize comments/i }),
+    );
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       /unsupported source/i,
@@ -209,7 +225,9 @@ describe("ImportCommentsPanel", () => {
     );
 
     expect(screen.getByLabelText("Provider")).toHaveValue("github");
-    expect(screen.getByLabelText("Source")).toHaveValue("github_review_comments");
+    expect(screen.getByLabelText("Source")).toHaveValue(
+      "github_review_comments",
+    );
     const json = screen.getByLabelText(/json payload/i) as HTMLTextAreaElement;
     expect(json.value).toContain("in_reply_to_id");
     expect(json.value).toContain("service/auth.py");
@@ -227,7 +245,9 @@ describe("ImportCommentsPanel", () => {
     );
 
     expect(screen.getByLabelText("Provider")).toHaveValue("github");
-    expect(screen.getByLabelText("Source")).toHaveValue("github_issue_comments");
+    expect(screen.getByLabelText("Source")).toHaveValue(
+      "github_issue_comments",
+    );
     const json = screen.getByLabelText(/json payload/i) as HTMLTextAreaElement;
     expect(json.value).toContain("issuecomment-2001");
     expect(mockImport).not.toHaveBeenCalled();
@@ -260,7 +280,9 @@ describe("ImportCommentsPanel", () => {
     );
     expect(mockImport).not.toHaveBeenCalled();
 
-    await user.click(screen.getByRole("button", { name: /normalize comments/i }));
+    await user.click(
+      screen.getByRole("button", { name: /normalize comments/i }),
+    );
     expect(mockImport).toHaveBeenCalledTimes(1);
     expect(mockImport.mock.calls[0][0].provider).toBe("github");
     expect(mockImport.mock.calls[0][0].source).toBe("github_review_comments");

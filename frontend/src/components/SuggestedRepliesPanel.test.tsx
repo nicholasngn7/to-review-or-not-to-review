@@ -10,8 +10,10 @@ const REPLIES: SuggestedReply[] = [
     id: "reply-t1-security",
     threadId: "t1",
     reviewer: "security",
-    suggestedReply: "Thanks for the review comment. Can we confirm the token is safe?",
-    rationale: 'The comment mentions "token", which maps to the Security reviewer.',
+    suggestedReply:
+      "Thanks for the review comment. Can we confirm the token is safe?",
+    rationale:
+      'The comment mentions "token", which maps to the Security reviewer.',
     confidence: 0.6,
     needsHumanReview: true,
     filePath: "app/auth.py",
@@ -36,7 +38,9 @@ const THREADS: CommentThread[] = [
     filePath: "app/auth.py",
     line: 5,
     status: "open",
-    comments: [{ id: "c1", author: "Reviewer", body: "Is the token safe? add a test" }],
+    comments: [
+      { id: "c1", author: "Reviewer", body: "Is the token safe? add a test" },
+    ],
   },
 ];
 

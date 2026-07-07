@@ -42,10 +42,7 @@ async function isPresent(
  * Open a `<details>` panel identified by text it contains (e.g. its summary title).
  * Returns false (no-op) when no such panel exists in this version.
  */
-async function openDetailsByText(
-  page: Page,
-  text: RegExp,
-): Promise<boolean> {
+async function openDetailsByText(page: Page, text: RegExp): Promise<boolean> {
   const details = page.locator("details").filter({ hasText: text }).first();
   if (!(await isPresent(details))) {
     return false;

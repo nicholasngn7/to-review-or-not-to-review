@@ -10,10 +10,7 @@ import {
   readMarkdownExportIfAvailable,
   runReview,
 } from "../helpers/flows";
-import {
-  captureElement,
-  captureMarkdownDocument,
-} from "../helpers/screenshot";
+import { captureElement, captureMarkdownDocument } from "../helpers/screenshot";
 
 /**
  * v0.4 — opt-in local retrieval-grounding screenshots.
@@ -49,7 +46,9 @@ test.describe("v0.4 retrieval grounding screenshots", () => {
     );
   });
 
-  test("review results with Retrieved local context panel", async ({ page }) => {
+  test("review results with Retrieved local context panel", async ({
+    page,
+  }) => {
     await gotoApp(page);
     await loadCoreReviewSample(page);
     const entered = await enterLocalContextSourcesIfAvailable(

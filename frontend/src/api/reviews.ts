@@ -51,7 +51,7 @@ export async function runReview(
       body: JSON.stringify(request),
       signal,
     });
-  } catch (cause) {
+  } catch {
     throw new ReviewApiError(
       "Could not reach the review service. Is the backend running on port 8000?",
       0,
